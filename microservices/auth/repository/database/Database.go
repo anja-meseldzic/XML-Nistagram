@@ -2,7 +2,6 @@ package database
 
 import (
 	"github.com/anja-meseldzic/XML-Nistagram/microservices/auth/model"
-	"github.com/google/uuid"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -14,15 +13,15 @@ func InitDB() *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	database.AutoMigrate(&model.User{})
+	database.AutoMigrate(&model.User{}, &model.RegularUser{}, &model.Admin{})
 
 	/*Loading test data*/
-	users := []model.User{
-		{ID: uuid.New(), Username: "petar", Password: "petar"},
-		{ID: uuid.New(), Username: "ivan", Password: "ivan"},
-	}
-	for _, user := range users {
-		database.Create(&user)
-	}
+	//users := []model.User{
+	//	{ID: uuid.New(), Username: "petar", Password: "petar"},
+	//	{ID: uuid.New(), Username: "ivan", Password: "ivan"},
+	//}
+	//for _, user := range users {
+	//	database.Create(&user)
+	//}
 	return database
 }

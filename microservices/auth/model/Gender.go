@@ -1,8 +1,8 @@
 package model
 
-type Gender string
+type Gender int
 const(
-	MALE = iota
+	MALE Gender = iota
 	FEMALE
 	OTHER
 )

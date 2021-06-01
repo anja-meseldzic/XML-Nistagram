@@ -25,6 +25,7 @@ func initController(service *service.UserService) *controller.UserController {
 func registerUserEndpoints(controller *controller.UserController, router *mux.Router) {
 	router.HandleFunc("/", controller.Hello).Methods("GET")
 	router.HandleFunc("/", controller.CreateUser).Methods("POST")
+	router.HandleFunc("/register", controller.Register).Methods("POST")
 	router.HandleFunc("/verify/{userId}", controller.Verify).Methods("GET")
 }
 

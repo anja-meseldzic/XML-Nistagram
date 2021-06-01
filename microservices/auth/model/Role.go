@@ -1,8 +1,8 @@
 package model
 
-type Role string
+type Role int
 const(
-	USER = iota
+	USER Role = iota
 	ADMIN
 	AGENT
 )

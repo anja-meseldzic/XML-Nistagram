@@ -6,5 +6,6 @@ import (
 
 type Admin struct {
 	ID       uuid.UUID `json:"id"`
-	User User
+	UserID uuid.UUID
+	User User `json:"user" gorm:"constraint:onUpdate:CASCADE;"`
 }

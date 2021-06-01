@@ -15,6 +15,11 @@ func (service *UserService) CreateUser(user *model.User) error {
 	return nil
 }
 
+func (service *UserService) Register(user *model.RegularUser) error  {
+	service.Repo.Register(user)
+	return nil
+}
+
 func (service *UserService) UserExists(userId string) (bool, error) {
 	id, err := uuid.Parse(userId)
 	if err != nil {

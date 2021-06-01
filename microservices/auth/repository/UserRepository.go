@@ -17,6 +17,11 @@ func (repo *UserRepository) CreateUser(user *model.User) error {
 	return nil
 }
 
+func (repo *UserRepository) Register(user *model.RegularUser) error {
+	repo.Database.Create(user)
+	return nil
+}
+
 func (repo *UserRepository) UserExists(userId uuid.UUID) bool {
 	var count int64
 	repo.Database.Where("id = ?", userId).Find(&model.User{}).Count(&count)

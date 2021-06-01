@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/anja-meseldzic/XML-Nistagram/microservices/auth/model"
 	"github.com/anja-meseldzic/XML-Nistagram/microservices/auth/service"
+	//"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"net"
 	"net/http"
@@ -31,6 +33,24 @@ func (controller *UserController) CreateUser(w http.ResponseWriter, r *http.Requ
 	}
 	fmt.Println(user)
 	err = controller.Service.CreateUser(&user)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusExpectationFailed)
+	}
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func (controller *UserController) Register(w http.ResponseWriter, r *http.Request)  {
+	var user model.RegularUser
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	user.ID = uuid.New()
+	user.User.ID = uuid.New()
+	err = controller.Service.Register(&user)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusExpectationFailed)
