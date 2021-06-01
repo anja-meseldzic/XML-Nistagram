@@ -1,8 +1,8 @@
 package model
 
-type TypeOfCampaignContent string
-const (
-	POST = iota
-	STORY
+type TypeOfCampaignContent int
 
+const (
+	POST TypeOfCampaignContent = iota
+	STORY
 )
