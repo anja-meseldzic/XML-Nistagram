@@ -5,7 +5,8 @@ import (
 )
 
 type TextMessage struct {
-	ID uuid.UUID `json:"id"`
-	Content string `json:"content" gorm:"not-null"`
-	Message Message
+	ID        uuid.UUID `json:"id"`
+	Content   string    `json:"content" gorm:"not-null"`
+	Mess      Message   `json:"mess" gorm:"foreignKey:ID"`
+	MessageID uuid.UUID
 }

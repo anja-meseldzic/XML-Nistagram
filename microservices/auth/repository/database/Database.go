@@ -1,10 +1,11 @@
 package database
 
 import (
+	"log"
+
 	"github.com/anja-meseldzic/XML-Nistagram/microservices/auth/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
 )
 
 func InitDB() *gorm.DB {

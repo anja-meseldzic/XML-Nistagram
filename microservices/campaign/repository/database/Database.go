@@ -3,7 +3,6 @@ package database
 import (
 	"log"
 
-	"github.com/anja-meseldzic/XML-Nistagram/microservices/campaign/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -15,7 +14,7 @@ func InitDB() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	database.AutoMigrate(&model.Campaign{}, &model.Targets{}, &model.InfluencerCampaignRequest{}, &model.CampaignUpdate{}, &model.OneTimeCampaign{}, &model.MultipleTimeCampaign{})
+	//database.AutoMigrate(&model.Campaign{}, &model.Targets{}, &model.InfluencerCampaignRequest{}, &model.CampaignUpdate{}, &model.OneTimeCampaign{}, &model.MultipleTimeCampaign{})
 
 	return database
 }
