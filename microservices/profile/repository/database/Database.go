@@ -15,7 +15,7 @@ func InitDB() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	database.AutoMigrate(&model.AgentRegistrationRequest{}, &model.Blocked{}, &model.CloseFriends{}, &model.Following{}, &model.Followers{}, &model.Muted{}, &model.Profile{}, &model.VerificationRequest{})
+	database.AutoMigrate(&model.AgentRegistrationRequest{}, &model.Blocked{}, &model.CloseFriends{}, &model.Followers{}, &model.Muted{}, &model.Profile{}, &model.VerificationRequest{})
 
 	return database
 }

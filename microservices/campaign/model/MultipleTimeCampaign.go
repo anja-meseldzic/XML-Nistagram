@@ -11,6 +11,6 @@ type MultipleTimeCampaign struct {
 	StartDate   time.Time `json:"start-date" gorm:"not null"`
 	EndDate     time.Time `json:"end-date" gorm:"not null"`
 	TimesPerDay int       `json:"times-per-day" gorm:"not null"`
-	//Camp        Campaign  `json:"camp" gorm:"foreignKey:ID"`
-	CampaignID uuid.UUID
+	Campaign    Campaign  `json:"campaign" gorm:"foreignKey:ID"`
+	CampaignID  uuid.UUID
 }

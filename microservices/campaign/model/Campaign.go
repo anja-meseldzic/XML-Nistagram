@@ -12,6 +12,7 @@ type Campaign struct {
 
 type Targets struct {
 	ID         uuid.UUID `json:"id"`
-	Target     int       `json:"target"`
+	Target     uuid.UUID `json:"target"`
+	Campaign   Campaign  `json:"campaign"`
 	CampaignID uuid.UUID
 }

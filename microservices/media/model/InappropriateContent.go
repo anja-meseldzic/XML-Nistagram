@@ -7,6 +7,6 @@ import (
 type InappropriateContent struct {
 	ID       uuid.UUID `json:"id"`
 	Reviewed bool      `json:"reviewed" gorm:"not-null"`
-	Med      Media     `json:"med" gorm:"foreignKey:ID"`
+	Media    Media     `json:"media" gorm:"foreignKey:ID"`
 	MediaID  uuid.UUID
 }

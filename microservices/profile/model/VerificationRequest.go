@@ -4,6 +4,7 @@ import "github.com/google/uuid"
 
 type VerificationRequest struct {
 	ID        uuid.UUID `json:"id"`
+	Profile   Profile   `json:"profile"`
 	ProfileID uuid.UUID
 	Category  VerificationCategory
 	FilePath  string `json:"file-path" gorm:"not-null"`
