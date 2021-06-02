@@ -11,7 +11,7 @@ type Story struct {
 	DateCreated    time.Time `json:"date-created" gorm:"not-null"`
 	CloseFriends   bool      `json:"close-friends" gorm:"not-null"`
 	ExpiresInHours int       `json:"expires-in-hours" gorm:"not-null"`
-	Med            Media     `json:"med" gorm:"foreignKey:ID"`
-	MediaID        uuid.UUID
-	IsHighlight    bool `json:"is-highlight" gorm:"not-null"`
+	//Med            Media     `json:"med" gorm:"foreignKey:ID"`
+	MediaID     uuid.UUID
+	IsHighlight bool `json:"is-highlight" gorm:"not-null"`
 }

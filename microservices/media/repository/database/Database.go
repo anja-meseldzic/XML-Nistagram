@@ -3,6 +3,7 @@ package database
 import (
 	"log"
 
+	"github.com/anja-meseldzic/XML-Nistagram/microservices/media/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -14,7 +15,7 @@ func InitDB() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	database.AutoMigrate()
+	database.AutoMigrate(&model.Comment{}, &model.Favourites{}, &model.InappropriateContent{}, &model.Media{}, &model.Post{}, &model.Taggs{}, &model.Rating{}, &model.Story{})
 
 	return database
 }

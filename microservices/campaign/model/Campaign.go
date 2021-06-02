@@ -7,10 +7,11 @@ type Campaign struct {
 	ProfileID     uuid.UUID             `json:"profile-id"`
 	PathToContent string                `json:"path-to-content"`
 	ContentType   TypeOfCampaignContent `json:"content-type" `
-	TargetGroup   []Targets             `json:"target-group" gorm:"foreignKey:ID"`
+	//TargetGroup   []Targets             `json:"target-group" gorm:"foreignKey:ID"`
 }
 
 type Targets struct {
-	ID     uuid.UUID `json:"id"`
-	Target int       `json:"target"`
+	ID         uuid.UUID `json:"id"`
+	Target     int       `json:"target"`
+	CampaignID uuid.UUID
 }

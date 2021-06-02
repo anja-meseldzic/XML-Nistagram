@@ -15,7 +15,7 @@ func InitDB() *gorm.DB {
 		log.Fatal(err)
 	}
 
-	database.AutoMigrate(&model.MediaMessage{}, &model.Message{}, &model.Notification{})
+	database.AutoMigrate(&model.MediaMessage{}, &model.Message{}, &model.Notification{}, &model.OneTimeMessage{}, &model.TextMessage{})
 
 	return database
 }
