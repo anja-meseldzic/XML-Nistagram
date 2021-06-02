@@ -1,8 +1,9 @@
 package model
 
-type VerificationCategory string
-const(
-	INFLUENCER = iota
+type VerificationCategory int
+
+const (
+	INFLUENCER VerificationCategory = iota
 	SPORTS
 	NEWS_MEDIA
 	BUISNESS

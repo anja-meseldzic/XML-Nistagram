@@ -1,7 +1,8 @@
 package model
 
-type RatingType string
-const(
-	LIKE = iota
+type RatingType int
+
+const (
+	LIKE RatingType = iota
 	DISLIKE
 )

@@ -1,8 +1,9 @@
 package model
 
-type NotificationType string
-const(
-	NEW_FOLLOWING = iota
+type NotificationType int
+
+const (
+	NEW_FOLLOWING NotificationType = iota
 	MESSAGE
 	RATING
 	COMMENT

@@ -4,9 +4,8 @@ import (
 	"github.com/google/uuid"
 )
 
-type Media struct{
-	ID uuid.UUID `json:"id"`
+type Media struct {
+	ID        uuid.UUID `json:"id"`
 	ProfileID uuid.UUID `json:"profile-id"`
-	Path string `json:"path" gorm:"not-null"`
-
+	Path      string    `json:"path" gorm:"not-null"`
 }

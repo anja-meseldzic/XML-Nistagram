@@ -3,13 +3,13 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/anja-meseldzic/XML-Nistagram/microservices/auth/model"
-	"github.com/anja-meseldzic/XML-Nistagram/microservices/auth/service"
-	//"github.com/gofrs/uuid"
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 	"net"
 	"net/http"
+
+	"github.com/anja-meseldzic/XML-Nistagram/microservices/auth/model"
+	"github.com/anja-meseldzic/XML-Nistagram/microservices/auth/service"
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 type UserController struct {
@@ -41,7 +41,7 @@ func (controller *UserController) CreateUser(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("Content-Type", "application/json")
 }
 
-func (controller *UserController) Register(w http.ResponseWriter, r *http.Request)  {
+func (controller *UserController) Register(w http.ResponseWriter, r *http.Request) {
 	var user model.RegularUser
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
