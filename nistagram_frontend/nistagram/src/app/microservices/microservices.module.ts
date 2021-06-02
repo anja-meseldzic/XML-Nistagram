@@ -11,10 +11,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatTableModule} from '@angular/material/table';
+import { RegistrationComponent } from './auth-service/registration/registration.component';
 
 
 @NgModule({
-  declarations: [LandingPageComponent],
+  declarations: [LandingPageComponent, RegistrationComponent],
   imports: [
     CommonModule,
     MicroservicesRoutingModule,
