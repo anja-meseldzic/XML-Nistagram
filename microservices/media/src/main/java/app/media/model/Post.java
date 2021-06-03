@@ -28,7 +28,7 @@ public class Post {
 	private String description;
 	
 	@Column(name = "tags")
-	@ElementCollection(targetClass=String.class)
+	@ElementCollection(targetClass=String.class, fetch = FetchType.LAZY)
 	private Set<String> tags = new HashSet<String>();
 	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
