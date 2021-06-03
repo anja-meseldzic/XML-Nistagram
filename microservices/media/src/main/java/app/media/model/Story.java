@@ -1,6 +1,7 @@
 package app.media.model;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -98,6 +99,16 @@ public class Story {
 		this.media = media;
 	}
 	
+	public boolean isActive() {
+		LocalDateTime date = LocalDateTime.now();
+		long hours = ChronoUnit.HOURS.between(dateCreated, date);
+		if(hours < 24) {
+			return true;
+		}else {
+			return false;
+		}
+		
+	}
 	
 
 }
