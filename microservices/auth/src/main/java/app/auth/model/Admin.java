@@ -7,7 +7,8 @@ import javax.persistence.*;
 @Entity
 public class Admin {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_generator")
+    @SequenceGenerator(name="admin_generator", sequenceName = "admin_seq", allocationSize=50, initialValue = 100)
     private long id;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User user;

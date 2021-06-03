@@ -8,9 +8,10 @@ import java.time.LocalDate;
 @Entity
 public class RegularUser {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reg_user_generator")
+    @SequenceGenerator(name="reg_user_generator", sequenceName = "reg_user_seq", allocationSize=50, initialValue = 100)
     private long id;
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private User user;
     @Column(name = "name", nullable = false)
     private String name;
