@@ -17,4 +17,8 @@ export class LandingPageComponent implements OnInit {
   registration(): void {
     this.router.navigate(['/registration']);
   }
+
+  login(): void {
+    this.router.navigate(['/login']);
+  }
 }

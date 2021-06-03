@@ -1,0 +1,14 @@
+<div class="bg" style="background-image: url(assets/insta.jpg); background-size: cover; height: 100%; display: flex; align-items: center; justify-content:right;">
+  <div class="m-4" style="background-color: ghostwhite; width: 30%; height: 30%; padding: 20px; border-radius: 3%;">
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" placeholder="username" [(ngModel)]="username"/>
+    </div>
+
+    <div class="input-group mb-3">
+      <input type="password" class="form-control" placeholder="password" [(ngModel)]="password"/>
+    </div>
+    <button class="btn btn-success m-1" (click)="login()">Register</button>
+    <button class="btn btn-danger" (click)="cancel()">Cancel</button>
+  </div>
+</div>
+

@@ -13,10 +13,11 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatTableModule} from '@angular/material/table';
 import { RegistrationComponent } from './auth-service/registration/registration.component';
 import { PersonalInfoEditComponent } from './auth-service/personal-info-edit/personal-info-edit.component';
+import { LoginComponent } from './auth-service/login/login.component';
 
 
 @NgModule({
-  declarations: [LandingPageComponent, RegistrationComponent, PersonalInfoEditComponent],
+  declarations: [LandingPageComponent, RegistrationComponent, PersonalInfoEditComponent, LoginComponent],
   imports: [
     CommonModule,
     MicroservicesRoutingModule,
