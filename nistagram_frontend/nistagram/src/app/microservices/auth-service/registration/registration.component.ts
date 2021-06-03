@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import axios from "axios";
+import { MatSnackBar } from '@angular/material/snack-bar';
+import axios from 'axios';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-registration',
@@ -19,31 +21,40 @@ export class RegistrationComponent implements OnInit {
   username: string;
   password: string;
 
-  constructor() { }
+  // tslint:disable-next-line:variable-name
+  constructor(private _snackBar: MatSnackBar, private router: Router) { }
 
   ngOnInit(): void {
   }
 
   register(): void {
-    const genders = ['MALE', 'FEMALE', 'OTHER']
-
     axios
-      .post('http://localhost:8080/register', {
+      .post('http://localhost:8081/regulars', {
         name : this.name,
-        'last-name' : this.lastName,
+        surname : this.lastName,
         email : this.email,
-        'phone-number' : this.phoneNumber,
-        'date-of-birth' : this.birthDate + 'T00:00:00.123Z',
+        phoneNumber : this.phoneNumber,
+        birthDate : this.birthDate + 'T00:00:00.123Z',
         website : this.website,
         biography : this.biography,
-        gender : genders.indexOf(this.gender),
+        gender : this.gender,
         user : {
           username : this.username,
           password : this.password,
-          role : 0
+          role : 'USER'
         }
       })
-      .then(res => console.log('success'));
+      .then(res => this.openSnackBar('Success', 'Okay'));
+  }
+
+  cancel(): void {
+    this.router.navigate(['/']);
+  }
+
+  openSnackBar(message: string, action: string): void {
+    this._snackBar.open(message, action, {
+      duration: 5000,
+    });
   }
 
 }
