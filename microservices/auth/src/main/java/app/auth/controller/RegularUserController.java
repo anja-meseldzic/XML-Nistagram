@@ -5,10 +5,7 @@ import app.auth.service.RegularUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/regulars")
@@ -24,5 +21,22 @@ public class RegularUserController {
     public ResponseEntity<Void> register(@RequestBody RegularUser user) {
         service.register(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/update")
+    public ResponseEntity<Void> update(@RequestBody RegularUser user) {
+        service.update(user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<RegularUser> getRegularUser(@PathVariable long id) {
+        RegularUser user;
+        try {
+            user = service.getRegularUser(id);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }
