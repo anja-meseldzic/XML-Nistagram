@@ -11,13 +11,21 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatTableModule} from '@angular/material/table';
+import { MatDividerModule } from '@angular/material/divider'
 import { RegistrationComponent } from './auth-service/registration/registration.component';
 import { CreatePostComponent } from './create-post/create-post.component';
 import { PersonalInfoEditComponent } from './auth-service/personal-info-edit/personal-info-edit.component';
 import { LoginComponent } from './auth-service/login/login.component';
+import { FeedComponent } from './components/feed/feed.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { NgImageSliderModule } from 'ng-image-slider';
+import { PostDetailsComponent } from './components/post-details/post-details.component';
+import {MatTabsModule} from '@angular/material/tabs'; 
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { SearchResultsComponent } from './components/search-results/search-results.component';
 
 @NgModule({
-  declarations: [LandingPageComponent, RegistrationComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent],
+  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent],
   imports: [
     CommonModule,
     MicroservicesRoutingModule,
@@ -29,7 +37,11 @@ import { LoginComponent } from './auth-service/login/login.component';
     MatInputModule,
     MatSnackBarModule,
     FormsModule,
-    MatSelectModule
+    MatSelectModule,
+    NgImageSliderModule,
+    MatDividerModule,
+    MatTabsModule,
+    FlexLayoutModule
   ]
 })
 export class MicroservicesModule { }

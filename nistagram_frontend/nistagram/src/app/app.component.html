@@ -1,2 +1,23 @@
+<mat-toolbar style="min-width: 100%; max-width: max-content; background-color: white; color: gray;" class="mat-elevation-z8"> 
+    <span style="width: 10px;"></span>
+  
+    <button mat-icon-button routerLink="../feed">
+      <mat-icon>home</mat-icon>
+    </button>
+    <span style="margin-left: 10px;">nistagram</span>
+    <span style="width: 20px;"></span>
+    
+    <span style="margin-left: 100px;">
+        <mat-form-field>
+            <input type="text" placeholder="search" matInput [matAutocomplete]="auto" (keyup)="updated()" [(ngModel)]="data">
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let option of options" [value]="option.name" (click)="seeDetails(option.id)">
+                <span>{{option.name}}</span> |
+                <small>{{option.type}}</small>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+    </span>
 
+  </mat-toolbar>
 <router-outlet></router-outlet>
