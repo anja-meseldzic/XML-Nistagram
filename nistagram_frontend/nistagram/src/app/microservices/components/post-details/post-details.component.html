@@ -1,0 +1,24 @@
+<div style="margin-top: 50px; margin-left: 15%; width: 70%; background-color: white; overflow: hidden;" class="mat-elevation-z8">
+    <div style="width: 60%; overflow: hidden; float: left;">
+        <div style="width: 100%; text-align:center;margin:0; padding:0;">
+            <ng-image-slider #nav
+              [images]="post['slider']"
+              [infinite]="false"
+              [imageSize]="{width: '100%', height: 500}"
+              [imagePopup]="true"
+              [manageImageRatio]="true"
+              [showArrow]="true"
+              [videoAutoPlay]="true">
+            </ng-image-slider>
+        </div>
+    </div>
+    <div style="float: left; width: 40%; height: 100%;">
+        <div style="margin-left: 5%; margin-top: 10px; width: 100%;">
+            <p style="font-size: large;" (click)="goToProfile(post.username)">{{post.username}}</p>
+            Description: <span *ngIf="post.description != null" style="color: gray;">{{post.description}}</span>
+            <div></div>
+            Hashtags: <span *ngFor="let tag of post.hashtags" style="color: gray;">{{tag}}</span>
+        </div>
+        <mat-divider></mat-divider>
+    </div>
+</div>

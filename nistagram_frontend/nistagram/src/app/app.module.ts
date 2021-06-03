@@ -16,6 +16,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatTableModule} from '@angular/material/table';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgImageSliderModule } from 'ng-image-slider';
+import { MatAutocompleteModule } from '@angular/material/autocomplete'; 
 
 @NgModule({
   declarations: [
@@ -37,7 +39,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     FormsModule,
     MatSelectModule,
     HttpClientModule,
-    NgbModule
+    NgbModule,
+    NgImageSliderModule,
+    MatAutocompleteModule
   ],
   providers: [],
   bootstrap: [AppComponent]

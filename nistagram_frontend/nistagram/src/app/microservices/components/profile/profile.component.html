@@ -1,0 +1,50 @@
+<div id="profile_info" style="margin-top: 50px; margin-left: 15%; width: 70%; height: max-content;">
+    <div style="float: left; width: 200px; height: 200px; margin-right: 20px; overflow: hidden; border-radius: 50%;">
+        <ng-image-slider style="width: 100px;"
+            [images]="stories['slider']"
+            imageSize="{width: '100px', height: '100px', space: 4}"
+            [imagePopup]="true"
+            [showArrow]="false"
+            [arrowKeyMove]="false"
+            #nav>
+        </ng-image-slider>
+    </div>
+    <div style="float: left; width: max-content; height: max-content;">
+        <p style="font-size: large;">{{profile.username}}</p>
+        <p style="font-size: large;">
+            {{profile.followerCount}} followers {{profile.followingCount}} following
+            <button mat-stroked-button style="margin-left: 10px;" *ngIf="profile.owned">Settings</button>
+            <button mat-stroked-button style="margin-left: 10px;" *ngIf="profile.owned">Edit profile</button>
+            <button mat-raised-button color="primary" style="margin-left: 10px;" *ngIf="!profile.owned && !profile.following">Follow</button>
+            <button mat-raised-button color="primary" style="margin-left: 10px;" *ngIf="!profile.owned && profile.following">Unfollow</button>
+        </p>
+        <p style="color: gray;" *ngIf="profile.fullName != null">Name: {{profile.fullName}}</p>
+        <p style="color: gray;" *ngIf="profile.birthDate != null">Birth date: {{profile.birthDate | date: 'dd. MM. yyyy.'}}</p>
+        <p style="color: gray;" *ngIf="profile.gender != null">Gender: {{profile.gender}}</p>
+        <p style="color: gray;" *ngIf="profile.email != null">Email: {{profile.email}}</p>
+        <p style="color: gray;" *ngIf="profile.website != null">Website: {{profile.website}}</p>
+        <p style="color: gray;" *ngIf="profile.bio != null">Bio: {{profile.bio}}</p>
+    </div>
+</div>
+<div></div>
+<div style="margin-top:50px; width: 100%; height: max-content; display: inline-block;">
+    <mat-tab-group mat-align-tabs="center" *ngIf="profile.owned || profile.following || !profile.privateProfile">
+        <mat-tab label="Posts">
+            <div class="content" fxLayout="row wrap">
+                <div id="p" fxFlex="25%" (click)="seeDetails(post.id)" *ngFor ="let post of posts" style="margin: 20px; width: 200px; height: 200px; overflow: hidden; display:inline-block;">
+                    <ng-image-slider style="width: 200px;"
+                        [images]="post['slider']"
+                        [imageSize]="{width: 200, height: 200, space: 4}"
+                        [imagePopup]="true"
+                        [showArrow]="false"
+                        [arrowKeyMove]="false"
+                        #nav2>
+                    </ng-image-slider>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="Favourites" *ngIf="profile.owned">Favourites</mat-tab>
+        <mat-tab label="Stories" *ngIf="profile.owned">Stories</mat-tab>
+    </mat-tab-group>
+    <div *ngIf="profile.privateProfile && !profile.following && !profile.owned" style="text-align: center; margin-top: 50px; font-size: large;">This profile is private</div>
+</div>
