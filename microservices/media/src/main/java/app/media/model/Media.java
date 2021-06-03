@@ -1,10 +1,17 @@
 package app.media.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Media {
@@ -16,19 +23,20 @@ public class Media {
 	@Column(name = "profileId", nullable = false)
 	private long profileId;
 	
-	@Column(name = "path", nullable = false)
-	private String path;
+	@ElementCollection(targetClass=String.class, fetch = FetchType.LAZY)
+	private Set<String> path = new HashSet<String>();
 
 	public Media() {
 		super();
 	}
-
-	public Media(long id, long profileId, String path) {
+	
+	public Media(long id, long profileId, Set<String> path) {
 		super();
 		this.id = id;
 		this.profileId = profileId;
 		this.path = path;
 	}
+
 
 	public long getId() {
 		return id;
@@ -46,13 +54,13 @@ public class Media {
 		this.profileId = profileId;
 	}
 
-	public String getPath() {
+	public Set<String> getPath() {
 		return path;
 	}
 
-	public void setPath(String path) {
+	public void setPath(Set<String> path) {
 		this.path = path;
 	}
-	
-	
+
+
 }

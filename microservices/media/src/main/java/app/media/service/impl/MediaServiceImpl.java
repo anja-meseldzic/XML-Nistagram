@@ -29,7 +29,9 @@ public class MediaServiceImpl implements MediaService{
 	public void createPost(String filepath, PostDTO postDTO) {
 		Media media = new Media();
 		media.setProfileId(1); //PROFILE MICROSERVICE
-		media.setPath(filepath);
+		Set<String> paths = new HashSet<String>();
+		paths.add(filepath);
+		media.setPath(paths);
 		mediaRepository.save(media);
 		
 		Post post = new Post();
