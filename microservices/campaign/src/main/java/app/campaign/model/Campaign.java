@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +30,7 @@ public class Campaign {
 	
 
 	@Column(name = "targetGroup")
-	@ElementCollection(targetClass=Long.class)
+	@ElementCollection(targetClass=Long.class, fetch = FetchType.LAZY)
 	private Set<Long> targetGroup = new HashSet<Long>();
 
 	public Campaign() {
