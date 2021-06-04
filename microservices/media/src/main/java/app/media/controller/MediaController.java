@@ -45,7 +45,7 @@ public class MediaController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
-	
+
     @PostMapping(value="createAlbum")
     public ResponseEntity<String> uploadFiles(MultipartHttpServletRequest request) throws IOException {
     	ObjectMapper mapper = new ObjectMapper();

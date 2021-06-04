@@ -22,7 +22,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(
       params => {const username = params.get('username');
-                 this.getProfileInfo(username);        
+                 this.getProfileInfo(username);
       }
     )
   }
@@ -83,5 +83,9 @@ export class ProfileComponent implements OnInit {
 
   public seeDetails(id : String) {
     this.router.navigate(['../post/' + id]);
+  }
+
+  editProfile(): void {
+    this.router.navigate(['/personal-edit']);
   }
 }
