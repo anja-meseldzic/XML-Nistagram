@@ -15,8 +15,8 @@ public class Comment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	@Column(name = "profileId", nullable = false)
-	private long profileId;
+	@Column(name = "username", nullable = false)
+	private String username;
 	
 	@Column(name = "dateCreated" , nullable = false)
 	private LocalDateTime dateCreated;
@@ -29,10 +29,10 @@ public class Comment {
 		super();
 	}
 
-	public Comment(long id, long profileId, LocalDateTime dateCreated, String content) {
+	public Comment(long id, String username, LocalDateTime dateCreated, String content) {
 		super();
 		this.id = id;
-		this.profileId = profileId;
+		this.username = username;
 		this.dateCreated = dateCreated;
 		this.content = content;
 	}
@@ -45,12 +45,12 @@ public class Comment {
 		this.id = id;
 	}
 
-	public long getProfileId() {
-		return profileId;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setProfileId(long profileId) {
-		this.profileId = profileId;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public LocalDateTime getDateCreated() {

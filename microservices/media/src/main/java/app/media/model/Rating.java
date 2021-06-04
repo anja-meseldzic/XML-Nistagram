@@ -13,8 +13,8 @@ public class Rating {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	@Column(name = "profileId", nullable = false)
-	private long profileId;
+	@Column(name = "username", nullable = false)
+	private String username;
 	
 	@Column(name = "ratingType", nullable = false)
 	private RatingType ratingType;
@@ -24,10 +24,10 @@ public class Rating {
 		super();
 	}
 
-	public Rating(long id, long profileId, RatingType ratingType) {
+	public Rating(long id, String username, RatingType ratingType) {
 		super();
 		this.id = id;
-		this.profileId = profileId;
+		this.username = username;
 		this.ratingType = ratingType;
 	}
 
@@ -39,12 +39,12 @@ public class Rating {
 		this.id = id;
 	}
 
-	public long getProfileId() {
-		return profileId;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setProfileId(long profileId) {
-		this.profileId = profileId;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public RatingType getRatingType() {

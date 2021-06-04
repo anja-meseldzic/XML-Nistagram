@@ -18,8 +18,8 @@ public class Favourites {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	@Column(name = "profileId", nullable = false)
-	private long profileId;
+	@Column(name = "username", nullable = false)
+	private String username;
 
 	//private Map<Stirng,List<Post>> posts 
 	
@@ -28,10 +28,10 @@ public class Favourites {
 		super();
 	}
 
-	public Favourites(long id, long profileId) {
+	public Favourites(long id, String username) {
 		super();
 		this.id = id;
-		this.profileId = profileId;
+		this.username = username;
 	}
 	
 	public long getId() {
@@ -42,12 +42,12 @@ public class Favourites {
 		this.id = id;
 	}
 
-	public long getProfileId() {
-		return profileId;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setProfileId(long profileId) {
-		this.profileId = profileId;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	
 	
