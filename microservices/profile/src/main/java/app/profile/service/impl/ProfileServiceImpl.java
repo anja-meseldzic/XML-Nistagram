@@ -24,9 +24,9 @@ public class ProfileServiceImpl implements ProfileService {
 	}
 
 	@Override
-	public void followProfile(long id, long loggedId) {
+	public int followProfile(long id, long loggedId) {
 		// TODO Auto-generated method stub
-		Profile profileToFollow = profileRepository.findByRegularUserId(id); // profil korisnika kog hocu da zapratim
+		/*Profile profileToFollow = profileRepository.findByRegularUserId(id); // profil korisnika kog hocu da zapratim
 		Followers followerToFollow = followersRepo.findByProfileId(id);
 
 		Profile loggedInProfile = profileRepository.findByRegularUserId(loggedId);// profil ulogovanog korisnika
@@ -44,11 +44,13 @@ public class ProfileServiceImpl implements ProfileService {
 		
 		followersRepo.save(followerToFollow);
 		followersRepo.save(loggedInFollower);
+		return followers.size();*/
+		return 1;
 	}
 
 	@Override
-	public void unfollowProfile(long id, long loggedId) {
-		Profile profileToFollow = profileRepository.findByRegularUserId(id); // profil korisnika kog hocu da zapratim
+	public int unfollowProfile(long id, long loggedId) {
+		/*Profile profileToFollow = profileRepository.findByRegularUserId(id); // profil korisnika kog hocu da zapratim
 		Followers followerToFollow = followersRepo.findByProfileId(id);
 
 		Profile loggedInProfile = profileRepository.findByRegularUserId(loggedId);// profil ulogovanog korisnika
@@ -63,6 +65,7 @@ public class ProfileServiceImpl implements ProfileService {
 		
 		followersRepo.save(followerToFollow);
 		followersRepo.save(loggedInFollower);
-	
+		return followers.size();*/
+		return 1;
 	}
 }

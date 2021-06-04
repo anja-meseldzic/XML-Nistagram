@@ -26,10 +26,10 @@ export class ProfileService {
   }
 
   public followProfile(id : number){
-    return this._http.get("http://localhost:8085/profile/follow/"+ id);
+    return this._http.get("http://localhost:8085/profile/follow/"+ id, {responseType: 'text'});
   }
 
   public unfollowProfile(id : number) {
-    return this._http.get("http://localhost:8085/profile/unfollow/"+ id);
+    return this._http.get("http://localhost:8085/profile/unfollow/"+ id, {responseType: 'text'});
   }
 }

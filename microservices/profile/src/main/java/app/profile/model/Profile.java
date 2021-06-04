@@ -22,8 +22,8 @@ public class Profile {
 	@Column(name = "allowTagging" , nullable = false)
 	private boolean allowTagging;
 	
-	@Column(name = "regularUserId" , nullable = false)
-	private long regularUserId;
+	@Column(name = "regularUserUsername" , nullable = false)
+	private String regularUserUsername;
 	
 	@Column(name = "allowMessages" , nullable = false)
 	private boolean allowMessages;
@@ -35,14 +35,14 @@ public class Profile {
 		super();
 	}
 
-	public Profile(long id, boolean verified, boolean active, boolean allowTagging, long regularUserId,
+	public Profile(long id, boolean verified, boolean active, boolean allowTagging, String regularUserId,
 			boolean allowMessages, boolean privateProfile) {
 		super();
 		this.id = id;
 		this.verified = verified;
 		this.active = active;
 		this.allowTagging = allowTagging;
-		this.regularUserId = regularUserId;
+		this.regularUserUsername = regularUserId;
 		this.allowMessages = allowMessages;
 		this.privateProfile = privateProfile;
 	}
@@ -79,12 +79,12 @@ public class Profile {
 		this.allowTagging = allowTagging;
 	}
 
-	public long getRegularUserId() {
-		return regularUserId;
+	public String getRegularUserId() {
+		return regularUserUsername;
 	}
 
-	public void setRegularUserId(long regularUserId) {
-		this.regularUserId = regularUserId;
+	public void setRegularUserId(String regularUserId) {
+		this.regularUserUsername = regularUserId;
 	}
 
 	public boolean isAllowMessages() {

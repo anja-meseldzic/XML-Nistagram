@@ -9,7 +9,7 @@
             #nav>
         </ng-image-slider>
     </div>
-    <div style="float: left; width: max-content; height: max-content;">
+    <div style="float: left; width: max-content; height: max-content; margin-bottom: 30px;" >
         <p style="font-size: large;">{{profile.username}}</p>
         <p style="font-size: large;">
             {{profile.followerCount}} followers {{profile.followingCount}} following
@@ -27,6 +27,12 @@
     </div>
 </div>
 <div></div>
+<div id="stories" class="mat-elevation-z8" style="margin-left: 20%; margin-top: 50px; width: 60%; height: max-content; overflow-x: hidden; background-color: rgb(255, 255, 255);">
+    Story highlihts
+    <div style="width: 100px; height: 150px; margin-right: 20px; overflow: hidden; display:inline-block; border-radius: 50%;">
+        
+    </div>
+</div>
 <div style="margin-top:50px; width: 100%; height: max-content; display: inline-block;">
     <mat-tab-group mat-align-tabs="center" *ngIf="profile.owned || profile.following || !profile.privateProfile">
         <mat-tab label="Posts">

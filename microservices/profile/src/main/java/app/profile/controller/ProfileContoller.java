@@ -26,16 +26,16 @@ public class ProfileContoller {
 	}
 	
 	@GetMapping(value = "follow/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> followProfile(@PathVariable long id){
+	public ResponseEntity<Integer> followProfile(@PathVariable long id){
 		
-		profileService.followProfile(id, 1); // treba dodati id ulogovanog korisnika
-		return new ResponseEntity<>(true, HttpStatus.OK);
+		int followerCount = profileService.followProfile(id, 1); // treba dodati id ulogovanog korisnika
+		return new ResponseEntity<>(followerCount, HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "unfollow/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> unfollowProfile(@PathVariable long id){
+	public ResponseEntity<Integer> unfollowProfile(@PathVariable long id){
 		
-		profileService.unfollowProfile(id, 1); // treba dodati id ulogovanog korisnika
-		return new ResponseEntity<>(true, HttpStatus.OK);
+		int followerCount = profileService.unfollowProfile(id, 1); // treba dodati id ulogovanog korisnika
+		return new ResponseEntity<>(followerCount, HttpStatus.OK);
 	}
 }
