@@ -53,6 +53,23 @@ export class PersonalInfoEditComponent implements OnInit {
   }
 
   edit(): void {
+    if (!this.validateRequiredFields()) {
+      this.openSnackBar('First name, Last name, Birth date, Gender and Username are required', 'Okay');
+      return;
+    }
+    if (!this.validateRegExp('^[0-9]*$', this.phoneNumber)) {
+      this.openSnackBar('Phone number can take only digits', 'Okay');
+      return;
+    }
+    if (!this.validateRegExp('^([\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4})?$', this.email)) {
+      this.openSnackBar('Email is not valid', 'Okay');
+      return;
+    }
+    if (!this.validateRegExp('^(((https?|ftp|smtp):\\/\\/)?(www.)?[a-z0-9]+\\.[a-z]+(\\/[a-zA-Z0-9#]+\\/?)*)?$', this.website)) {
+      this.openSnackBar('Website url is not valid', 'Okay');
+      return;
+    }
+
     axios
       .post('http://localhost:8081/regulars/update', {
         id : this.id,
@@ -83,6 +100,16 @@ export class PersonalInfoEditComponent implements OnInit {
     const month = date[1] < 10 ? '0' + date[1] : date[1];
     const day = date[2] < 10 ? '0' + date[2] : date[2];
     return year + '-' + month + '-' + day;
+  }
+
+  validateRequiredFields(): boolean {
+    return this.name.trim() !== '' && this.lastName !== '' && this.birthDate.trim() !== '' && this.gender.trim() !== 'Select gender'
+      && this.username.trim() !== '';
+  }
+
+  validateRegExp(reg: string, toTest: string): boolean {
+    const regExp = new RegExp(reg);
+    return regExp.test(toTest);
   }
 
   openSnackBar(message: string, action: string): void {
