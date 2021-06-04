@@ -4,14 +4,10 @@ import app.auth.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 @Component
 public class TokenUtils {
@@ -34,17 +30,11 @@ public class TokenUtils {
     }
 
     public static String getToken(String authHeader) {
-//        String authHeader = getAuthHeaderFromHeader(request);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
         return null;
     }
-
-    public static String getAuthHeaderFromHeader(HttpServletRequest request) {
-        return request.getHeader(AUTH_HEADER);
-    }
-
 
     private static Date generateExpirationDate() {
         return new Date(new Date().getTime() + EXPIRES_IN);
@@ -62,12 +52,6 @@ public class TokenUtils {
         }
         return claims;
     }
-
-//    public static Boolean validateToken(String token, UserDetails userDetails) {
-//        final String username = "" + getIdFromToken(token);
-//        return (username.equals(userDetails.getUsername())
-//                && !isTokenExpired(token));
-//    }
 
     public static boolean verify(String header, String... roles) {
         String token = getToken(header);
@@ -91,17 +75,6 @@ public class TokenUtils {
         return expiration;
     }
 
-//    public static Long getIdFromToken(String token) {
-//        Long id;
-//        try {
-//            final Claims claims = getAllClaimsFromToken(token);
-//            id = Long.valueOf("" + claims.get("id"));
-//        } catch (Exception e) {
-//            id = null;
-//        }
-//        return id;
-//    }
-
     public static Role getRoleFromToken(String token) {
         Role type;
         try {
@@ -112,17 +85,4 @@ public class TokenUtils {
         }
         return type;
     }
-//    public static Date getIssuedAtDateFromToken(String token) {
-//        Date issueAt;
-//        try {
-//            final Claims claims = this.getAllClaimsFromToken(token);
-//            issueAt = claims.getIssuedAt();
-//        } catch (Exception e) {
-//            issueAt = null;
-//        }
-//        return issueAt;
-//    }
-
-
-
 }

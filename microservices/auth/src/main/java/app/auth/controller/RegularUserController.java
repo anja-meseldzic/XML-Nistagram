@@ -33,7 +33,9 @@ public class RegularUserController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<RegularUser> getRegularUser(@PathVariable long id) {
+    public ResponseEntity<RegularUser> getRegularUser(@RequestHeader("Authorization") String auth, @PathVariable long id) {
+        if(!TokenUtils.verify(auth, "USER", "ADMIN"))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         RegularUser user;
         try {
             user = service.getRegularUser(id);
