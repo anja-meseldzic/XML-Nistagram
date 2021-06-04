@@ -9,15 +9,12 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
+import app.media.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.server.ResponseStatusException;
@@ -41,7 +38,14 @@ public class MediaController {
     public MediaController(MediaService mediaService) {
         this.mediaService = mediaService;
     }
-   
+
+	@GetMapping(value = "/testAuth")
+	public ResponseEntity<String> testAuth(@RequestHeader("Authorization") String auth) {
+		if(!TokenUtils.verify(auth, "USER"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		return new ResponseEntity<>("OK", HttpStatus.OK);
+	}
+	
     @PostMapping(value="createAlbum")
     public ResponseEntity<String> uploadFiles(MultipartHttpServletRequest request) throws IOException {
     	ObjectMapper mapper = new ObjectMapper();
@@ -84,7 +88,7 @@ public class MediaController {
 		
     	return new ResponseEntity<>("ok",HttpStatus.OK);
     }
-    
+
     @PostMapping(value="createPost",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> createPost(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "post", required = false) String model) throws JsonMappingException, JsonProcessingException{
 	

@@ -31,7 +31,11 @@ export class PersonalInfoEditComponent implements OnInit {
 
     axios
       // @ts-ignore
-      .get('http://localhost:8081/regulars/' + jwtDec.id)
+      .get('http://localhost:8081/regulars/' + jwtDec.id, {
+        headers : {
+          Authorization: 'Bearer ' + localStorage.getItem('jwt')
+        }
+      })
       .then(res => {
         this.id = res.data.id;
         this.userId = res.data.user.id;
