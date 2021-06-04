@@ -35,6 +35,22 @@ public class MediaController {
         this.mediaService = mediaService;
     }
     
+    @PostMapping(value="createStory",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+   	public ResponseEntity<String> creatStory(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "story", required = false) String model) throws JsonMappingException, JsonProcessingException{
+    	boolean close = model.equals("true") ? true : false; 
+    	String path = new File("src/main/resources/stories").getAbsolutePath();
+		Path filepath = Paths.get(path, data.getOriginalFilename());
+
+		try (OutputStream os = Files.newOutputStream(filepath)) {
+		        os.write(data.getBytes());
+		    } catch (IOException e2) {
+		    	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e2.getMessage());
+			}
+		mediaService.createStory("src/main/resources/stories/" + data.getOriginalFilename(), close);
+		
+    	return new ResponseEntity<>("ok",HttpStatus.OK);
+    }
+    
     @PostMapping(value="createPost",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> createPost(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "post", required = false) String model) throws JsonMappingException, JsonProcessingException{
 	

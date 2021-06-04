@@ -12,6 +12,7 @@ export class MediaService {
 
   private baseUrl = "http://localhost:8083";
   private postDataUrl = this.baseUrl + "/media/createPost";
+  private createStoryUrl = this.baseUrl + "/media/createStory";
 
   constructor(private _http : HttpClient) { }
 
@@ -39,6 +40,10 @@ export class MediaService {
 
   postData(data : FormData) {
     return this._http.post(this.postDataUrl,data, {responseType: 'text'});
+  }
+
+  postStory(data : FormData) {
+    return this._http.post(this.createStoryUrl, data, {responseType: 'text'});
   }
 
   public getPostsForFeed() : Post[] {
