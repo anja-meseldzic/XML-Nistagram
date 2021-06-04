@@ -1,4 +1,4 @@
-package app.auth.model;
+package app.media.model;
 
 public enum Role {
     USER,

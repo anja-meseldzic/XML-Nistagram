@@ -1,4 +1,4 @@
-package app.auth.model;
+package app.message.model;
 
 public enum Role {
     USER,

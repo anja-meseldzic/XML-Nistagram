@@ -1,4 +1,4 @@
-package app.auth.model;
+package app.campaign.model;
 
 public enum Role {
     USER,

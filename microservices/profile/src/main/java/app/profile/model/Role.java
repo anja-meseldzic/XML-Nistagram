@@ -1,4 +1,4 @@
-package app.auth.model;
+package app.profile.model;
 
 public enum Role {
     USER,

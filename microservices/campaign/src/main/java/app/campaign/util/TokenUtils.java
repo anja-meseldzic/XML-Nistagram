@@ -1,6 +1,6 @@
-package app.auth.util;
+package app.campaign.util;
 
-import app.auth.model.Role;
+import app.campaign.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

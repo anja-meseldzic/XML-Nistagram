@@ -1,6 +1,6 @@
-package app.message.util;
+package app.profile.util;
 
-import app.auth.model.Role;
+import app.profile.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
