@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ProfileInfo } from '../model/profile-info';
 
@@ -6,7 +7,7 @@ import { ProfileInfo } from '../model/profile-info';
 })
 export class ProfileService {
 
-  constructor() { }
+  constructor(private _http : HttpClient) { }
 
   private profiles : ProfileInfo[] = [
     new ProfileInfo(1, 'pera', 'Pera Peric', 'user bio', new Date(1998, 11, 29), 'email@gmail', 'MALE', '', 150, 194, true, true, false),
@@ -22,5 +23,13 @@ export class ProfileService {
     } else {
       return null;
     }
+  }
+
+  public followProfile(id : number){
+    return this._http.get("http://localhost:8085/profile/follow/"+ id);
+  }
+
+  public unfollowProfile(id : number) {
+    return this._http.get("http://localhost:8085/profile/unfollow/"+ id);
   }
 }

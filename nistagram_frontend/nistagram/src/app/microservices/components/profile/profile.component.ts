@@ -70,14 +70,15 @@ export class ProfileComponent implements OnInit {
     if(!privateProfile){
       this.profile.followerCount = this.profile.followerCount.valueOf() + 1;
       this.profile.following = true;
+      this.profileService.followProfile(2).subscribe();
     }else{
       console.log("Follow request have been sent.")
     }
-    //console.log(profileUsername);
   }
   unfollow(profileUsername : string){
     this.profile.followerCount = this.profile.followerCount.valueOf() - 1;
     this.profile.following = false;
+    //this.profileService.unfollowProfile(2).subscribe();
   }
 
   public seeDetails(id : String) {

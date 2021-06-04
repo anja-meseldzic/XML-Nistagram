@@ -8,4 +8,6 @@ import app.profile.model.Profile;
 @Repository
 public interface ProfileRepository extends JpaRepository<Profile, Long>{
 
+	Profile findByRegularUserId(long id);
+
 }
