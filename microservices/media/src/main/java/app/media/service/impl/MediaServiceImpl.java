@@ -34,7 +34,7 @@ public class MediaServiceImpl implements MediaService{
 	@Override
 	public void createPost(String filepath, PostDTO postDTO) {
 		Media media = new Media();
-		media.setProfileId(1); //PROFILE MICROSERVICE
+		media.setUsername("username"); //PROFILE MICROSERVICE
 		Set<String> paths = new HashSet<String>();
 		paths.add(filepath);
 		media.setPath(paths);
@@ -59,7 +59,7 @@ public class MediaServiceImpl implements MediaService{
 	@Override
 	public void createStory(String filepath, boolean closeFriends) {
 		Media media = new Media();
-		media.setProfileId(1); //PROFILE MICROSERVICE
+		media.setUsername("username"); //PROFILE MICROSERVICE
 		Set<String> paths = new HashSet<String>();
 		paths.add(filepath);
 		media.setPath(paths);
@@ -77,7 +77,7 @@ public class MediaServiceImpl implements MediaService{
 	@Override
 	public void createAlbumAsPost(Set<String> fileNames, AlbumDTO albumDTO) {
 		Media media = new Media();
-		media.setProfileId(1); //PROFILE MICROSERVICE
+		media.setUsername("username"); //PROFILE MICROSERVICE
 		media.setPath(fileNames);
 		mediaRepository.save(media);
 		
@@ -95,7 +95,7 @@ public class MediaServiceImpl implements MediaService{
 	@Override
 	public void createAlbumAsStory(Set<String> fileNames, AlbumDTO albumDTO) {
 		Media media = new Media();
-		media.setProfileId(1); //PROFILE MICROSERVICE
+		media.setUsername("username"); //PROFILE MICROSERVICE
 		media.setPath(fileNames);
 		mediaRepository.save(media);
 		

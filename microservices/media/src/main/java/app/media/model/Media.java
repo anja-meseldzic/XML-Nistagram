@@ -17,8 +17,8 @@ public class Media {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	@Column(name = "profileId", nullable = false)
-	private long profileId;
+	@Column(name = "username", nullable = false)
+	private String username;
 	
 	@ElementCollection(targetClass=String.class, fetch = FetchType.LAZY)
 	private Set<String> path = new HashSet<String>();
@@ -27,10 +27,10 @@ public class Media {
 		super();
 	}
 	
-	public Media(long id, long profileId, Set<String> path) {
+	public Media(long id, String username, Set<String> path) {
 		super();
 		this.id = id;
-		this.profileId = profileId;
+		this.username = username;
 		this.path = path;
 	}
 
@@ -43,12 +43,12 @@ public class Media {
 		this.id = id;
 	}
 
-	public long getProfileId() {
-		return profileId;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setProfileId(long profileId) {
-		this.profileId = profileId;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public Set<String> getPath() {
