@@ -1,6 +1,7 @@
 package app.auth.controller;
 
 import app.auth.model.RegularUser;
+import app.auth.util.TokenUtils;
 import app.auth.service.RegularUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,9 @@ public class RegularUserController {
     }
 
     @PostMapping(value = "/update")
-    public ResponseEntity<Void> update(@RequestBody RegularUser user) {
+    public ResponseEntity<Void> update(@RequestHeader("Authorization") String auth, @RequestBody RegularUser user) {
+        if(!TokenUtils.verify(auth, "USER"))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         service.update(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }

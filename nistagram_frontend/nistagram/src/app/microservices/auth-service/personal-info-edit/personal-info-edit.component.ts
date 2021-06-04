@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import axios from 'axios';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import jwtDecode from 'jwt-decode';
 
 
 @Component({
@@ -25,8 +26,12 @@ export class PersonalInfoEditComponent implements OnInit {
   constructor(private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
+    const jwt = localStorage.getItem('jwt');
+    const jwtDec = jwtDecode(jwt);
+
     axios
-      .get('http://localhost:8081/regulars/100')
+      // @ts-ignore
+      .get('http://localhost:8081/regulars/' + jwtDec.id)
       .then(res => {
         this.id = res.data.id;
         this.userId = res.data.user.id;
@@ -60,8 +65,13 @@ export class PersonalInfoEditComponent implements OnInit {
           username : this.username,
           role : 'USER'
         }
+      }, {
+        headers : {
+          Authorization: 'Bearer ' + localStorage.getItem('jwt')
+        }
       })
-      .then(res => this.openSnackBar('Success', 'Okay'));
+      .then(res => this.openSnackBar('Success', 'Okay'))
+      .catch(res => console.log(res));
   }
 
   buildDate(date): string {
