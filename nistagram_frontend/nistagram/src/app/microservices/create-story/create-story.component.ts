@@ -44,9 +44,7 @@ export class CreateStoryComponent implements OnInit {
       );
     }
   }
-  prepare() {
-    var close = this.closeFriends == 0 ? true : false;
-  }
+  
   onFileSelected(event) {
     this.selectedFile = <File>event.target.files[0];
     this.selectedFileHide = false;
