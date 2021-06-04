@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CommentDTO } from '../../DTOs/comment-dto';
 import { MediaService } from '../../media-service/media.service';
 import { Post } from '../../model/post';
 
@@ -11,12 +13,40 @@ import { Post } from '../../model/post';
 export class PostDetailsComponent implements OnInit {
 
   post : Post;
+  public comments : string[] = ['very nice', 'cool', 'beautiful', 'lepo'];
+  public likes : number = 50;
+  public dislikes : number = 2 ;
+  public comment : string;
   
-  constructor(private mediaService : MediaService, private route : ActivatedRoute, private router : Router) { }
+  constructor(private mediaService : MediaService, private route : ActivatedRoute, private router : Router, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.getPost(id);
+  }
+  like(){
+
+  }
+  dislike(){
+
+  }
+  postComment(){
+    this.mediaService.postComment(new CommentDTO(Number(this.route.snapshot.paramMap.get('id')),this.comment)).subscribe(
+      (data) => {
+       let message = "Comment is uploaded. ";
+       this.openSnackBar(message, "Okay");
+   },
+   error => {
+     this.openSnackBar(error.error, "Okay");
+   }
+   
+   );
+
+  }
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 5000,
+    });
   }
 
   getPost(id : String) {

@@ -3,15 +3,20 @@ package app.media.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app.media.dtos.AlbumDTO;
+import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
+import app.media.exception.PostDoesNotExistException;
+import app.media.model.Comment;
 import app.media.model.Media;
 import app.media.model.Post;
 import app.media.model.Story;
+import app.media.repository.CommentRepository;
 import app.media.repository.MediaRepository;
 import app.media.repository.PostRepository;
 import app.media.repository.StoryRepository;
@@ -23,12 +28,14 @@ public class MediaServiceImpl implements MediaService{
 	private MediaRepository mediaRepository;
 	private PostRepository postRepository;
 	private StoryRepository storyRepository;
+	private CommentRepository commentRepository;
 	
 	@Autowired
-    public MediaServiceImpl(MediaRepository mediaRepository, PostRepository postRepository, StoryRepository storyRepository) {
+    public MediaServiceImpl(MediaRepository mediaRepository, PostRepository postRepository, StoryRepository storyRepository, CommentRepository commentRepository) {
         this.mediaRepository = mediaRepository;
         this.postRepository = postRepository;
         this.storyRepository = storyRepository;
+        this.commentRepository = commentRepository;
     }
 
 	@Override
@@ -106,6 +113,23 @@ public class MediaServiceImpl implements MediaService{
 		story.setHighlighted(false);
 		story.setMedia(media);
 		storyRepository.save(story);
+		
+	}
+
+	@Override
+	public void postComment(CommentDTO dto) throws PostDoesNotExistException {
+		Comment comment = new Comment();
+		comment.setUsername("username"); //
+		comment.setDateCreated(LocalDateTime.now());
+		comment.setContent(dto.getContent());
+		commentRepository.save(comment);
+		
+		Optional<Post> post = postRepository.findById(dto.getId());
+		if(post.isEmpty())
+			throw new PostDoesNotExistException("You are trying to get post that does not exist!");
+		Post oldPost= post.get();
+		oldPost.getComments().add(comment);
+		postRepository.save(oldPost);
 		
 	}
 

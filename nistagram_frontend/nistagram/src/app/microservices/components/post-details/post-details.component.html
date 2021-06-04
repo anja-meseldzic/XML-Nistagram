@@ -20,5 +20,24 @@
             Hashtags: <span *ngFor="let tag of post.hashtags" style="color: gray;">{{tag}}</span>
         </div>
         <mat-divider></mat-divider>
+        <div >
+            <button mat-raised-button (click)="like()" style="height: 30px; width: 140px; background-color: rgb(255, 197, 252); margin-top: 10px; margin-left: 10px" >LIKE</button>
+            <p style="display:inline; margin-left: 15px; color:rgb(255, 138, 249); font-size:medium; ">{{likes}} </p>
+            <button mat-raised-button (click)="dislike()" style="height: 30px; width: 140px; background-color: rgb(254, 255, 244); margin-top: 10px; margin-left: 20px;" >DISLIKE</button>
+            <p style="display:inline; margin-left: 15px; font-size:medium; ">{{dislikes}} </p>    
+        </div>
+      <div style= "margin-top: 10px;margin-bottom: 2px;">
+        <mat-list  role="list">
+            <mat-list-item *ngFor="let comment of comments" role="listitem" style="color: rgb(95, 95, 95);">{{comment}}</mat-list-item>
+          </mat-list>  
+      </div>
+      <form>
+        <mat-form-field class="example-full-width"   style="padding-bottom: 10px;">
+            <input matInput placeholder="Add comment" id="newComment" name="commentText" [(ngModel)]="comment">
+        </mat-form-field>   
+        <div class="example-full-width"  style="display: inline;">
+            <button mat-raised-button style="float:right; width: 150px; color: rgb(7, 8, 10);" (click)="postComment()">Post comment</button>
+        </div>
+      </form>
     </div>
 </div>

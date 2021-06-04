@@ -3,7 +3,9 @@ package app.media.service;
 import java.util.Set;
 
 import app.media.dtos.AlbumDTO;
+import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
+import app.media.exception.PostDoesNotExistException;
 import app.media.model.Media;
 
 public interface MediaService {
@@ -17,5 +19,7 @@ public interface MediaService {
 	void createAlbumAsPost(Set<String> fileNames, AlbumDTO albumDTO);
 
 	void createAlbumAsStory(Set<String> fileNames, AlbumDTO albumDTO);
+
+	void postComment(CommentDTO dto) throws PostDoesNotExistException;
 
 }

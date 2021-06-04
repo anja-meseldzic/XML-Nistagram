@@ -1,0 +1,8 @@
+mat-list {
+
+    border: 3px solid rgb(236, 243, 236);
+    overflow: auto;
+}
+.example-full-width {
+    width: 100%;
+}
