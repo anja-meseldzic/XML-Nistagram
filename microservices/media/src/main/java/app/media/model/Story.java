@@ -101,8 +101,8 @@ public class Story {
 	
 	public boolean isActive() {
 		LocalDateTime date = LocalDateTime.now();
-		long hours = ChronoUnit.HOURS.between(dateCreated, date);
-		if(hours < 24) {
+		long hours = ChronoUnit.HOURS.between(this.dateCreated, date);
+		if(hours < this.expiresInHours) {
 			return true;
 		}else {
 			return false;

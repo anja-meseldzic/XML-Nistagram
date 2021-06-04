@@ -10,4 +10,6 @@ public interface MediaService {
 
 	Media save(Media media);
 
+	void createStory(String filepath, boolean closeFriends);
+
 }
