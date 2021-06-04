@@ -15,8 +15,8 @@
             {{profile.followerCount}} followers {{profile.followingCount}} following
             <button mat-stroked-button style="margin-left: 10px;" *ngIf="profile.owned">Settings</button>
             <button mat-stroked-button style="margin-left: 10px;" *ngIf="profile.owned">Edit profile</button>
-            <button mat-raised-button color="primary" style="margin-left: 10px;" *ngIf="!profile.owned && !profile.following">Follow</button>
-            <button mat-raised-button color="primary" style="margin-left: 10px;" *ngIf="!profile.owned && profile.following">Unfollow</button>
+            <button mat-raised-button color="primary" style="margin-left: 10px;" (click) = "follow(profile.privateProfile, profile.username)" *ngIf="!profile.owned && !profile.following">Follow</button>
+            <button mat-raised-button color="primary" style="margin-left: 10px;" (click) = "unfollow(profile.username)"*ngIf="!profile.owned && profile.following">Unfollow</button>
         </p>
         <p style="color: gray;" *ngIf="profile.fullName != null">Name: {{profile.fullName}}</p>
         <p style="color: gray;" *ngIf="profile.birthDate != null">Birth date: {{profile.birthDate | date: 'dd. MM. yyyy.'}}</p>
