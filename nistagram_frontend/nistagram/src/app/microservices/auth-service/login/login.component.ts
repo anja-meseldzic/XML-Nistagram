@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
+import axios from 'axios';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,14 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void {
-    console.log('LOGIN');
+    axios
+      .post('http://localhost:8081/auth', {
+        username : this.username,
+        password : this.password
+      })
+      .then(res => {
+        localStorage.setItem('jwt', res.data);
+      });
   }
 
   cancel(): void {
