@@ -66,6 +66,20 @@ export class ProfileComponent implements OnInit {
     this.stories['slider'] = storyObject;
   }
 
+  follow(privateProfile : boolean, profileUsername : string){
+    if(!privateProfile){
+      this.profile.followerCount = this.profile.followerCount.valueOf() + 1;
+      this.profile.following = true;
+    }else{
+      console.log("Follow request have been sent.")
+    }
+    //console.log(profileUsername);
+  }
+  unfollow(profileUsername : string){
+    this.profile.followerCount = this.profile.followerCount.valueOf() - 1;
+    this.profile.following = false;
+  }
+
   public seeDetails(id : String) {
     this.router.navigate(['../post/' + id]);
   }
