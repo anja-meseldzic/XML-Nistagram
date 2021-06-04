@@ -24,10 +24,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public String login(String username, String password) {
         RegularUser user = regularUserRepository.findRegularUserByUser_UsernameAndUser_Password(username, password);
         if(user != null)
-            return TokenUtils.generateToken(user.getId(), user.getUser().getRole());
+            return TokenUtils.generateToken(user.getId(), user.getUser().getRole(), user.getUser().getUsername());
         Admin admin = adminRepository.findAdminByUser_UsernameAndUser_Password(username, password);
         if(admin != null)
-            return TokenUtils.generateToken(admin.getId(), admin.getUser().getRole());
+            return TokenUtils.generateToken(admin.getId(), admin.getUser().getRole(), user.getUser().getUsername());
         throw new IllegalArgumentException("Wrong username or password");
     }
 }

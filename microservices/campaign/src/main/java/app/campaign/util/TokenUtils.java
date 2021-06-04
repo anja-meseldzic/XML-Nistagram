@@ -18,13 +18,14 @@ public class TokenUtils {
     private static final String AUDIENCE_WEB = "web";
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
-    public static String generateToken(Long id, Role role) {
+    public static String generateToken(Long id, Role role, String username) {
         return Jwts.builder()
                 .setIssuer(APP_NAME)
                 .setAudience(AUDIENCE_WEB)
                 .setIssuedAt(new Date())
                 .setExpiration(generateExpirationDate())
                 .claim("id", id)
+                .claim("username", username)
                 .claim("role", role)
                 .signWith(SIGNATURE_ALGORITHM, SECRET).compact();
     }
@@ -85,4 +86,16 @@ public class TokenUtils {
         }
         return type;
     }
+
+    public static String getUsernameFromToken(String token) {
+        String username;
+        try {
+            final Claims claims = getAllClaimsFromToken(token);
+            username = (String) claims.get("username");
+        } catch (Exception e) {
+            username = null;
+        }
+        return username;
+    }
 }
+
