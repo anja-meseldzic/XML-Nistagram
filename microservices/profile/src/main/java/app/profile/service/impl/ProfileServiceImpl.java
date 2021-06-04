@@ -1,13 +1,8 @@
 package app.profile.service.impl;
 
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import app.profile.model.Followers;
-import app.profile.model.Profile;
-import app.profile.repository.FollowersRepository;
 import app.profile.repository.ProfileRepository;
 import app.profile.service.ProfileService;
 
@@ -15,12 +10,10 @@ import app.profile.service.ProfileService;
 public class ProfileServiceImpl implements ProfileService {
 
 	private ProfileRepository profileRepository;
-	private FollowersRepository followersRepo;
 
 	@Autowired
-	public ProfileServiceImpl(ProfileRepository profileRepository, FollowersRepository followersRepo) {
+	public ProfileServiceImpl(ProfileRepository profileRepository) {
 		this.profileRepository = profileRepository;
-		this.followersRepo = followersRepo;
 	}
 
 	@Override
