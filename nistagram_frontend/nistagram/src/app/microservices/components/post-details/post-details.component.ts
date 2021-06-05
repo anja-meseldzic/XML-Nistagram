@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AllCommentDTO } from '../../DTOs/all-comment-dto';
 import { CommentDTO } from '../../DTOs/comment-dto';
+import { RatingDTO } from '../../DTOs/rating-dto';
 import { MediaService } from '../../media-service/media.service';
 import { Post } from '../../model/post';
 
@@ -13,9 +15,9 @@ import { Post } from '../../model/post';
 export class PostDetailsComponent implements OnInit {
 
   post : Post;
-  public comments : string[] = ['very nice', 'cool', 'beautiful', 'lepo'];
-  public likes : number = 50;
-  public dislikes : number = 2 ;
+  public comments : AllCommentDTO[] = [];
+  public likes : number = 0;
+  public dislikes : number = 0;
   public comment : string;
   
   constructor(private mediaService : MediaService, private route : ActivatedRoute, private router : Router, private _snackBar: MatSnackBar) { }
@@ -23,26 +25,61 @@ export class PostDetailsComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.getPost(id);
+    this.getComments(Number(id));
+    this.getRatingsNumber(Number(id));
   }
+
+  getRatingsNumber(id: number) {
+    this.mediaService.getReactionsNumber(id).subscribe(
+      (data) => {  
+        this.likes = data.likes;
+        this.dislikes = data.dislikes;    
+   },
+   error => {
+     this.openSnackBar(error.error, "Okay");
+   } );
+  }
+
   like(){
-
+    this.mediaService.reactOnPost(new RatingDTO(Number(this.route.snapshot.paramMap.get('id')), true)).subscribe(
+      (data) => {      
+        this.getRatingsNumber(Number(this.route.snapshot.paramMap.get('id')));
+   },
+   error => {
+     this.openSnackBar(error.error, "Okay");
+   } );
   }
+
   dislike(){
-
+    this.mediaService.reactOnPost(new RatingDTO(Number(this.route.snapshot.paramMap.get('id')), false)).subscribe(
+      (data) => {     
+        this.getRatingsNumber(Number(this.route.snapshot.paramMap.get('id'))); 
+   },
+   error => {
+     this.openSnackBar(error.error, "Okay");
+   } );
   }
+
+  getComments(id : number){
+    this.mediaService.getComments(id).subscribe(
+      (data) => this.comments = data
+    );
+  }
+
   postComment(){
     this.mediaService.postComment(new CommentDTO(Number(this.route.snapshot.paramMap.get('id')),this.comment)).subscribe(
       (data) => {
        let message = "Comment is uploaded. ";
        this.openSnackBar(message, "Okay");
+       this.getComments(Number(this.route.snapshot.paramMap.get('id')));
+       this.comment="";
    },
    error => {
      this.openSnackBar(error.error, "Okay");
    }
-   
    );
-
   }
+
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {
       duration: 5000,

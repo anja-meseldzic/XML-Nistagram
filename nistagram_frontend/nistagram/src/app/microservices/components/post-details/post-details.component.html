@@ -28,7 +28,7 @@
         </div>
       <div style= "margin-top: 10px;margin-bottom: 2px;">
         <mat-list  role="list">
-            <mat-list-item *ngFor="let comment of comments" role="listitem" style="color: rgb(95, 95, 95);">{{comment}}</mat-list-item>
+            <mat-list-item *ngFor="let comment of comments" role="listitem" style="color: rgb(95, 95, 95);">{{comment.content}}  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ( {{comment.username}} )</mat-list-item>
           </mat-list>  
       </div>
       <form>

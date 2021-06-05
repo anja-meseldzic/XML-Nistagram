@@ -14,12 +14,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import app.profile.model.FollowRequest;
 import app.profile.model.Profile;
 import app.profile.model.dto.FollowRequestDto;
 import app.profile.model.dto.FollowerDto;
+
 import app.profile.service.ProfileService;
-import app.profile.service.impl.ProfileServiceImpl;
 import app.profile.util.TokenUtils;
 
 @RestController
@@ -55,6 +56,7 @@ public class ProfileContoller {
 		int followerCount = profileService.unfollowProfile(username, loggedInUsername); 
 		return new ResponseEntity<>(followerCount, HttpStatus.OK);
 	}
+
 	
 	@GetMapping(value = "followRequest/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Set<FollowRequestDto>> getFollowRequests(@RequestHeader("Authorization") String auth,@PathVariable String username){
@@ -103,5 +105,12 @@ public class ProfileContoller {
 
 		List<FollowerDto> followers = profileService.getFollowers(username);
 		return new ResponseEntity<>(followers, HttpStatus.OK);
+	}
+
+	@PostMapping("/{username}")
+	public ResponseEntity<Void> createFromUser(@PathVariable String username) {
+		profileService.createFromUser(username);
+		return new ResponseEntity<>(HttpStatus.CREATED);
+
 	}
 }

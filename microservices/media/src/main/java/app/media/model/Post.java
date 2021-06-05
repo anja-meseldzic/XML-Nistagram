@@ -21,10 +21,10 @@ public class Post {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	@Column(name = "location", nullable = false)
+	@Column(name = "location")
 	private String location;
 	
-	@Column(name = "description", nullable = false)
+	@Column(name = "description")
 	private String description;
 	
 	@Column(name = "tags")

@@ -1,5 +1,6 @@
 package app.auth.service.impl;
 
+import app.auth.client.ProfileClient;
 import app.auth.model.RegularUser;
 import app.auth.repository.RegularUserRepository;
 import app.auth.service.RegularUserService;
@@ -10,16 +11,20 @@ import java.util.Optional;
 
 @Service
 public class RegularUserServiceImpl implements RegularUserService {
-    RegularUserRepository repository;
+    private final RegularUserRepository repository;
+
+    private final ProfileClient profileClient;
 
     @Autowired
-    public RegularUserServiceImpl(RegularUserRepository repository) {
+    public RegularUserServiceImpl(RegularUserRepository repository, ProfileClient profileClient) {
         this.repository = repository;
+        this.profileClient = profileClient;
     }
 
     @Override
     public void register(RegularUser user) {
         repository.save(user);
+        profileClient.createFromUser(user.getUser().getUsername());
     }
 
     @Override

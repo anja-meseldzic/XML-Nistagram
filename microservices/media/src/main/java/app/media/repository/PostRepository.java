@@ -7,5 +7,6 @@ import app.media.model.Post;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-
+	
+	Post findOneById(long id);
 }
