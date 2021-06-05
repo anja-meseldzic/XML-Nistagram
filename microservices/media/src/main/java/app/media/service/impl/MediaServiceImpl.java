@@ -16,6 +16,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 import app.media.dtos.AlbumDTO;
+import app.media.dtos.AllCommentDTO;
 import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
 import app.media.exception.PostDoesNotExistException;
@@ -180,6 +181,20 @@ public class MediaServiceImpl implements MediaService{
 	@Override
 	public UrlResource getContent(String contentName) throws MalformedURLException {
 		return new UrlResource("file:" + storageDirectoryPath + "\\" + contentName);
+	}
+
+	@Override
+	public Set<AllCommentDTO> getAllComments(long postId) throws PostDoesNotExistException {
+		Post post = postRepository.findOneById(postId);
+		if(post == null) {
+			throw new PostDoesNotExistException("You are trying to get post that does not exist!");
+		}
+		Set<Comment> comments =  post.getComments();
+		Set<AllCommentDTO> contents = new HashSet<AllCommentDTO>();
+		for(Comment com : comments) {
+			contents.add(new AllCommentDTO(com.getUsername(), com.getContent()));
+		}
+		return contents;
 	}
 
 	private String saveFile(MultipartFile file, String storageDirectoryPath) throws IOException {

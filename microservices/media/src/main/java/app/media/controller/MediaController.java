@@ -6,13 +6,15 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 import javax.servlet.http.HttpSession;
 
 import app.media.util.TokenUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.media.dtos.AlbumDTO;
+import app.media.dtos.AllCommentDTO;
 import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
 import app.media.exception.PostDoesNotExistException;
@@ -52,6 +55,18 @@ public class MediaController {
 		if(!TokenUtils.verify(auth, "USER"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		return new ResponseEntity<>("OK", HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "allComments")
+	public ResponseEntity<Set<AllCommentDTO>> getAllComments(@RequestBody long id)
+	{
+		Set<AllCommentDTO> comments;
+		try {
+			comments = mediaService.getAllComments(id);
+		} catch (PostDoesNotExistException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+		return new ResponseEntity<>(comments, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "postComment")

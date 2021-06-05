@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import app.media.dtos.AlbumDTO;
+import app.media.dtos.AllCommentDTO;
 import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
 import app.media.exception.PostDoesNotExistException;
@@ -28,4 +29,6 @@ public interface MediaService {
 	void postComment(CommentDTO dto) throws PostDoesNotExistException;
 
 	UrlResource getContent(String contentName) throws MalformedURLException;
+
+	Set<AllCommentDTO> getAllComments(long postId) throws PostDoesNotExistException;
 }
