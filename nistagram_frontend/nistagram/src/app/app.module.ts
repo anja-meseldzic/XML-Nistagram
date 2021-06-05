@@ -19,6 +19,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgImageSliderModule } from 'ng-image-slider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete'; 
 import { MatListModule } from '@angular/material/list'; 
+import {MatDialogModule} from '@angular/material/dialog';
+import { FollowerRequestDialogComponent } from './microservices/components/follower-request-dialog/follower-request-dialog.component';
+import { FollowersDialogComponent } from './microservices/components/followers-dialog/followers-dialog.component';
+
 
 
 @NgModule({
@@ -44,8 +48,11 @@ import { MatListModule } from '@angular/material/list';
     NgbModule,
     NgImageSliderModule,
     MatAutocompleteModule,
-    MatListModule
+    MatListModule,
+    MatDialogModule
+    
   ],
+  entryComponents:[FollowerRequestDialogComponent, FollowersDialogComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

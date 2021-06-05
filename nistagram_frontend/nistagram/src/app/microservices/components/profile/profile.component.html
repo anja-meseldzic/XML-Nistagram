@@ -12,9 +12,11 @@
     <div style="float: left; width: max-content; height: max-content; margin-bottom: 30px;" >
         <p style="font-size: large;">{{profile.username}}</p>
         <p style="font-size: large;">
-            {{profile.followerCount}} followers {{profile.followingCount}} following
+            <button mat-flat-button (click) = "getFollowers()" [disabled]= "profile.privateProfile && !profile.following && !profile.owned">{{profile.followerCount}} followers </button>
+            <button mat-flat-button (click) = "getFollowing()"[disabled]= "profile.privateProfile && !profile.following  && !profile.owned">{{profile.followingCount}} following </button>
             <button mat-stroked-button style="margin-left: 10px;" *ngIf="profile.owned">Settings</button>
             <button mat-stroked-button style="margin-left: 10px;" *ngIf="profile.owned" (click)="editProfile()">Edit profile</button>
+            <button mat-stroked-button style="margin-left: 10px;" *ngIf="profile.owned" (click)="followRequests()">Follow requests</button>
             <button mat-raised-button color="primary" style="margin-left: 10px;" (click) = "follow(profile.privateProfile, profile.username)" *ngIf="!profile.owned && !profile.following">Follow</button>
             <button mat-raised-button color="primary" style="margin-left: 10px;" (click) = "unfollow(profile.username)"*ngIf="!profile.owned && profile.following">Unfollow</button>
         </p>
