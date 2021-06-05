@@ -1,16 +1,13 @@
 package app.profile.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Profile {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "profile_generator")
+	@SequenceGenerator(name="profile_generator", sequenceName = "profile_seq", allocationSize=50, initialValue = 100)
 	private long id;
 	
 	@Column(name = "verified" , nullable = false)
@@ -45,6 +42,14 @@ public class Profile {
 		this.regularUserUsername = regularUserId;
 		this.allowMessages = allowMessages;
 		this.privateProfile = privateProfile;
+	}
+
+	public Profile(String username) {
+		super();
+		this.active = true;
+		this.allowTagging = true;
+		this.regularUserUsername = username;
+		this.allowMessages = true;
 	}
 
 	public long getId() {

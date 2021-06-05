@@ -1,5 +1,6 @@
 package app.profile.service.impl;
 
+import app.profile.model.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,5 +61,11 @@ public class ProfileServiceImpl implements ProfileService {
 		followersRepo.save(loggedInFollower);
 		return followers.size();*/
 		return 1;
+	}
+
+	@Override
+	public void createFromUser(String username) {
+		Profile profile = new Profile(username);
+		profileRepository.save(profile);
 	}
 }
