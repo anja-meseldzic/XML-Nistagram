@@ -271,4 +271,16 @@ public class ProfileServiceImpl implements ProfileService {
 				filter(f -> f.getProfile().getRegularUserUsername().equals(profile.getRegularUserUsername())
 						&& f.getFollowedBy().getRegularUserUsername().equals(follower)).count() > 0;
 	}
+
+	@Override
+	public void addCloseFriend(String myUsername, String usernameOfFriend) {
+		for (Follow f : followRepository.findAll()) {
+			if (f.getProfile().getRegularUserUsername().equals(myUsername) && f.getFollowedBy().getRegularUserUsername().equals(usernameOfFriend)){
+				f.setCloseFriend(true);
+				followRepository.save(f);
+				return;
+			}
+		}
+		
+	}
 }

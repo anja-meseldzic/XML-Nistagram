@@ -14,8 +14,6 @@ public interface ProfileService {
 
 	int unfollowProfile(String username, String loggedInUsername);
 
-	void createFromUser(String username);
-
 	ProfileInfoDTO getProfile(String requestedBy, String profile) throws ProfileNotFoundException;
 
 	List<String> getAll();
@@ -40,5 +38,9 @@ public interface ProfileService {
 
 	List<FollowerDto> getFollowers(String username);
 
+	void createFromUser(String username);
+
 	List<FollowerDto> getFollowing(String username);
+
+	void addCloseFriend(String myUsername, String usernameOfFriend);
 }
