@@ -9,11 +9,17 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
+
+import javax.servlet.http.HttpSession;
+
 import app.media.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -28,7 +34,7 @@ import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
 import app.media.exception.PostDoesNotExistException;
 import app.media.service.MediaService;
-
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
 @RestController
@@ -73,65 +79,59 @@ public class MediaController {
 	}
 
     @PostMapping(value="createAlbum")
-    public ResponseEntity<String> uploadFiles(MultipartHttpServletRequest request) throws IOException {
+    public ResponseEntity<Void> uploadFiles(MultipartHttpServletRequest request) throws IOException {
     	ObjectMapper mapper = new ObjectMapper();
     	AlbumDTO albumDTO = mapper.readValue(request.getParameter("album"), AlbumDTO.class);
     	
-    	Set<String> fileNames = new HashSet<String>();
-    	String path = new File("src/main/resources/albums").getAbsolutePath();
+    	List<MultipartFile> files = new ArrayList<MultipartFile>();
     	Iterator<String> iterator = request.getFileNames();
-        MultipartFile multipartFile = null;
         while (iterator.hasNext()) {
-            multipartFile = request.getFile(iterator.next());
-            fileNames.add("src/main/resources/albums/" + multipartFile.getOriginalFilename());
-            Path filepath = Paths.get(path, multipartFile.getOriginalFilename());
-            try (OutputStream os = Files.newOutputStream(filepath)) {
-		        os.write(multipartFile.getBytes());
-		    } catch (IOException e2) {
-		    	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e2.getMessage());
-			}
+            MultipartFile file = request.getFile(iterator.next());
+            files.add(file);
         }
+
         if(albumDTO.isPostSelected() == true) {
-        	mediaService.createAlbumAsPost(fileNames, albumDTO);
+        	mediaService.createAlbumAsPost(files, albumDTO);
         } else {
-        	mediaService.createAlbumAsStory(fileNames, albumDTO);
+        	mediaService.createAlbumAsStory(files, albumDTO);
         }
-    	return new ResponseEntity<>("ok",HttpStatus.OK);
+    	return new ResponseEntity<>(HttpStatus.OK);
     
     }
     @PostMapping(value="createStory",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-   	public ResponseEntity<String> creatStory(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "story", required = false) String model) throws JsonMappingException, JsonProcessingException{
-    	boolean close = model.equals("true") ? true : false; 
-    	String path = new File("src/main/resources/stories").getAbsolutePath();
-		Path filepath = Paths.get(path, data.getOriginalFilename());
-
-		try (OutputStream os = Files.newOutputStream(filepath)) {
-		        os.write(data.getBytes());
-		    } catch (IOException e2) {
-		    	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e2.getMessage());
-			}
-		mediaService.createStory("src/main/resources/stories/" + data.getOriginalFilename(), close);
-		
-    	return new ResponseEntity<>("ok",HttpStatus.OK);
+   	public ResponseEntity<Void> creatStory(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "story", required = false) String model) throws JsonMappingException, JsonProcessingException{
+    	boolean close = model.equals("true") ? true : false;
+		try {
+			mediaService.createStory(data, close);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(value="createPost",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<String> createPost(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "post", required = false) String model) throws JsonMappingException, JsonProcessingException{
-	
+	public ResponseEntity<Void> createPost(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "post", required = false) String model) throws JsonMappingException, JsonProcessingException{
     	ObjectMapper mapper = new ObjectMapper();
     	PostDTO postDTO = mapper.readValue(model, PostDTO.class);
-    	
-    	String path = new File("src/main/resources/posts").getAbsolutePath();
-		Path filepath = Paths.get(path, data.getOriginalFilename());
-
-		try (OutputStream os = Files.newOutputStream(filepath)) {
-		        os.write(data.getBytes());
-		    } catch (IOException e2) {
-		    	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e2.getMessage());
-			}
-		
-		mediaService.createPost("src/main/resources/posts/" + data.getOriginalFilename(), postDTO);
-		
-		return new ResponseEntity<>("ok",HttpStatus.OK);
+		try {
+			mediaService.createPost(data, postDTO);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
     }
+
+	@GetMapping(
+			value = "content/{contentName:.+}",
+			produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, "video/mp4"}
+	)
+	public @ResponseBody byte[] getContent(@PathVariable(name = "contentName") String fileName) {
+		try {
+			return this.mediaService.getContent(fileName);
+		} catch (IOException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
 }

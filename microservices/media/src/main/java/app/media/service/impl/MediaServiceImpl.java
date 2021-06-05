@@ -1,10 +1,15 @@
 package app.media.service.impl;
 
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +27,10 @@ import app.media.repository.MediaRepository;
 import app.media.repository.PostRepository;
 import app.media.repository.StoryRepository;
 import app.media.service.MediaService;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Service
 public class MediaServiceImpl implements MediaService{
@@ -30,7 +39,9 @@ public class MediaServiceImpl implements MediaService{
 	private PostRepository postRepository;
 	private StoryRepository storyRepository;
 	private CommentRepository commentRepository;
-	
+
+	public final String storageDirectoryPath = "..\\storage\\media-content";
+
 	@Autowired
     public MediaServiceImpl(MediaRepository mediaRepository, PostRepository postRepository, StoryRepository storyRepository, CommentRepository commentRepository) {
         this.mediaRepository = mediaRepository;
@@ -40,11 +51,18 @@ public class MediaServiceImpl implements MediaService{
     }
 
 	@Override
-	public void createPost(String filepath, PostDTO postDTO) {
+	public void createPost(MultipartFile file, PostDTO postDTO) throws IOException {
+		String fileName = saveFile(file, storageDirectoryPath);
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+				.path("media/content/")
+				.path(fileName)
+				.toUriString();
+		System.out.println(fileDownloadUri);
+
 		Media media = new Media();
 		media.setUsername("username"); //PROFILE MICROSERVICE
 		Set<String> paths = new HashSet<String>();
-		paths.add(filepath);
+		paths.add(fileDownloadUri);
 		media.setPath(paths);
 		mediaRepository.save(media);
 		
@@ -55,7 +73,6 @@ public class MediaServiceImpl implements MediaService{
 		post.setTags(tags);
 		post.setMedia(media);
 		postRepository.save(post);
-
 	}
 	
 	@Override
@@ -65,11 +82,18 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public void createStory(String filepath, boolean closeFriends) {
+	public void createStory(MultipartFile file, boolean closeFriends) throws IOException {
+		String fileName = saveFile(file, storageDirectoryPath);
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+				.path("media/content/")
+				.path(fileName)
+				.toUriString();
+		System.out.println(fileDownloadUri);
+
 		Media media = new Media();
 		media.setUsername("username"); //PROFILE MICROSERVICE
 		Set<String> paths = new HashSet<String>();
-		paths.add(filepath);
+		paths.add(fileDownloadUri);
 		media.setPath(paths);
 		mediaRepository.save(media);
 		
@@ -83,7 +107,18 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public void createAlbumAsPost(Set<String> fileNames, AlbumDTO albumDTO) {
+	public void createAlbumAsPost(List<MultipartFile> files, AlbumDTO albumDTO) throws IOException {
+		Set<String> fileNames = new HashSet<String>();
+		for(MultipartFile file : files) {
+			String fileName = saveFile(file, storageDirectoryPath);
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+					.path("media/content/")
+					.path(fileName)
+					.toUriString();
+			System.out.println(fileDownloadUri);
+			fileNames.add(fileDownloadUri);
+		}
+
 		Media media = new Media();
 		media.setUsername("username"); //PROFILE MICROSERVICE
 		media.setPath(fileNames);
@@ -96,12 +131,21 @@ public class MediaServiceImpl implements MediaService{
 		post.setTags(tags);
 		post.setMedia(media);
 		postRepository.save(post);
-
-		
 	}
 
 	@Override
-	public void createAlbumAsStory(Set<String> fileNames, AlbumDTO albumDTO) {
+	public void createAlbumAsStory(List<MultipartFile> files, AlbumDTO albumDTO) throws  IOException {
+		Set<String> fileNames = new HashSet<String>();
+		for(MultipartFile file : files) {
+			String fileName = saveFile(file, storageDirectoryPath);
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+					.path("media/content/")
+					.path(fileName)
+					.toUriString();
+			System.out.println(fileDownloadUri);
+			fileNames.add(fileDownloadUri);
+		}
+
 		Media media = new Media();
 		media.setUsername("username"); //PROFILE MICROSERVICE
 		media.setPath(fileNames);
@@ -114,7 +158,6 @@ public class MediaServiceImpl implements MediaService{
 		story.setHighlighted(false);
 		story.setMedia(media);
 		storyRepository.save(story);
-		
 	}
 
 	@Override
@@ -126,7 +169,7 @@ public class MediaServiceImpl implements MediaService{
 		commentRepository.save(comment);
 		
 		Optional<Post> post = postRepository.findById(dto.getId());
-		if(post.isEmpty())
+		if(!post.isPresent())
 			throw new PostDoesNotExistException("You are trying to get post that does not exist!");
 		Post oldPost= post.get();
 		oldPost.getComments().add(comment);
@@ -148,5 +191,34 @@ public class MediaServiceImpl implements MediaService{
 		return contents;
 	}
 
+	public  byte[] getContent(String contentName) throws IOException {
+		Path destination = Paths.get(storageDirectoryPath+"\\"+contentName);
+		System.out.println(destination.toString());
+		System.out.println(destination.toUri());
+		return IOUtils.toByteArray(destination.toUri());
+	}
 
+	private String saveFile(MultipartFile file, String storageDirectoryPath) throws IOException {
+		String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+		String extension = getFileExtension(originalFileName);
+		String fileName = UUID.randomUUID().toString() + "." + extension;
+
+		System.out.println(fileName);
+
+		Path storageDirectory = Paths.get(storageDirectoryPath);
+		if(!Files.exists(storageDirectory)){
+			Files.createDirectories(storageDirectory);
+		}
+		Path destination = Paths.get(storageDirectory.toString() + "\\" + fileName);
+		Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+		return fileName;
+	}
+
+	private String getFileExtension(String fileName) throws IOException {
+		String[] parts = fileName.split("\\.");
+		if(parts.length > 0)
+			return parts[parts.length - 1];
+		else
+			throw new IOException();
+	}
 }
