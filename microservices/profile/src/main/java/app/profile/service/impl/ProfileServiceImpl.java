@@ -1,9 +1,8 @@
 package app.profile.service.impl;
 
-
 import java.util.ArrayList;
 import java.util.List;
-
+import app.profile.model.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,5 +75,11 @@ public class ProfileServiceImpl implements ProfileService {
 			}
 		}
 		return following;
+	}
+
+	@Override
+	public void createFromUser(String username) {
+		Profile profile = new Profile(username);
+		profileRepository.save(profile);
 	}
 }
