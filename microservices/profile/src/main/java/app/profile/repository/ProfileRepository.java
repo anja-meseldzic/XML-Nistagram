@@ -9,5 +9,4 @@ import app.profile.model.Profile;
 public interface ProfileRepository extends JpaRepository<Profile, Long>{
 
 	Profile findByRegularUserUsername(String username);
-
 }

@@ -21,8 +21,11 @@ export class SearchResultsComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.type = params['type'];
       this.value = params['value'];
-      this.posts = this.mediaService.getPostsBySearchCriteria(new SearchResult(this.value, this.type));
-      this.constructSliderObjectsForPosts();
+      const value = this.value.replace('#', '%23');
+      this.mediaService.getPostsBySearchCriteria(new SearchResult(value, this.type)).subscribe(
+        data => { this.posts = data; this.constructSliderObjectsForPosts(); },
+        error => console.log(error.error.message)
+      );
     });
   }
 

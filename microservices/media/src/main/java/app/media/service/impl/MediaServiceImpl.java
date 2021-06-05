@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -61,10 +62,11 @@ public class MediaServiceImpl implements MediaService{
 		System.out.println(fileDownloadUri);
 
 		Media media = new Media();
-		media.setUsername("username"); //PROFILE MICROSERVICE
+		media.setUsername("pera"); //PROFILE MICROSERVICE
 		Set<String> paths = new HashSet<String>();
 		paths.add(fileDownloadUri);
 		media.setPath(paths);
+		media.setCreated(LocalDateTime.now());
 		mediaRepository.save(media);
 		
 		Post post = new Post();
@@ -92,10 +94,11 @@ public class MediaServiceImpl implements MediaService{
 		System.out.println(fileDownloadUri);
 
 		Media media = new Media();
-		media.setUsername("username"); //PROFILE MICROSERVICE
+		media.setUsername("pera"); //PROFILE MICROSERVICE
 		Set<String> paths = new HashSet<String>();
 		paths.add(fileDownloadUri);
 		media.setPath(paths);
+		media.setCreated(LocalDateTime.now());
 		mediaRepository.save(media);
 		
 		Story story = new Story();
@@ -121,8 +124,9 @@ public class MediaServiceImpl implements MediaService{
 		}
 
 		Media media = new Media();
-		media.setUsername("username"); //PROFILE MICROSERVICE
+		media.setUsername("pera"); //PROFILE MICROSERVICE
 		media.setPath(fileNames);
+		media.setCreated(LocalDateTime.now());
 		mediaRepository.save(media);
 		
 		Post post = new Post();
@@ -148,8 +152,9 @@ public class MediaServiceImpl implements MediaService{
 		}
 
 		Media media = new Media();
-		media.setUsername("username"); //PROFILE MICROSERVICE
+		media.setUsername("pera"); //PROFILE MICROSERVICE
 		media.setPath(fileNames);
+		media.setCreated(LocalDateTime.now());
 		mediaRepository.save(media);
 		
 		Story story = new Story();

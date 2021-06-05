@@ -107,8 +107,9 @@ public class Profile {
 	public void setPrivateProfile(boolean privateProfile) {
 		this.privateProfile = privateProfile;
 	}
-	
-	
-	
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		return id == ((Profile)obj).id;
+	}
 }

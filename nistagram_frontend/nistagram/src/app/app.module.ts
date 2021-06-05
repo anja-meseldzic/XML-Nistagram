@@ -14,11 +14,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatTableModule} from '@angular/material/table';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgImageSliderModule } from 'ng-image-slider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete'; 
 import { MatListModule } from '@angular/material/list'; 
+import { AuthInterceptorService } from './interceptors/auth-interceptor.service';
 
 
 @NgModule({
@@ -46,7 +47,11 @@ import { MatListModule } from '@angular/material/list';
     MatAutocompleteModule,
     MatListModule
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptorService,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

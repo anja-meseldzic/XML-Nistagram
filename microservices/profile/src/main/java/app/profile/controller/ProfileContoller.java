@@ -1,5 +1,7 @@
 package app.profile.controller;
 
+import app.profile.dtos.ProfileInfoDTO;
+import app.profile.exception.ProfileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,6 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import app.profile.service.ProfileService;
 import app.profile.util.TokenUtils;
+import org.springframework.web.server.ResponseStatusException;
+
+import javax.xml.ws.Response;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "profile")
@@ -53,5 +59,61 @@ public class ProfileContoller {
 	public ResponseEntity<Void> createFromUser(@PathVariable String username) {
 		profileService.createFromUser(username);
 		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+
+	@GetMapping(value = "{username}")
+	public ResponseEntity<ProfileInfoDTO> getInfo(@PathVariable String username, @RequestHeader("Authorization") String auth) {
+		try {
+			String requestedBy = null;
+			if(auth != null)
+				requestedBy = TokenUtils.getUsernameFromToken(auth.substring(7));
+			return new ResponseEntity<>(profileService.getProfile(requestedBy, username), HttpStatus.OK);
+		} catch (ProfileNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	//don't put in api gateway
+	@GetMapping(value = "ms")
+	public List<String> getAll() { return profileService.getAll(); }
+
+	//don't put in api gateway
+	@GetMapping(value = "ms/followers/{profile}")
+	public List<String> getFollowers(@PathVariable String profile) {
+		return profileService.getFollowers(profile);
+	}
+
+	//don't put in api gateway
+	@GetMapping(value = "ms/following/{profile}")
+	public List<String> getFollowing(@PathVariable String profile) {
+		return profileService.getFollowing(profile);
+	}
+
+	//don't put in api gateway
+	@GetMapping(value = "ms/muted/{profile}")
+	public List<String> getMuted(@PathVariable String profile) {
+		return profileService.getMuted(profile);
+	}
+
+	//don't put in api gateway
+	@GetMapping(value = "ms/blocked/{profile}")
+	public List<String> getBlocked(@PathVariable String profile) {
+		return profileService.getBlocked(profile);
+	}
+
+	//don't put in api gateway
+	@GetMapping(value = "ms/close/{profile}")
+	public List<String> getCloseFriends(@PathVariable String profile) {
+		return profileService.getCloseFriends(profile);
+	}
+
+	//don't put in api gateway
+	@GetMapping(value = "ms/public/{profile}")
+	public boolean isPublic(@PathVariable String profile) {
+		try {
+			return profileService.isPublic(profile);
+		} catch (ProfileNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		}
 	}
 }

@@ -17,10 +17,13 @@ export class FeedComponent implements OnInit {
   constructor(private mediaService : MediaService, private router : Router) {}
 
   ngOnInit(): void {
-    const stories : Story[] = this.mediaService.getStoriesForFeed();
-    this.constructSliderObjectsForStories(stories);
-    this.posts = this.mediaService.getPostsForFeed();
-    this.constructSliderObjectsForPosts();
+     this.mediaService.getStoriesForFeed().subscribe(
+      data => { const stories : Story[] = data; this.constructSliderObjectsForStories(stories) },
+      error => console.log(error.error.message)
+    );
+    this.mediaService.getPostsForFeed().subscribe(
+      data => { this.posts = data; this.constructSliderObjectsForPosts(); }
+    );
   }
 
   constructSliderObjectsForStories(stories : Story[]) {

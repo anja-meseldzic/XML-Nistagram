@@ -28,16 +28,24 @@ export class ProfileComponent implements OnInit {
   }
 
   getProfileInfo(username : String) {
-    this.profile = this.profileService.getProfileInfo(username);
-    if(this.profile == null) {
-      this.router.navigate(['../feed']);
-    }
-    if(this.profile.owned || this.profile.following || !this.profile.privateProfile) {
-      this.posts = this.mediaService.getPostsByUser(this.profile.username);
-      this.stories = this.mediaService.getStoriesByUser(this.profile.username);
-      this.constructSliderObjectsForPosts();
-      this.constructSliderObjectsForStories();
-    }
+    this.profileService.getProfileInfo(username).subscribe(
+      data => {
+        this.profile = data;
+        if(this.profile == null) {
+          this.router.navigate(['../feed']);
+        }
+        if(this.profile.owned || this.profile.following || !this.profile.privateProfile) {
+          this.mediaService.getPostsByUser(this.profile.username).subscribe(
+            data => { this.posts = data; this.constructSliderObjectsForPosts(); },
+            error => console.log(error.error.message)
+          )
+          this.mediaService.getStoriesByUser(this.profile.username).subscribe(
+            data => { this.stories = data; this.constructSliderObjectsForStories(); },
+            error => console.log(error.error.message)
+          );
+        }
+      }
+    );
   }
 
   constructSliderObjectsForPosts() {

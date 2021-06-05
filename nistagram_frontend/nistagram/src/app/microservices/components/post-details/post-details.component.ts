@@ -57,12 +57,17 @@ export class PostDetailsComponent implements OnInit {
   }
 
   getPost(id : String) {
-    this.post = this.mediaService.getPost(id);
-    if(this.post == null) {
-      this.router.navigate(['../feed']);
-    } else {
-      this.constructSliderObjectsForPost();
-    }
+    this.mediaService.getPost(id).subscribe(
+      data => {
+        this.post = data;
+        if(this.post == null) {
+          this.router.navigate(['../feed']);
+        } else {
+          this.constructSliderObjectsForPost();
+        }
+      },
+      error => this.openSnackBar(error.error.message, "Okay")
+    )
   }
 
   constructSliderObjectsForPost() {
