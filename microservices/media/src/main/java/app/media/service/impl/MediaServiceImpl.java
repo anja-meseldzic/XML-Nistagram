@@ -17,19 +17,23 @@ import app.media.dtos.AlbumDTO;
 import app.media.dtos.AllCommentDTO;
 import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
+import app.media.dtos.RatingDTO;
+import app.media.dtos.ReactionsNumberDTO;
 import app.media.exception.PostDoesNotExistException;
 import app.media.model.Comment;
 import app.media.model.Media;
 import app.media.model.Post;
+import app.media.model.Rating;
+import app.media.model.RatingType;
 import app.media.model.Story;
 import app.media.repository.CommentRepository;
 import app.media.repository.MediaRepository;
 import app.media.repository.PostRepository;
+import app.media.repository.RatingRepository;
 import app.media.repository.StoryRepository;
 import app.media.service.MediaService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Service
@@ -39,15 +43,18 @@ public class MediaServiceImpl implements MediaService{
 	private PostRepository postRepository;
 	private StoryRepository storyRepository;
 	private CommentRepository commentRepository;
+	private RatingRepository ratingRepository;
 
 	public final String storageDirectoryPath = "..\\storage\\media-content";
 
 	@Autowired
-    public MediaServiceImpl(MediaRepository mediaRepository, PostRepository postRepository, StoryRepository storyRepository, CommentRepository commentRepository) {
+    public MediaServiceImpl(MediaRepository mediaRepository, PostRepository postRepository, StoryRepository storyRepository,
+    		CommentRepository commentRepository, RatingRepository ratingRepository) {
         this.mediaRepository = mediaRepository;
         this.postRepository = postRepository;
         this.storyRepository = storyRepository;
         this.commentRepository = commentRepository;
+        this.ratingRepository = ratingRepository;
     }
 
 	@Override
@@ -220,5 +227,45 @@ public class MediaServiceImpl implements MediaService{
 			return parts[parts.length - 1];
 		else
 			throw new IOException();
+	}
+
+	@Override
+	public void reactOnPost(RatingDTO dto) throws PostDoesNotExistException {
+		Post post = postRepository.findOneById(dto.getId());
+		if(post == null) {
+			throw new PostDoesNotExistException("You are trying to get post that does not exist!");
+		}
+		Rating rating = new Rating();
+		rating.setUsername("username"); //USERNAME
+		if(dto.isLike() == false) {
+			rating.setRatingType(RatingType.DISLIKE);
+		}else {
+			rating.setRatingType(RatingType.LIKE);
+		}
+		ratingRepository.save(rating);
+		post.getRatings().add(rating);
+		postRepository.save(post);
+	}
+
+	@Override
+	public ReactionsNumberDTO getReactionsNumber(long id) throws PostDoesNotExistException {
+		Post post = postRepository.findOneById(id);
+		if(post == null) {
+			throw new PostDoesNotExistException("You are trying to get post that does not exist!");
+		}
+		ReactionsNumberDTO dto = new ReactionsNumberDTO();
+		Set<Rating> likes = new HashSet<Rating>();
+		Set<Rating> dislikes = new HashSet<Rating>();
+		Set<Rating> ratings = post.getRatings();
+		for(Rating rating : ratings) {
+			if(rating.getRatingType() == RatingType.LIKE) {
+				likes.add(rating);
+			}else {
+				dislikes.add(rating);
+			}
+		}
+		dto.setLikes(likes.size());
+		dto.setDislikes(dislikes.size());
+		return dto;
 	}
 }

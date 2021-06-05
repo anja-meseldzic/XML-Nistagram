@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { AllCommentDTO } from '../DTOs/all-comment-dto';
 import { CommentDTO } from '../DTOs/comment-dto';
 import { PostDTO } from '../DTOs/post-dto';
+import { RatingDTO } from '../DTOs/rating-dto';
+import { ReactionsNumberDTO } from '../DTOs/reactions-number-dto';
 import { Post } from '../model/post';
 import { SearchResult } from '../model/search-result';
 import { Story } from '../model/story';
@@ -19,6 +21,8 @@ export class MediaService {
   private createAlbumUrl = this.baseUrl + "/media/createAlbum";
   private postCommentUrl = this.baseUrl + "/media/postComment";
   private getAllCommentsUrl = this.baseUrl + "/media/allComments";
+  private reactOnPostUrl = this.baseUrl + "/media/reactOnPost";
+  private getReactionsNumberUrl = this.baseUrl + "/media/getReactionsNumber";
 
   constructor(private _http : HttpClient) { }
 
@@ -43,6 +47,14 @@ export class MediaService {
     new SearchResult('tag', 'hashtag'),
     new SearchResult('location', 'location')
   ];
+
+  getReactionsNumber(data : number) : Observable<ReactionsNumberDTO>{
+    return this._http.post<ReactionsNumberDTO>(this.getReactionsNumberUrl, data, {responseType: 'json'});
+  }
+
+  reactOnPost(data : RatingDTO) {
+    return this._http.post(this.reactOnPostUrl, data, {responseType: 'text'});
+  }
   
   getComments(data : number) : Observable<AllCommentDTO[]>{
     return this._http.post<AllCommentDTO[]>(this.getAllCommentsUrl, data, {responseType: 'json'});
