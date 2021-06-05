@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { CommentDTO } from '../DTOs/comment-dto';
 import { PostDTO } from '../DTOs/post-dto';
 import { Post } from '../model/post';
 import { SearchResult } from '../model/search-result';
@@ -14,6 +15,7 @@ export class MediaService {
   private postDataUrl = this.baseUrl + "/media/createPost";
   private createStoryUrl = this.baseUrl + "/media/createStory";
   private createAlbumUrl = this.baseUrl + "/media/createAlbum";
+  private postCommentUrl = this.baseUrl + "/media/postComment";
 
   constructor(private _http : HttpClient) { }
 
@@ -38,6 +40,10 @@ export class MediaService {
     new SearchResult('tag', 'hashtag'),
     new SearchResult('location', 'location')
   ];
+
+  postComment(data : CommentDTO) {
+    return this._http.post(this.postCommentUrl,data, {responseType: 'text'});
+  }
 
   postData(data : FormData) {
     return this._http.post(this.postDataUrl,data, {responseType: 'text'});

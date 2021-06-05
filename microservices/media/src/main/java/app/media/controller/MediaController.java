@@ -9,7 +9,11 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import javax.servlet.http.HttpSession;
+
 import app.media.util.TokenUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +27,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.media.dtos.AlbumDTO;
+import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
+import app.media.exception.PostDoesNotExistException;
 import app.media.service.MediaService;
 
 
@@ -44,6 +50,17 @@ public class MediaController {
 		if(!TokenUtils.verify(auth, "USER"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		return new ResponseEntity<>("OK", HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "postComment")
+	public ResponseEntity<String> postComment(@RequestBody CommentDTO dto)
+	{
+		try {
+			mediaService.postComment(dto);
+		} catch (PostDoesNotExistException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+		return new ResponseEntity<>("ok",HttpStatus.OK);
 	}
 
     @PostMapping(value="createAlbum")

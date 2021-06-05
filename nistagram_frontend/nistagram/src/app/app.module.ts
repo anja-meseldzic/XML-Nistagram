@@ -18,6 +18,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgImageSliderModule } from 'ng-image-slider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete'; 
+import { MatListModule } from '@angular/material/list'; 
+
 
 @NgModule({
   declarations: [
@@ -41,7 +43,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     HttpClientModule,
     NgbModule,
     NgImageSliderModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatListModule
   ],
   providers: [],
   bootstrap: [AppComponent]
