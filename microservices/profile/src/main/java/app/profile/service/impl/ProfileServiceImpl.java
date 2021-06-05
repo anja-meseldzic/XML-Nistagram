@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import app.profile.model.Follow;
 import app.profile.model.FollowRequest;
-import app.profile.model.Profile;
 import app.profile.model.dto.FollowRequestDto;
 import app.profile.model.dto.FollowerDto;
 import app.profile.repository.FollowRepository;
@@ -167,5 +166,17 @@ public class ProfileServiceImpl implements ProfileService {
 		Profile profile = new Profile(username);
 		profileRepository.save(profile);
 
+	}
+
+	@Override
+	public void addCloseFriend(String myUsername, String usernameOfFriend) {
+		for (Follow f : followRepository.findAll()) {
+			if (f.getProfile().getRegularUserUsername().equals(myUsername) && f.getFollowedBy().getRegularUserUsername().equals(usernameOfFriend)){
+				f.setCloseFriend(true);
+				followRepository.save(f);
+				return;
+			}
+		}
+		
 	}
 }

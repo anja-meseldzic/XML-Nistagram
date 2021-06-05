@@ -17,5 +17,7 @@ public interface ProfileService {
 	List<FollowerDto> getFollowing(String username);
 
 	void createFromUser(String username);
+	
+	void addCloseFriend(String myUsername, String usernameOfFriend);
 
 }

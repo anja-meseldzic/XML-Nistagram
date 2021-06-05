@@ -10,13 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-
-import app.profile.model.FollowRequest;
-import app.profile.model.Profile;
 import app.profile.model.dto.FollowRequestDto;
 import app.profile.model.dto.FollowerDto;
 
@@ -112,5 +109,18 @@ public class ProfileContoller {
 		profileService.createFromUser(username);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 
+	}
+	@PostMapping(value = "addCloseFriend")
+	public ResponseEntity<String> addCloseFriend(@RequestBody String usernameOfFriend,  @RequestHeader("Authorization") String auth)
+	{
+		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		String token = TokenUtils.getToken(auth);
+		String myUsername = TokenUtils.getUsernameFromToken(token);
+		
+		profileService.addCloseFriend(myUsername, usernameOfFriend);
+		
+		return new ResponseEntity<>("", HttpStatus.OK);
+		
 	}
 }
