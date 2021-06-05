@@ -7,12 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import app.profile.model.Profile;
 import app.profile.service.ProfileService;
 import app.profile.service.impl.ProfileServiceImpl;
+import app.profile.util.TokenUtils;
 
 @RestController
 @RequestMapping(value = "profile")
@@ -25,17 +27,26 @@ public class ProfileContoller {
 		this.profileService = profileService;
 	}
 	
-	@GetMapping(value = "follow/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Integer> followProfile(@PathVariable long id){
-		
-		int followerCount = profileService.followProfile(id, 1); // treba dodati id ulogovanog korisnika
+	@GetMapping(value = "follow/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Integer> followProfile(@RequestHeader("Authorization") String auth ,@PathVariable String username){
+		if(!TokenUtils.verify(auth, "USER")) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		String token = TokenUtils.getToken(auth);
+		System.out.println(TokenUtils.getRoleFromToken(token));
+		System.out.println(TokenUtils.getUsernameFromToken(token));
+		String loggedInUsername = TokenUtils.getUsernameFromToken(token);
+		int followerCount = profileService.followProfile(username, loggedInUsername); 
 		return new ResponseEntity<>(followerCount, HttpStatus.OK);
 	}
 	
-	@GetMapping(value = "unfollow/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Integer> unfollowProfile(@PathVariable long id){
-		
-		int followerCount = profileService.unfollowProfile(id, 1); // treba dodati id ulogovanog korisnika
+	@GetMapping(value = "unfollow/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Integer> unfollowProfile(@RequestHeader("Authorization") String auth,@PathVariable String username){
+		if(!TokenUtils.verify(auth, "USER")) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		String loggedInUsername = TokenUtils.getUsernameFromToken(TokenUtils.getToken(auth));
+		int followerCount = profileService.unfollowProfile(username, loggedInUsername); 
 		return new ResponseEntity<>(followerCount, HttpStatus.OK);
 	}
 }

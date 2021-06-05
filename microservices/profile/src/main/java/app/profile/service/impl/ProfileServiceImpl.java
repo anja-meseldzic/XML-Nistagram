@@ -1,8 +1,15 @@
 package app.profile.service.impl;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import app.profile.model.Follow;
+import app.profile.model.Profile;
+import app.profile.repository.FollowRepository;
 import app.profile.repository.ProfileRepository;
 import app.profile.service.ProfileService;
 
@@ -10,55 +17,64 @@ import app.profile.service.ProfileService;
 public class ProfileServiceImpl implements ProfileService {
 
 	private ProfileRepository profileRepository;
+	private FollowRepository followRepository;
 
 	@Autowired
-	public ProfileServiceImpl(ProfileRepository profileRepository) {
+	public ProfileServiceImpl(ProfileRepository profileRepository, FollowRepository followRepository) {
 		this.profileRepository = profileRepository;
+		this.followRepository = followRepository;
+	}
+
+	
+	@Override
+	public int followProfile(String username, String loggedInUsername) {
+		Profile profile = profileRepository.findByRegularUserUsername(username);
+		Profile followedBy = profileRepository.findByRegularUserUsername(loggedInUsername);
+
+		Follow follow = new Follow();
+		follow.setFollowedBy(followedBy);
+		follow.setProfile(profile);
+		follow.setBlocked(false);
+		follow.setCloseFriend(false);
+		follow.setMuted(false);
+
+		followRepository.save(follow);
+		
+		return getFollowers(username).size();
 	}
 
 	@Override
-	public int followProfile(long id, long loggedId) {
-		// TODO Auto-generated method stub
-		/*Profile profileToFollow = profileRepository.findByRegularUserId(id); // profil korisnika kog hocu da zapratim
-		Followers followerToFollow = followersRepo.findByProfileId(id);
-
-		Profile loggedInProfile = profileRepository.findByRegularUserId(loggedId);// profil ulogovanog korisnika
-		Followers loggedInFollower = followersRepo.findByProfileId(loggedId); // dobavi mi ljude koje prati ulogovani profil
-		
-		Set<Profile> following = loggedInFollower.getFollowing(); // ljudi koji prate profil ulogovanog korisnika
-		Set<Profile> followers = followerToFollow.getFollowersOfProfile();// ljudi koji prate drugog korisnika
-		
-		//ukoliko je profil javan dodaj u listu pratilaca i listu pratecih
-		if (!profileToFollow.isPrivateProfile()) {
-			
-			following.add(profileToFollow); // dodajem da ulogovani prati korisnika 2			
-			followers.add(loggedInProfile); // dodajem da korisnika 2 prati ulogovani
+	public int unfollowProfile(String username, String loggedInUsername) {
+		Follow delete = new Follow();
+		for (Follow f : followRepository.findAll()) {
+			if (f.getProfile().getRegularUserUsername().equals(username)
+					&& f.getFollowedBy().getRegularUserUsername().equals(loggedInUsername)) {
+				delete = f;
+				break;
+			}
 		}
+		followRepository.delete(delete);
 		
-		followersRepo.save(followerToFollow);
-		followersRepo.save(loggedInFollower);
-		return followers.size();*/
-		return 1;
+		return getFollowers(username).size();
 	}
-
-	@Override
-	public int unfollowProfile(long id, long loggedId) {
-		/*Profile profileToFollow = profileRepository.findByRegularUserId(id); // profil korisnika kog hocu da zapratim
-		Followers followerToFollow = followersRepo.findByProfileId(id);
-
-		Profile loggedInProfile = profileRepository.findByRegularUserId(loggedId);// profil ulogovanog korisnika
-		Followers loggedInFollower = followersRepo.findByProfileId(loggedId); // dobavi mi ljude koje prati ulogovani profil
-		
-		Set<Profile> following = loggedInFollower.getFollowing(); // ljudi koji prate profil ulogovanog korisnika
-		Set<Profile> followers = followerToFollow.getFollowersOfProfile();// ljudi koji prate drugog korisnika
-			
-		following.remove(profileToFollow); // dodajem da ulogovani prati korisnika 2			
-		followers.remove(loggedInProfile); // dodajem da korisnika 2 prati ulogovani
-		
-		
-		followersRepo.save(followerToFollow);
-		followersRepo.save(loggedInFollower);
-		return followers.size();*/
-		return 1;
+	
+	public List<String> getFollowers(String username){
+		List<String> followers = new ArrayList<String>();
+		for (Follow f : followRepository.findAll()) {
+			if (f.getProfile().getRegularUserUsername().equals(username)) {
+				followers.add(f.getFollowedBy().getRegularUserUsername());
+			}
+		}
+		return followers;
+	}
+	
+	public List<String> getFollowing(String username){
+		List<String> following = new ArrayList<String>();
+		for (Follow f : followRepository.findAll()) {
+			if (f.getFollowedBy().getRegularUserUsername().equals(username)) {
+				following.add(f.getFollowedBy().getRegularUserUsername());
+			}
+		}
+		return following;
 	}
 }

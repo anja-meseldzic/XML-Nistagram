@@ -25,11 +25,15 @@ export class ProfileService {
     }
   }
 
-  public followProfile(id : number){
-    return this._http.get("http://localhost:8085/profile/follow/"+ id, {responseType: 'text'});
+  public followProfile(username : string){
+    return this._http.get("http://localhost:8085/profile/follow/"+ username, {responseType: 'text',headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
   }
 
-  public unfollowProfile(id : number) {
-    return this._http.get("http://localhost:8085/profile/unfollow/"+ id, {responseType: 'text'});
+  public unfollowProfile(username : string) {
+    return this._http.get("http://localhost:8085/profile/unfollow/"+ username, {responseType: 'text',headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
   }
 }
