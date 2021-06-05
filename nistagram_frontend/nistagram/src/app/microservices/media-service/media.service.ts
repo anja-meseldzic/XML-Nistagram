@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AllCommentDTO } from '../DTOs/all-comment-dto';
 import { CommentDTO } from '../DTOs/comment-dto';
 import { PostDTO } from '../DTOs/post-dto';
 import { Post } from '../model/post';
@@ -16,6 +18,7 @@ export class MediaService {
   private createStoryUrl = this.baseUrl + "/media/createStory";
   private createAlbumUrl = this.baseUrl + "/media/createAlbum";
   private postCommentUrl = this.baseUrl + "/media/postComment";
+  private getAllCommentsUrl = this.baseUrl + "/media/allComments";
 
   constructor(private _http : HttpClient) { }
 
@@ -40,6 +43,10 @@ export class MediaService {
     new SearchResult('tag', 'hashtag'),
     new SearchResult('location', 'location')
   ];
+  
+  getComments(data : number) : Observable<AllCommentDTO[]>{
+    return this._http.post<AllCommentDTO[]>(this.getAllCommentsUrl, data, {responseType: 'json'});
+  }
 
   postComment(data : CommentDTO) {
     return this._http.post(this.postCommentUrl,data, {responseType: 'text'});

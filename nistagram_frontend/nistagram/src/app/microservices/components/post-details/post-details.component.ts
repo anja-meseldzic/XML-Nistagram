@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AllCommentDTO } from '../../DTOs/all-comment-dto';
 import { CommentDTO } from '../../DTOs/comment-dto';
 import { MediaService } from '../../media-service/media.service';
 import { Post } from '../../model/post';
@@ -13,7 +14,7 @@ import { Post } from '../../model/post';
 export class PostDetailsComponent implements OnInit {
 
   post : Post;
-  public comments : string[] = ['very nice', 'cool', 'beautiful', 'lepo'];
+  public comments : AllCommentDTO[] = [];
   public likes : number = 50;
   public dislikes : number = 2 ;
   public comment : string;
@@ -23,6 +24,7 @@ export class PostDetailsComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.getPost(id);
+    this.getComments(Number(id));
   }
   like(){
 
@@ -30,18 +32,23 @@ export class PostDetailsComponent implements OnInit {
   dislike(){
 
   }
+  getComments(id : number){
+    this.mediaService.getComments(id).subscribe(
+      (data) => this.comments = data
+    );
+  }
   postComment(){
     this.mediaService.postComment(new CommentDTO(Number(this.route.snapshot.paramMap.get('id')),this.comment)).subscribe(
       (data) => {
        let message = "Comment is uploaded. ";
        this.openSnackBar(message, "Okay");
+       this.getComments(Number(this.route.snapshot.paramMap.get('id')));
+       this.comment="";
    },
    error => {
      this.openSnackBar(error.error, "Okay");
    }
-   
    );
-
   }
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {
