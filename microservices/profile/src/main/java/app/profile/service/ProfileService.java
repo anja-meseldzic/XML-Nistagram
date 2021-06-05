@@ -1,10 +1,13 @@
 package app.profile.service;
 
+import java.util.List;
+import java.util.Set;
 
 import app.profile.dtos.ProfileInfoDTO;
 import app.profile.exception.ProfileNotFoundException;
+import app.profile.model.dto.FollowRequestDto;
+import app.profile.model.dto.FollowerDto;
 
-import java.util.List;
 
 public interface ProfileService {
 	int followProfile(String username, String loggedInUsername);
@@ -17,9 +20,9 @@ public interface ProfileService {
 
 	List<String> getAll();
 
-	List<String> getFollowers(String profile);
+	List<String> getFollowerss(String profile);
 
-	List<String> getFollowing(String profile);
+	List<String> getFollowingg(String profile);
 
 	List<String> getBlocked(String profile);
 
@@ -28,4 +31,14 @@ public interface ProfileService {
 	List<String> getCloseFriends(String profile);
 
 	boolean isPublic(String profile) throws ProfileNotFoundException;
+
+	Set<FollowRequestDto> getFollowRequests(String username);
+
+	Set<FollowRequestDto> acceptRequest(String username,String loggedInUsername);
+
+	Set<FollowRequestDto> deleteRequest(String username,String loggedInUsername);
+
+	List<FollowerDto> getFollowers(String username);
+
+	List<FollowerDto> getFollowing(String username);
 }

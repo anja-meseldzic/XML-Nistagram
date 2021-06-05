@@ -10,24 +10,28 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 import app.media.dtos.AlbumDTO;
 import app.media.dtos.AllCommentDTO;
+import app.media.dtos.AllReactionsDTO;
 import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
+import app.media.dtos.RatingDTO;
+import app.media.dtos.ReactionsNumberDTO;
 import app.media.exception.PostDoesNotExistException;
 import app.media.model.Comment;
 import app.media.model.Media;
 import app.media.model.Post;
+import app.media.model.Rating;
+import app.media.model.RatingType;
 import app.media.model.Story;
 import app.media.repository.CommentRepository;
 import app.media.repository.MediaRepository;
 import app.media.repository.PostRepository;
+import app.media.repository.RatingRepository;
 import app.media.repository.StoryRepository;
 import app.media.service.MediaService;
 import org.springframework.util.StringUtils;
@@ -41,19 +45,22 @@ public class MediaServiceImpl implements MediaService{
 	private PostRepository postRepository;
 	private StoryRepository storyRepository;
 	private CommentRepository commentRepository;
+	private RatingRepository ratingRepository;
 
 	public final String storageDirectoryPath = "..\\storage\\media-content";
 
 	@Autowired
-    public MediaServiceImpl(MediaRepository mediaRepository, PostRepository postRepository, StoryRepository storyRepository, CommentRepository commentRepository) {
+    public MediaServiceImpl(MediaRepository mediaRepository, PostRepository postRepository, StoryRepository storyRepository,
+    		CommentRepository commentRepository, RatingRepository ratingRepository) {
         this.mediaRepository = mediaRepository;
         this.postRepository = postRepository;
         this.storyRepository = storyRepository;
         this.commentRepository = commentRepository;
+        this.ratingRepository = ratingRepository;
     }
 
 	@Override
-	public void createPost(MultipartFile file, PostDTO postDTO) throws IOException {
+	public void createPost(MultipartFile file, PostDTO postDTO, String username) throws IOException {
 		String fileName = saveFile(file, storageDirectoryPath);
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
 				.path("media/content/")
@@ -62,7 +69,7 @@ public class MediaServiceImpl implements MediaService{
 		System.out.println(fileDownloadUri);
 
 		Media media = new Media();
-		media.setUsername("pera"); //PROFILE MICROSERVICE
+		media.setUsername(username);
 		Set<String> paths = new HashSet<String>();
 		paths.add(fileDownloadUri);
 		media.setPath(paths);
@@ -85,7 +92,7 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public void createStory(MultipartFile file, boolean closeFriends) throws IOException {
+	public void createStory(MultipartFile file, boolean closeFriends, String username) throws IOException {
 		String fileName = saveFile(file, storageDirectoryPath);
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
 				.path("media/content/")
@@ -94,7 +101,7 @@ public class MediaServiceImpl implements MediaService{
 		System.out.println(fileDownloadUri);
 
 		Media media = new Media();
-		media.setUsername("pera"); //PROFILE MICROSERVICE
+		media.setUsername(username);
 		Set<String> paths = new HashSet<String>();
 		paths.add(fileDownloadUri);
 		media.setPath(paths);
@@ -111,7 +118,7 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public void createAlbumAsPost(List<MultipartFile> files, AlbumDTO albumDTO) throws IOException {
+	public void createAlbumAsPost(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws IOException {
 		Set<String> fileNames = new HashSet<String>();
 		for(MultipartFile file : files) {
 			String fileName = saveFile(file, storageDirectoryPath);
@@ -124,7 +131,7 @@ public class MediaServiceImpl implements MediaService{
 		}
 
 		Media media = new Media();
-		media.setUsername("pera"); //PROFILE MICROSERVICE
+		media.setUsername(username);
 		media.setPath(fileNames);
 		media.setCreated(LocalDateTime.now());
 		mediaRepository.save(media);
@@ -139,7 +146,7 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public void createAlbumAsStory(List<MultipartFile> files, AlbumDTO albumDTO) throws  IOException {
+	public void createAlbumAsStory(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws  IOException {
 		Set<String> fileNames = new HashSet<String>();
 		for(MultipartFile file : files) {
 			String fileName = saveFile(file, storageDirectoryPath);
@@ -152,7 +159,7 @@ public class MediaServiceImpl implements MediaService{
 		}
 
 		Media media = new Media();
-		media.setUsername("pera"); //PROFILE MICROSERVICE
+		media.setUsername(username);
 		media.setPath(fileNames);
 		media.setCreated(LocalDateTime.now());
 		mediaRepository.save(media);
@@ -167,9 +174,9 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public void postComment(CommentDTO dto) throws PostDoesNotExistException {
+	public void postComment(CommentDTO dto, String username) throws PostDoesNotExistException {
 		Comment comment = new Comment();
-		comment.setUsername("username"); //
+		comment.setUsername(username); 
 		comment.setDateCreated(LocalDateTime.now());
 		comment.setContent(dto.getContent());
 		commentRepository.save(comment);
@@ -224,5 +231,72 @@ public class MediaServiceImpl implements MediaService{
 			return parts[parts.length - 1];
 		else
 			throw new IOException();
+	}
+
+	@Override
+	public void reactOnPost(RatingDTO dto, String username) throws PostDoesNotExistException {
+		Post post = postRepository.findOneById(dto.getId());
+		if(post == null) {
+			throw new PostDoesNotExistException("You are trying to get post that does not exist!");
+		}
+		Set<Rating> ratings = post.getRatings();
+		RatingType type = dto.isLike() ? RatingType.LIKE : RatingType.DISLIKE;
+		for(Rating rat : ratings) {
+			if(rat.getUsername().equals(username) && rat.getRatingType() == type) { 
+				return;
+			}
+		}
+		Rating rating = new Rating();
+		rating.setUsername(username); 
+		if(dto.isLike() == false) {
+			rating.setRatingType(RatingType.DISLIKE);
+		}else {
+			rating.setRatingType(RatingType.LIKE);
+		}
+		ratingRepository.save(rating);
+		post.getRatings().add(rating);
+		postRepository.save(post);
+	}
+
+	@Override
+	public ReactionsNumberDTO getReactionsNumber(long id) throws PostDoesNotExistException {
+		Post post = postRepository.findOneById(id);
+		if(post == null) {
+			throw new PostDoesNotExistException("You are trying to get post that does not exist!");
+		}
+		ReactionsNumberDTO dto = new ReactionsNumberDTO();
+		Set<Rating> likes = new HashSet<Rating>();
+		Set<Rating> dislikes = new HashSet<Rating>();
+		Set<Rating> ratings = post.getRatings();
+		for(Rating rating : ratings) {
+			if(rating.getRatingType() == RatingType.LIKE) {
+				likes.add(rating);
+			}else {
+				dislikes.add(rating);
+			}
+		}
+		dto.setLikes(likes.size());
+		dto.setDislikes(dislikes.size());
+		return dto;
+	}
+
+	@Override
+	public AllReactionsDTO getAllReactions(long postId) throws PostDoesNotExistException {
+		Post post = postRepository.findOneById(postId);
+		if(post == null) {
+			throw new PostDoesNotExistException("You are trying to get post that does not exist!");
+		}
+		Set<String> likes = new HashSet<String>();
+		Set<String> dislikes = new HashSet<String>();
+		Set<Rating> ratings = post.getRatings();
+		for(Rating rat : ratings) {
+			if(rat.getRatingType() == RatingType.LIKE) {
+				likes.add(rat.getUsername());
+			}else {
+				dislikes.add(rat.getUsername());
+			}
+		}
+		AllReactionsDTO dto = new AllReactionsDTO(likes, dislikes);
+		return dto;
 	}
 }

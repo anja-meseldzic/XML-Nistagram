@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import axios from 'axios';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import jwtDecode from 'jwt-decode';
+import {Router} from '@angular/router';
 
 
 @Component({
@@ -23,11 +24,21 @@ export class PersonalInfoEditComponent implements OnInit {
   username: string;
 
   // tslint:disable-next-line:variable-name
-  constructor(private _snackBar: MatSnackBar) { }
+  constructor(private _snackBar: MatSnackBar, private router: Router) { }
 
   ngOnInit(): void {
     const jwt = localStorage.getItem('jwt');
+    if (jwt == null) {
+      this.router.navigate(['/unauthorized']);
+      return;
+    }
     const jwtDec = jwtDecode(jwt);
+    // @ts-ignore
+    if (jwtDec.role !== 'USER') {
+      this.router.navigate(['/unauthorized']);
+      return;
+    }
+
 
     axios
       // @ts-ignore
@@ -48,7 +59,6 @@ export class PersonalInfoEditComponent implements OnInit {
         this.website = res.data.website;
         this.biography = res.data.biography;
         this.username = res.data.user.username;
-        console.log(this.birthDate);
       });
   }
 

@@ -20,6 +20,10 @@ import { NgImageSliderModule } from 'ng-image-slider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete'; 
 import { MatListModule } from '@angular/material/list'; 
 import { AuthInterceptorService } from './interceptors/auth-interceptor.service';
+import {MatDialogModule} from '@angular/material/dialog';
+import { FollowerRequestDialogComponent } from './microservices/components/follower-request-dialog/follower-request-dialog.component';
+import { FollowersDialogComponent } from './microservices/components/followers-dialog/followers-dialog.component';
+
 
 
 @NgModule({
@@ -45,13 +49,16 @@ import { AuthInterceptorService } from './interceptors/auth-interceptor.service'
     NgbModule,
     NgImageSliderModule,
     MatAutocompleteModule,
-    MatListModule
+    MatListModule,
+    MatDialogModule
+    
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptorService,
     multi: true
   }],
+  entryComponents:[FollowerRequestDialogComponent, FollowersDialogComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
