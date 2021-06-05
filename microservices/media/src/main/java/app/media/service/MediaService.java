@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import app.media.dtos.AlbumDTO;
 import app.media.dtos.AllCommentDTO;
+import app.media.dtos.AllReactionsDTO;
 import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
 import app.media.dtos.RatingDTO;
@@ -36,4 +37,6 @@ public interface MediaService {
 	ReactionsNumberDTO getReactionsNumber(long id) throws PostDoesNotExistException;
 	
 	Set<AllCommentDTO> getAllComments(long postId) throws PostDoesNotExistException;
+
+	AllReactionsDTO getAllReactions(long postId) throws PostDoesNotExistException;
 }

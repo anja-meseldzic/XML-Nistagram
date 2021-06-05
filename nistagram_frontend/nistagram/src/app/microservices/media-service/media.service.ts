@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AllCommentDTO } from '../DTOs/all-comment-dto';
+import { AllReactionsDTO } from '../DTOs/all-reactions-dto';
 import { CommentDTO } from '../DTOs/comment-dto';
 import { PostDTO } from '../DTOs/post-dto';
 import { RatingDTO } from '../DTOs/rating-dto';
@@ -23,6 +24,7 @@ export class MediaService {
   private getAllCommentsUrl = this.baseUrl + "/media/allComments";
   private reactOnPostUrl = this.baseUrl + "/media/reactOnPost";
   private getReactionsNumberUrl = this.baseUrl + "/media/getReactionsNumber";
+  private getReactionsUrl = this.baseUrl + "/media/allReactions";
 
   constructor(private _http : HttpClient) { }
 
@@ -47,6 +49,10 @@ export class MediaService {
     new SearchResult('tag', 'hashtag'),
     new SearchResult('location', 'location')
   ];
+
+  getAllReactions(data : number) : Observable<AllReactionsDTO>{
+    return this._http.post<AllReactionsDTO>(this.getReactionsUrl, data, {responseType: 'json'});
+  }
 
   getReactionsNumber(data : number) : Observable<ReactionsNumberDTO>{
     return this._http.post<ReactionsNumberDTO>(this.getReactionsNumberUrl, data, {responseType: 'json'});

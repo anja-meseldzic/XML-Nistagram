@@ -28,6 +28,10 @@ export class PostDetailsComponent implements OnInit {
     this.getComments(Number(id));
     this.getRatingsNumber(Number(id));
   }
+  
+  reactions(){
+    this.router.navigate(['./reactions/' + this.route.snapshot.paramMap.get('id') ]);
+  }
 
   getRatingsNumber(id: number) {
     this.mediaService.getReactionsNumber(id).subscribe(

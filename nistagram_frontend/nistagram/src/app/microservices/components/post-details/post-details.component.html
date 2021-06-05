@@ -22,9 +22,9 @@
         <mat-divider></mat-divider>
         <div >
             <button mat-raised-button (click)="like()" style="height: 30px; width: 140px; background-color: rgb(255, 197, 252); margin-top: 10px; margin-left: 10px" >LIKE</button>
-            <p style="display:inline; margin-left: 15px; color:rgb(255, 138, 249); font-size:medium; ">{{likes}} </p>
+            <p style="display:inline; margin-left: 15px; color:rgb(255, 138, 249); font-size:medium; cursor:pointer" (click)="reactions()">{{likes}} </p>
             <button mat-raised-button (click)="dislike()" style="height: 30px; width: 140px; background-color: rgb(254, 255, 244); margin-top: 10px; margin-left: 20px;" >DISLIKE</button>
-            <p style="display:inline; margin-left: 15px; font-size:medium; ">{{dislikes}} </p>    
+            <p style="display:inline; margin-left: 15px; font-size:medium; cursor:pointer" (click)="reactions()">{{dislikes}} </p>    
         </div>
       <div style= "margin-top: 10px;margin-bottom: 2px;">
         <mat-list  role="list">

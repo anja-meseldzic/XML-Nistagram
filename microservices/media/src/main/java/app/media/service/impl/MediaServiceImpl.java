@@ -9,14 +9,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.*;
-
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 import app.media.dtos.AlbumDTO;
 import app.media.dtos.AllCommentDTO;
+import app.media.dtos.AllReactionsDTO;
 import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
 import app.media.dtos.RatingDTO;
@@ -235,6 +234,13 @@ public class MediaServiceImpl implements MediaService{
 		if(post == null) {
 			throw new PostDoesNotExistException("You are trying to get post that does not exist!");
 		}
+		Set<Rating> ratings = post.getRatings();
+		RatingType type = dto.isLike() ? RatingType.LIKE : RatingType.DISLIKE;
+		for(Rating rat : ratings) {
+			if(rat.getUsername().equals("username") && rat.getRatingType() == type) { //USERNAME
+				return;
+			}
+		}
 		Rating rating = new Rating();
 		rating.setUsername("username"); //USERNAME
 		if(dto.isLike() == false) {
@@ -266,6 +272,26 @@ public class MediaServiceImpl implements MediaService{
 		}
 		dto.setLikes(likes.size());
 		dto.setDislikes(dislikes.size());
+		return dto;
+	}
+
+	@Override
+	public AllReactionsDTO getAllReactions(long postId) throws PostDoesNotExistException {
+		Post post = postRepository.findOneById(postId);
+		if(post == null) {
+			throw new PostDoesNotExistException("You are trying to get post that does not exist!");
+		}
+		Set<String> likes = new HashSet<String>();
+		Set<String> dislikes = new HashSet<String>();
+		Set<Rating> ratings = post.getRatings();
+		for(Rating rat : ratings) {
+			if(rat.getRatingType() == RatingType.LIKE) {
+				likes.add(rat.getUsername());
+			}else {
+				dislikes.add(rat.getUsername());
+			}
+		}
+		AllReactionsDTO dto = new AllReactionsDTO(likes, dislikes);
 		return dto;
 	}
 }

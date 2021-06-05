@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.media.dtos.AlbumDTO;
 import app.media.dtos.AllCommentDTO;
+import app.media.dtos.AllReactionsDTO;
 import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
 import app.media.dtos.RatingDTO;
@@ -45,6 +46,18 @@ public class MediaController {
 		if(!TokenUtils.verify(auth, "USER"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		return new ResponseEntity<>("OK", HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "allReactions")
+	public ResponseEntity<AllReactionsDTO> getReactions(@RequestBody long id)
+	{
+		AllReactionsDTO dto;
+		try {
+			dto = mediaService.getAllReactions(id);
+		} catch (PostDoesNotExistException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+		return new ResponseEntity<>(dto, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "getReactionsNumber")
