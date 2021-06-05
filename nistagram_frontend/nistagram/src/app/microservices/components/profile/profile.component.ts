@@ -68,17 +68,15 @@ export class ProfileComponent implements OnInit {
 
   follow(privateProfile : boolean, profileUsername : string){
     if(!privateProfile){
-      //this.profile.followerCount = this.profile.followerCount.valueOf() + 1;
       this.profile.following = true;
-      this.profileService.followProfile(2).subscribe(data => this.profile.followerCount = Number(data));
+      this.profileService.followProfile(profileUsername).subscribe(data => this.profile.followerCount = Number(data));
     }else{
       console.log("Follow request have been sent.")
     }
   }
   unfollow(profileUsername : string){
-    //this.profile.followerCount = this.profile.followerCount.valueOf() - 1;
     this.profile.following = false;
-    this.profileService.unfollowProfile(2).subscribe(data => this.profile.followerCount = Number(data));
+    this.profileService.unfollowProfile(profileUsername).subscribe(data => this.profile.followerCount = Number(data));
   }
 
   public seeDetails(id : String) {

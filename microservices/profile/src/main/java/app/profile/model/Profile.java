@@ -79,11 +79,11 @@ public class Profile {
 		this.allowTagging = allowTagging;
 	}
 
-	public String getRegularUserId() {
+	public String getRegularUserUsername() {
 		return regularUserUsername;
 	}
 
-	public void setRegularUserId(String regularUserId) {
+	public void setRegularUserUsername(String regularUserId) {
 		this.regularUserUsername = regularUserId;
 	}
 
