@@ -7,6 +7,7 @@ import { FeedComponent } from './microservices/components/feed/feed.component';
 import { PostDetailsComponent } from './microservices/components/post-details/post-details.component';
 import { ProfileComponent } from './microservices/components/profile/profile.component';
 import { SearchResultsComponent } from './microservices/components/search-results/search-results.component';
+import {UnauthorizedPageComponent} from './microservices/auth-service/unauthorized-page/unauthorized-page.component';
 
 const routes: Routes = [
   {path: 'registration', component: RegistrationComponent},
@@ -16,6 +17,7 @@ const routes: Routes = [
   {path: 'post/:id', component: PostDetailsComponent},
   {path: 'post', component: SearchResultsComponent},
   {path: 'profile/:username', component: ProfileComponent},
+  {path: 'unauthorized', component: UnauthorizedPageComponent},
   {path: '', loadChildren: () => import('./microservices/microservices.module').then(mod => mod.MicroservicesModule)}
 ];
 
