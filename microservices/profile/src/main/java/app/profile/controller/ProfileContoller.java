@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import app.profile.model.Profile;
+
 import app.profile.service.ProfileService;
-import app.profile.service.impl.ProfileServiceImpl;
 import app.profile.util.TokenUtils;
 
 @RestController
@@ -48,5 +47,11 @@ public class ProfileContoller {
 		String loggedInUsername = TokenUtils.getUsernameFromToken(TokenUtils.getToken(auth));
 		int followerCount = profileService.unfollowProfile(username, loggedInUsername); 
 		return new ResponseEntity<>(followerCount, HttpStatus.OK);
+	}
+
+	@PostMapping("/{username}")
+	public ResponseEntity<Void> createFromUser(@PathVariable String username) {
+		profileService.createFromUser(username);
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 }

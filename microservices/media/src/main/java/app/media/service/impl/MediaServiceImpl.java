@@ -2,6 +2,7 @@ package app.media.service.impl;
 
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +12,7 @@ import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 import app.media.dtos.AlbumDTO;
@@ -185,6 +187,11 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
+	public UrlResource getContent(String contentName) throws MalformedURLException {
+		return new UrlResource("file:" + storageDirectoryPath + "\\" + contentName);
+	}
+
+	@Override
 	public Set<AllCommentDTO> getAllComments(long postId) throws PostDoesNotExistException {
 		Post post = postRepository.findOneById(postId);
 		if(post == null) {
@@ -196,13 +203,6 @@ public class MediaServiceImpl implements MediaService{
 			contents.add(new AllCommentDTO(com.getUsername(), com.getContent()));
 		}
 		return contents;
-	}
-
-	public  byte[] getContent(String contentName) throws IOException {
-		Path destination = Paths.get(storageDirectoryPath+"\\"+contentName);
-		System.out.println(destination.toString());
-		System.out.println(destination.toUri());
-		return IOUtils.toByteArray(destination.toUri());
 	}
 
 	private String saveFile(MultipartFile file, String storageDirectoryPath) throws IOException {
