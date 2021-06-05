@@ -59,7 +59,7 @@ public class MediaServiceImpl implements MediaService{
     }
 
 	@Override
-	public void createPost(MultipartFile file, PostDTO postDTO) throws IOException {
+	public void createPost(MultipartFile file, PostDTO postDTO, String username) throws IOException {
 		String fileName = saveFile(file, storageDirectoryPath);
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
 				.path("media/content/")
@@ -68,7 +68,7 @@ public class MediaServiceImpl implements MediaService{
 		System.out.println(fileDownloadUri);
 
 		Media media = new Media();
-		media.setUsername("username"); //PROFILE MICROSERVICE
+		media.setUsername(username);
 		Set<String> paths = new HashSet<String>();
 		paths.add(fileDownloadUri);
 		media.setPath(paths);
@@ -90,7 +90,7 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public void createStory(MultipartFile file, boolean closeFriends) throws IOException {
+	public void createStory(MultipartFile file, boolean closeFriends, String username) throws IOException {
 		String fileName = saveFile(file, storageDirectoryPath);
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
 				.path("media/content/")
@@ -99,7 +99,7 @@ public class MediaServiceImpl implements MediaService{
 		System.out.println(fileDownloadUri);
 
 		Media media = new Media();
-		media.setUsername("username"); //PROFILE MICROSERVICE
+		media.setUsername(username);
 		Set<String> paths = new HashSet<String>();
 		paths.add(fileDownloadUri);
 		media.setPath(paths);
@@ -115,7 +115,7 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public void createAlbumAsPost(List<MultipartFile> files, AlbumDTO albumDTO) throws IOException {
+	public void createAlbumAsPost(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws IOException {
 		Set<String> fileNames = new HashSet<String>();
 		for(MultipartFile file : files) {
 			String fileName = saveFile(file, storageDirectoryPath);
@@ -128,7 +128,7 @@ public class MediaServiceImpl implements MediaService{
 		}
 
 		Media media = new Media();
-		media.setUsername("username"); //PROFILE MICROSERVICE
+		media.setUsername(username); 
 		media.setPath(fileNames);
 		mediaRepository.save(media);
 		
@@ -142,7 +142,7 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public void createAlbumAsStory(List<MultipartFile> files, AlbumDTO albumDTO) throws  IOException {
+	public void createAlbumAsStory(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws  IOException {
 		Set<String> fileNames = new HashSet<String>();
 		for(MultipartFile file : files) {
 			String fileName = saveFile(file, storageDirectoryPath);
@@ -155,7 +155,7 @@ public class MediaServiceImpl implements MediaService{
 		}
 
 		Media media = new Media();
-		media.setUsername("username"); //PROFILE MICROSERVICE
+		media.setUsername(username); 
 		media.setPath(fileNames);
 		mediaRepository.save(media);
 		
@@ -169,9 +169,9 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public void postComment(CommentDTO dto) throws PostDoesNotExistException {
+	public void postComment(CommentDTO dto, String username) throws PostDoesNotExistException {
 		Comment comment = new Comment();
-		comment.setUsername("username"); //
+		comment.setUsername(username); 
 		comment.setDateCreated(LocalDateTime.now());
 		comment.setContent(dto.getContent());
 		commentRepository.save(comment);
@@ -229,7 +229,7 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public void reactOnPost(RatingDTO dto) throws PostDoesNotExistException {
+	public void reactOnPost(RatingDTO dto, String username) throws PostDoesNotExistException {
 		Post post = postRepository.findOneById(dto.getId());
 		if(post == null) {
 			throw new PostDoesNotExistException("You are trying to get post that does not exist!");
@@ -237,12 +237,12 @@ public class MediaServiceImpl implements MediaService{
 		Set<Rating> ratings = post.getRatings();
 		RatingType type = dto.isLike() ? RatingType.LIKE : RatingType.DISLIKE;
 		for(Rating rat : ratings) {
-			if(rat.getUsername().equals("username") && rat.getRatingType() == type) { //USERNAME
+			if(rat.getUsername().equals(username) && rat.getRatingType() == type) { 
 				return;
 			}
 		}
 		Rating rating = new Rating();
-		rating.setUsername("username"); //USERNAME
+		rating.setUsername(username); 
 		if(dto.isLike() == false) {
 			rating.setRatingType(RatingType.DISLIKE);
 		}else {

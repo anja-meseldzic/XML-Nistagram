@@ -18,21 +18,21 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface MediaService {
 
-	void createPost(MultipartFile file, PostDTO postDTO) throws IOException;
+	void createPost(MultipartFile file, PostDTO postDTO, String username) throws IOException;
 
 	Media save(Media media);
 
-	void createStory(MultipartFile file, boolean closeFriends) throws  IOException;
+	void createStory(MultipartFile file, boolean closeFriends, String username) throws  IOException;
 
-	void createAlbumAsPost(List<MultipartFile> files, AlbumDTO albumDTO) throws  IOException;
+	void createAlbumAsPost(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws  IOException;
 
-	void createAlbumAsStory(List<MultipartFile> files, AlbumDTO albumDTO) throws  IOException;
+	void createAlbumAsStory(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws  IOException;
 
-	void postComment(CommentDTO dto) throws PostDoesNotExistException;
+	void postComment(CommentDTO dto, String username) throws PostDoesNotExistException;
 
 	UrlResource getContent(String contentName) throws MalformedURLException;
 
-	void reactOnPost(RatingDTO dto) throws PostDoesNotExistException;
+	void reactOnPost(RatingDTO dto, String username) throws PostDoesNotExistException;
 
 	ReactionsNumberDTO getReactionsNumber(long id) throws PostDoesNotExistException;
 	
