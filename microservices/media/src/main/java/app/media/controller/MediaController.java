@@ -14,8 +14,10 @@ import javax.servlet.http.HttpSession;
 import app.media.util.TokenUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -108,13 +110,15 @@ public class MediaController {
 		return new ResponseEntity<>(HttpStatus.OK);
     }
 
-	@GetMapping(
-			value = "content/{contentName:.+}",
-			produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, "video/mp4"}
-	)
-	public @ResponseBody byte[] getContent(@PathVariable(name = "contentName") String fileName) {
+	@GetMapping(value = "content/{contentName:.+}")
+	public @ResponseBody ResponseEntity<UrlResource> getContent(@PathVariable(name = "contentName") String fileName) {
 		try {
-			return this.mediaService.getContent(fileName);
+			UrlResource resource = mediaService.getContent(fileName);
+			return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+					.contentType(MediaTypeFactory
+							.getMediaType(resource)
+							.orElse(MediaType.APPLICATION_OCTET_STREAM))
+							.body(this.mediaService.getContent(fileName));
 		} catch (IOException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}

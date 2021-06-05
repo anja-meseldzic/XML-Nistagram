@@ -2,6 +2,7 @@ package app.media.service.impl;
 
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +12,7 @@ import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 import app.media.dtos.AlbumDTO;
@@ -28,7 +30,6 @@ import app.media.repository.StoryRepository;
 import app.media.service.MediaService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Service
@@ -177,11 +178,8 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public  byte[] getContent(String contentName) throws IOException {
-		Path destination = Paths.get(storageDirectoryPath+"\\"+contentName);
-		System.out.println(destination.toString());
-		System.out.println(destination.toUri());
-		return IOUtils.toByteArray(destination.toUri());
+	public UrlResource getContent(String contentName) throws MalformedURLException {
+		return new UrlResource("file:" + storageDirectoryPath + "\\" + contentName);
 	}
 
 	private String saveFile(MultipartFile file, String storageDirectoryPath) throws IOException {

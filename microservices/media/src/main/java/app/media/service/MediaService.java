@@ -1,6 +1,7 @@
 package app.media.service;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
 import app.media.exception.PostDoesNotExistException;
 import app.media.model.Media;
+import org.springframework.core.io.UrlResource;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface MediaService {
@@ -25,5 +27,5 @@ public interface MediaService {
 
 	void postComment(CommentDTO dto) throws PostDoesNotExistException;
 
-	byte[] getContent(String contentName) throws IOException;
+	UrlResource getContent(String contentName) throws MalformedURLException;
 }
