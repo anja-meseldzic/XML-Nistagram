@@ -41,7 +41,7 @@ public class PostController {
                 String username = TokenUtils.getUsernameFromToken(auth.substring(7));
                 return new ResponseEntity<>(postService.getForProfile(username, profile), HttpStatus.OK);
             }
-            if (auth == null)
+            if (auth.equals("Bearer null"))
                 return new ResponseEntity<>(postService.getForProfile(null, profile), HttpStatus.OK);
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } catch (ProfilePrivateException e) {
@@ -55,7 +55,7 @@ public class PostController {
     public ResponseEntity<List<SearchResultDTO>> search(@PathVariable("criterion") String criterion, @RequestHeader("Authorization") String auth) {
         if(TokenUtils.verify(auth, "ADMIN"))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        if(auth == null)
+        if (auth.equals("Bearer null"))
             return new ResponseEntity<>(postService.search(null, criterion), HttpStatus.OK);
         return new ResponseEntity<>(postService.search(TokenUtils.getUsernameFromToken(auth.substring(7)), criterion), HttpStatus.OK);
     }
@@ -64,7 +64,7 @@ public class PostController {
     public ResponseEntity<List<PostInfoDTO>> getByLocation(@PathVariable("location") String location, @RequestHeader("Authorization") String auth) {
         if(TokenUtils.verify(auth, "ADMIN"))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        if(auth == null)
+        if (auth.equals("Bearer null"))
             return new ResponseEntity<>(postService.getAllWithLocation(null, location), HttpStatus.OK);
         return new ResponseEntity<>(postService.getAllWithLocation(TokenUtils.getUsernameFromToken(auth.substring(7)), location), HttpStatus.OK);
     }
@@ -73,7 +73,7 @@ public class PostController {
     public ResponseEntity<List<PostInfoDTO>> getByHashtag(@PathVariable("hashtag") String hashtag, @RequestHeader("Authorization") String auth) {
         if(TokenUtils.verify(auth, "ADMIN"))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        if(auth == null)
+        if (auth.equals("Bearer null"))
             return new ResponseEntity<>(postService.getAllWithHashtag(null, hashtag), HttpStatus.OK);
         return new ResponseEntity<>(postService.getAllWithHashtag(TokenUtils.getUsernameFromToken(auth.substring(7)), hashtag), HttpStatus.OK);
     }
@@ -83,7 +83,7 @@ public class PostController {
         try {
             if(TokenUtils.verify(auth, "ADMIN"))
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-            if(auth == null)
+            if (auth.equals("Bearer null"))
                 return new ResponseEntity<>(postService.get(null, id), HttpStatus.OK);
             return new ResponseEntity<>(postService.get(TokenUtils.getUsernameFromToken(auth.substring(7)), id), HttpStatus.OK);
         } catch (PostDoesNotExistException e) {

@@ -12,6 +12,8 @@ import app.media.dtos.PostDTO;
 import app.media.dtos.RatingDTO;
 import app.media.dtos.ReactionsNumberDTO;
 import app.media.exception.PostDoesNotExistException;
+import app.media.exception.ProfileBlockedException;
+import app.media.exception.ProfilePrivateException;
 import app.media.model.Media;
 import org.springframework.core.io.UrlResource;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +38,9 @@ public interface MediaService {
 
 	ReactionsNumberDTO getReactionsNumber(long id) throws PostDoesNotExistException;
 	
-	Set<AllCommentDTO> getAllComments(long postId) throws PostDoesNotExistException;
+	List<AllCommentDTO> getAllComments(long postId) throws PostDoesNotExistException;
 
 	AllReactionsDTO getAllReactions(long postId) throws PostDoesNotExistException;
+
+	void checkProfile(long postId, String myUsername) throws PostDoesNotExistException, ProfilePrivateException, ProfileBlockedException;
 }

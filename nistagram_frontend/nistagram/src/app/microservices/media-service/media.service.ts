@@ -16,14 +16,14 @@ import { Story } from '../model/story';
 })
 export class MediaService {
 
-  private postDataUrl = environment.mediaBaseUrl + "/media/createPost";
-  private createStoryUrl = environment.mediaBaseUrl + "/media/createStory";
-  private createAlbumUrl = environment.mediaBaseUrl + "/media/createAlbum";
-  private postCommentUrl = environment.mediaBaseUrl + "/media/postComment";
-  private getAllCommentsUrl = environment.mediaBaseUrl + "/media/allComments";
-  private reactOnPostUrl = environment.mediaBaseUrl + "/media/reactOnPost";
-  private getReactionsNumberUrl = environment.mediaBaseUrl + "/media/getReactionsNumber";
-  private getReactionsUrl = environment.mediaBaseUrl + "/media/allReactions";
+  private postDataUrl = environment.mediaBaseUrl + "media/createPost";
+  private createStoryUrl = environment.mediaBaseUrl + "media/createStory";
+  private createAlbumUrl = environment.mediaBaseUrl + "media/createAlbum";
+  private postCommentUrl = environment.mediaBaseUrl + "media/postComment";
+  private getAllCommentsUrl = environment.mediaBaseUrl + "media/allComments";
+  private reactOnPostUrl = environment.mediaBaseUrl + "media/reactOnPost";
+  private getReactionsNumberUrl = environment.mediaBaseUrl + "media/getReactionsNumber";
+  private getReactionsUrl = environment.mediaBaseUrl + "media/allReactions";
 
   constructor(private _http : HttpClient) { }
 

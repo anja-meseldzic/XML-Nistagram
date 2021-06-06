@@ -3,7 +3,6 @@ package app.media.controller;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.*;
 import app.media.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,8 @@ import app.media.dtos.PostDTO;
 import app.media.dtos.RatingDTO;
 import app.media.dtos.ReactionsNumberDTO;
 import app.media.exception.PostDoesNotExistException;
+import app.media.exception.ProfileBlockedException;
+import app.media.exception.ProfilePrivateException;
 import app.media.service.MediaService;
 
 @RestController
@@ -51,14 +52,21 @@ public class MediaController {
 	@PostMapping(value = "allReactions")
 	public ResponseEntity<AllReactionsDTO> getReactions(@RequestBody long id,  @RequestHeader("Authorization") String auth)
 	{
-		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+		if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		String token = TokenUtils.getToken(auth);
+		String myUsername = TokenUtils.getUsernameFromToken(token);
 		
 		AllReactionsDTO dto;
 		try {
+			mediaService.checkProfile(id, myUsername);
 			dto = mediaService.getAllReactions(id);
 		} catch (PostDoesNotExistException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		} catch (ProfilePrivateException e) {
+			 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profile is private");
+		} catch (ProfileBlockedException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You blocked this profile");
 		}
 		return new ResponseEntity<>(dto, HttpStatus.OK);
 	}
@@ -66,22 +74,29 @@ public class MediaController {
 	@PostMapping(value = "getReactionsNumber")
 	public ResponseEntity<ReactionsNumberDTO> getReactionsNumber(@RequestBody long id,  @RequestHeader("Authorization") String auth)
 	{
-		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+		if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		String token = TokenUtils.getToken(auth);
+		String myUsername = TokenUtils.getUsernameFromToken(token);
 		
 		ReactionsNumberDTO dto;
 		try {
+			mediaService.checkProfile(id, myUsername);
 			dto = mediaService.getReactionsNumber(id);
 		} catch (PostDoesNotExistException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 
+		} catch (ProfilePrivateException e) {
+			 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profile is private");
+		} catch (ProfileBlockedException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You blocked this profile");
 		}
 		return new ResponseEntity<>(dto,HttpStatus.OK);	
 	}
 	@PostMapping(value = "reactOnPost")
 	public ResponseEntity<String> reactOnPost(@RequestBody RatingDTO dto, @RequestHeader("Authorization") String auth)
 	{
-		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+		if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String username = TokenUtils.getUsernameFromToken(token);
@@ -95,24 +110,31 @@ public class MediaController {
 	}
 	
 	@PostMapping(value = "allComments")
-	public ResponseEntity<Set<AllCommentDTO>> getAllComments(@RequestBody long id,  @RequestHeader("Authorization") String auth)
+	public ResponseEntity<List<AllCommentDTO>> getAllComments(@RequestBody long id,  @RequestHeader("Authorization") String auth)
 	{
-		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+		if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		
-		Set<AllCommentDTO> comments;
+		String token = TokenUtils.getToken(auth);
+		String myUsername = TokenUtils.getUsernameFromToken(token);
+		List<AllCommentDTO>  comments;
 		try {
+			mediaService.checkProfile(id, myUsername);
 			comments = mediaService.getAllComments(id);
 		} catch (PostDoesNotExistException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		} catch (ProfilePrivateException e) {
+			 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profile is private");
+		} catch (ProfileBlockedException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You blocked this profile");
 		}
+		 
 		return new ResponseEntity<>(comments, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "postComment")
 	public ResponseEntity<String> postComment(@RequestBody CommentDTO dto, @RequestHeader("Authorization") String auth)
 	{
-		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+		if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String username = TokenUtils.getUsernameFromToken(token);
@@ -127,7 +149,7 @@ public class MediaController {
 
     @PostMapping(value="createAlbum")
     public ResponseEntity<Void> uploadFiles(MultipartHttpServletRequest request, @RequestHeader("Authorization") String auth) throws IOException {
-    	if(!TokenUtils.verify(auth, "USER","ADMIN"))
+    	if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String username = TokenUtils.getUsernameFromToken(token);
@@ -152,7 +174,7 @@ public class MediaController {
     }
     @PostMapping(value="createStory",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
    	public ResponseEntity<Void> creatStory(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "story", required = false) String model,  @RequestHeader("Authorization") String auth) throws JsonMappingException, JsonProcessingException{
-    	if(!TokenUtils.verify(auth, "USER","ADMIN"))
+    	if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String username = TokenUtils.getUsernameFromToken(token);
@@ -169,7 +191,7 @@ public class MediaController {
 
     @PostMapping(value="createPost",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Void> createPost(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "post", required = false) String model, @RequestHeader("Authorization") String auth) throws JsonMappingException, JsonProcessingException{
-    	if(!TokenUtils.verify(auth, "USER","ADMIN"))
+    	if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String username = TokenUtils.getUsernameFromToken(token);

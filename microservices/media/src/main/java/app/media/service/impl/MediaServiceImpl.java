@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,8 @@ import app.media.dtos.PostDTO;
 import app.media.dtos.RatingDTO;
 import app.media.dtos.ReactionsNumberDTO;
 import app.media.exception.PostDoesNotExistException;
+import app.media.exception.ProfileBlockedException;
+import app.media.exception.ProfilePrivateException;
 import app.media.model.Comment;
 import app.media.model.Media;
 import app.media.model.Post;
@@ -34,6 +35,8 @@ import app.media.repository.PostRepository;
 import app.media.repository.RatingRepository;
 import app.media.repository.StoryRepository;
 import app.media.service.MediaService;
+import app.media.service.ProfileService;
+
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -46,17 +49,20 @@ public class MediaServiceImpl implements MediaService{
 	private StoryRepository storyRepository;
 	private CommentRepository commentRepository;
 	private RatingRepository ratingRepository;
+	private ProfileService profileService;
+	
 
 	public final String storageDirectoryPath = "..\\storage\\media-content";
 
 	@Autowired
     public MediaServiceImpl(MediaRepository mediaRepository, PostRepository postRepository, StoryRepository storyRepository,
-    		CommentRepository commentRepository, RatingRepository ratingRepository) {
+    		CommentRepository commentRepository, RatingRepository ratingRepository, ProfileService profileService) {
         this.mediaRepository = mediaRepository;
         this.postRepository = postRepository;
         this.storyRepository = storyRepository;
         this.commentRepository = commentRepository;
         this.ratingRepository = ratingRepository;
+        this.profileService = profileService;
     }
 
 	@Override
@@ -196,19 +202,31 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public Set<AllCommentDTO> getAllComments(long postId) throws PostDoesNotExistException {
+	public List<AllCommentDTO> getAllComments(long postId) throws PostDoesNotExistException {
 		Post post = postRepository.findOneById(postId);
 		if(post == null) {
 			throw new PostDoesNotExistException("You are trying to get post that does not exist!");
 		}
 		Set<Comment> comments =  post.getComments();
-		Set<AllCommentDTO> contents = new HashSet<AllCommentDTO>();
-		for(Comment com : comments) {
+		List<Comment> comArray = new ArrayList<>(comments);
+		sortByDateCreated(comArray);
+		List<AllCommentDTO> contents = new ArrayList<AllCommentDTO>();
+		for(Comment com : comArray) {
 			contents.add(new AllCommentDTO(com.getUsername(), com.getContent()));
 		}
 		return contents;
 	}
-
+	
+	private List<Comment> sortByDateCreated(List<Comment> dtos){
+		Collections.sort(dtos, new Comparator<Comment>() {
+		    @Override
+		    public int compare(Comment c1, Comment c2) {
+		        return c1.getDateCreated().compareTo(c2.getDateCreated());
+		    }
+		});
+		return dtos;
+	}
+	
 	private String saveFile(MultipartFile file, String storageDirectoryPath) throws IOException {
 		String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
 		String extension = getFileExtension(originalFileName);
@@ -298,5 +316,26 @@ public class MediaServiceImpl implements MediaService{
 		}
 		AllReactionsDTO dto = new AllReactionsDTO(likes, dislikes);
 		return dto;
+	}
+
+	@Override
+	public void checkProfile(long postId, String myUsername) throws PostDoesNotExistException, ProfilePrivateException, ProfileBlockedException {
+		Post post = postRepository.findOneById(postId);
+		if(post == null) {
+			throw new PostDoesNotExistException("You are trying to get post that does not exist!");
+		}
+		String username = post.getMedia().getUsername();
+		
+		 List<String> followers = profileService.getFollowers(username);
+	        boolean follower = followers.contains(myUsername);
+	        if(!profileService.isPublic(username) && !follower && !username.equals(myUsername))
+	            throw new ProfilePrivateException();
+	     
+	     List<String> blockedProfiles = profileService.getBlocked(myUsername);
+	      	boolean blocked = blockedProfiles.contains(username);
+	        if(blocked)
+	            throw new ProfileBlockedException();
+	
+	        
 	}
 }

@@ -1,0 +1,10 @@
+.mat-header-cell {
+    font-size: larger;
+    width: 50%;
+  }
+  table {
+    width: 80%;
+  }   
+  .mat-row:hover {
+    background-color: rgb(250, 242, 231);
+}

@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FollowRequestDto } from '../../DTOs/follow-request-dto';
+import { AuthService } from '../../auth-service/auth.service';
 import { MediaService } from '../../media-service/media.service';
 import { Post } from '../../model/post';
 import { ProfileInfo } from '../../model/profile-info';
 import { Story } from '../../model/story';
 import { ProfileService } from '../../profile-service/profile.service';
+import { CloseFriendsComponent } from '../close-friends/close-friends.component';
 import { FollowerRequestDialogComponent } from '../follower-request-dialog/follower-request-dialog.component';
 import { FollowersDialogComponent } from '../followers-dialog/followers-dialog.component';
 
@@ -18,7 +19,7 @@ import { FollowersDialogComponent } from '../followers-dialog/followers-dialog.c
 })
 export class ProfileComponent implements OnInit {
 
-  constructor(private _snackBar : MatSnackBar,private route : ActivatedRoute, private router : Router, private profileService : ProfileService, private mediaService : MediaService, private matDialog : MatDialog) { }
+  constructor(private route : ActivatedRoute, private router : Router, private profileService : ProfileService, private mediaService : MediaService, private matDialog : MatDialog, private snackBar : MatSnackBar, public authService : AuthService) { }
 
   profile : ProfileInfo = new ProfileInfo(0, '', '', '', new Date(1998, 11, 29), '', '', '', 0, 0, false, false, false);
   posts : Post[] = [];
@@ -54,11 +55,11 @@ export class ProfileComponent implements OnInit {
         if(this.profile.owned || this.profile.following || !this.profile.privateProfile) {
           this.mediaService.getPostsByUser(this.profile.username).subscribe(
             data => { this.posts = data; this.constructSliderObjectsForPosts(); },
-            error => console.log(error.error.message)
-          );
+            error => {this.openSnackBar(error.error.message); this.router.navigate(['./feed']);}
+          )
           this.mediaService.getStoriesByUser(this.profile.username).subscribe(
             data => { this.stories = data; this.constructSliderObjectsForStories(); },
-            error => console.log(error.error.message)
+            error => {this.openSnackBar(error.error.message); this.router.navigate(['./feed']);}
           );
         }
       }
@@ -123,7 +124,7 @@ export class ProfileComponent implements OnInit {
       this.profile.following = true;
       this.profileService.followProfile(profileUsername).subscribe(data => this.profile.followerCount = Number(data));
     }else{
-      this.openSnackBar("You have successfully sent follow request.", "Okay")
+      this.openSnackBar("You have successfully sent follow request.")
       this.profileService.followProfile(profileUsername).subscribe(data => this.profile.followerCount = Number(data));
     }
   }
@@ -158,9 +159,17 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  openSnackBar(message: string, action: string): void {
-    this._snackBar.open(message, action, {
+  openSnackBar(message: string) {
+    this.snackBar.open(message, "Okay", {
       duration: 5000,
     });
+  }
+
+  closeFriends(){
+    this.profileService.getFollowers(this.profile.username).subscribe(data =>{
+      console.log(data);
+      this.matDialog.open(CloseFriendsComponent, {data : data,  width: '70vw',
+      maxWidth: '70vw'});
+    }); 
   }
 }

@@ -2,18 +2,18 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import jwtDecode from 'jwt-decode';
+import { Router } from '@angular/router';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router : Router) { }
 
-  logOut(): boolean {
-    if (!this.isLoggedIn()) { return false; }
+  logOut(){
     localStorage.removeItem('jwt');
-    return true;
+    this.router.navigate(['./']);
   }
 
   // setLoggedIn(token: string) {
@@ -30,5 +30,13 @@ export class AuthService {
     const tokenPayload = jwtDecode(token);
     // @ts-ignore
     return tokenPayload.role;
+  }
+
+  getUsername(): string {
+    if (!this.isLoggedIn()) { return ''; }
+    const token = localStorage.getItem('jwt');
+    const tokenPayload = jwtDecode(token);
+    // @ts-ignore
+    return tokenPayload.username;
   }
 }

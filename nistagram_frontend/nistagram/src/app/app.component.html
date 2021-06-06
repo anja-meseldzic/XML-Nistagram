@@ -4,10 +4,10 @@
     <button mat-icon-button routerLink="../feed">
       <mat-icon>home</mat-icon>
     </button>
-    <span style="margin-left: 10px;">nistagram</span>
+    <span style="margin-left: 10px;" routerLink="../feed">nistagram</span>
     <span style="width: 20px;"></span>
     
-    <span style="margin-left: 100px;">
+    <span style="margin-left: 100px;" *ngIf="this.authService.getRole() != 'ADMIN'">
         <mat-form-field>
             <input type="text" placeholder="search" matInput [matAutocomplete]="auto" (input)="updated()" [(ngModel)]="data">
             <mat-autocomplete #auto="matAutocomplete">
@@ -19,5 +19,9 @@
           </mat-form-field>
     </span>
 
+    <span style="flex: 1 1 auto;" *ngIf="this.authService.isLoggedIn()">
+      <button style="float: right; margin-right: 20px;" mat-stroked-button (click)="this.authService.logOut()">Log out</button>
+      <button mat-raised-button color="accent" style="float: right; margin-right: 20px;" (click)="goToProfile()" *ngIf="this.authService.getRole() != 'ADMIN'">Your profile</button>
+    </span>
   </mat-toolbar>
 <router-outlet></router-outlet>
