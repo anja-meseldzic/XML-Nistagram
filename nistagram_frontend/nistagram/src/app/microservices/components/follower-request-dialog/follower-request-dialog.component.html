@@ -9,13 +9,13 @@
       
         <ng-container matColumnDef="action1">
           <th mat-header-cell *matHeaderCellDef> Accept request </th>
-          <td mat-cell *matCellDef="let element"><button mat-raised-button name = "accept" ngDefaultControl (click) = "follow(element.username1)" [(ngModel)]="element.id" color="primary">Accept request</button></td>
+          <td mat-cell *matCellDef="let element"><button mat-raised-button name = "accept" ngDefaultControl (click) = "follow(element.username2)" [(ngModel)]="element.id" color="primary">Accept request</button></td>
           
         </ng-container>
 
         <ng-container matColumnDef="action2">
             <th mat-header-cell *matHeaderCellDef> Delete request </th>
-            <td mat-cell *matCellDef="let element"><button mat-raised-button name = "accept" ngDefaultControl (click) = "delete(element.username1)" [(ngModel)]="element.id" color="warn">Delete request</button></td>
+            <td mat-cell *matCellDef="let element"><button mat-raised-button name = "accept" ngDefaultControl (click) = "delete(element.username2)" [(ngModel)]="element.id" color="warn">Delete request</button></td>
           </ng-container>
       
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

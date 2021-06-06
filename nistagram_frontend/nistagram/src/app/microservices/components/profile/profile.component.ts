@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FollowRequestDto } from '../../DTOs/follow-request-dto';
 import { MediaService } from '../../media-service/media.service';
@@ -18,7 +19,7 @@ import { FollowersDialogComponent } from '../followers-dialog/followers-dialog.c
 })
 export class ProfileComponent implements OnInit {
 
-  constructor(private route : ActivatedRoute, private router : Router, private profileService : ProfileService, private mediaService : MediaService, private matDialog : MatDialog) { }
+  constructor(private _snackBar : MatSnackBar,private route : ActivatedRoute, private router : Router, private profileService : ProfileService, private mediaService : MediaService, private matDialog : MatDialog) { }
 
   profile : ProfileInfo = new ProfileInfo(0, '', '', '', new Date(1998, 11, 29), '', '', '', 0, 0, false, false, false);
   posts : Post[] = [];
@@ -84,7 +85,8 @@ export class ProfileComponent implements OnInit {
       this.profile.following = true;
       this.profileService.followProfile(profileUsername).subscribe(data => this.profile.followerCount = Number(data));
     }else{
-      console.log("Follow request have been sent.")
+      this.openSnackBar("You have successfully sent follow request.", "Okay")
+      this.profileService.followProfile(profileUsername).subscribe(data => this.profile.followerCount = Number(data));
     }
   }
   unfollow(profileUsername : string){
@@ -122,6 +124,12 @@ export class ProfileComponent implements OnInit {
       console.log(data);
       this.matDialog.open(CloseFriendsComponent, {data : data,  width: '70vw',
       maxWidth: '70vw'});
+    }); 
+  }
+    
+  openSnackBar(message: string, action: string): void {
+    this._snackBar.open(message, action, {
+      duration: 5000,
     });
   }
 }
