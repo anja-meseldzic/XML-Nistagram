@@ -179,9 +179,33 @@ public class ProfileContoller {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String myUsername = TokenUtils.getUsernameFromToken(token);
+
+		String message = profileService.addCloseFriend(myUsername, usernameOfFriend);
 		
-		profileService.addCloseFriend(myUsername, usernameOfFriend);
-		
-		return new ResponseEntity<>("", HttpStatus.OK);
+		return new ResponseEntity<>(message, HttpStatus.OK);
 	}
+	
+	@GetMapping(value = "getCloseFriends")
+	public ResponseEntity<List<String>> getCloseFriendsForProfile(@RequestHeader("Authorization") String auth) {
+		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		String token = TokenUtils.getToken(auth);
+		String myUsername = TokenUtils.getUsernameFromToken(token);
+		
+		List<String> close = profileService.getCloseFriends(myUsername);
+		return new ResponseEntity<>(close, HttpStatus.OK);
+	}
+	@PostMapping(value = "removeCloseFriend")
+	public ResponseEntity<String> removeCloseFriend(@RequestBody String usernameOfFriend,  @RequestHeader("Authorization") String auth)
+	{
+		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		String token = TokenUtils.getToken(auth);
+		String myUsername = TokenUtils.getUsernameFromToken(token);
+
+		String message = profileService.removeCloseFriend(myUsername, usernameOfFriend);
+		
+		return new ResponseEntity<>(message, HttpStatus.OK);
+	}
+	
 }

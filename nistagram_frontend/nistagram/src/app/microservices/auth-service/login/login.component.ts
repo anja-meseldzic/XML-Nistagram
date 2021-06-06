@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit {
       },)
       .then(res => {
         localStorage.setItem('jwt', res.data);
+        this.router.navigate(['./profile/' + this.username]);
       });
   }
 

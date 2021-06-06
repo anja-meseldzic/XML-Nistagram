@@ -273,14 +273,33 @@ public class ProfileServiceImpl implements ProfileService {
 	}
 
 	@Override
-	public void addCloseFriend(String myUsername, String usernameOfFriend) {
+	public String addCloseFriend(String myUsername, String usernameOfFriend) {
 		for (Follow f : followRepository.findAll()) {
-			if (f.getProfile().getRegularUserUsername().equals(myUsername) && f.getFollowedBy().getRegularUserUsername().equals(usernameOfFriend)){
+			if (f.getProfile().getRegularUserUsername().equals(myUsername) && f.getFollowedBy().getRegularUserUsername().equals(usernameOfFriend) && f.isCloseFriend()==true){
+				return "You have already choose this profile as your close friend.";
+			} else if(f.getProfile().getRegularUserUsername().equals(myUsername) && f.getFollowedBy().getRegularUserUsername().equals(usernameOfFriend) && f.isCloseFriend()==false)
+			{
 				f.setCloseFriend(true);
 				followRepository.save(f);
-				return;
+				return "You have successfully added your close friend";
 			}
 		}
+		return "This profile can't be set as your close friend";
 		
+	}
+
+	@Override
+	public String removeCloseFriend(String myUsername, String usernameOfFriend) {
+		for (Follow f : followRepository.findAll()) {
+			if (f.getProfile().getRegularUserUsername().equals(myUsername) && f.getFollowedBy().getRegularUserUsername().equals(usernameOfFriend) && f.isCloseFriend()==false){
+				return "You have already removed this profile from your close friends.";
+			} else if(f.getProfile().getRegularUserUsername().equals(myUsername) && f.getFollowedBy().getRegularUserUsername().equals(usernameOfFriend) && f.isCloseFriend()==true)
+			{
+				f.setCloseFriend(false);
+				followRepository.save(f);
+				return "You have successfully removed your close friend";
+			}
+		}
+		return "This profile can't be removed from your close friends list";
 	}
 }

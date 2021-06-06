@@ -7,6 +7,7 @@ import { Post } from '../../model/post';
 import { ProfileInfo } from '../../model/profile-info';
 import { Story } from '../../model/story';
 import { ProfileService } from '../../profile-service/profile.service';
+import { CloseFriendsComponent } from '../close-friends/close-friends.component';
 import { FollowerRequestDialogComponent } from '../follower-request-dialog/follower-request-dialog.component';
 import { FollowersDialogComponent } from '../followers-dialog/followers-dialog.component';
 
@@ -114,6 +115,13 @@ export class ProfileComponent implements OnInit {
   getFollowing(){
     this.profileService.getFollowing(this.profile.username).subscribe(data =>{
       this.matDialog.open(FollowersDialogComponent, {data : data});
+    });
+  }
+  closeFriends(){
+    this.profileService.getFollowers(this.profile.username).subscribe(data =>{
+      console.log(data);
+      this.matDialog.open(CloseFriendsComponent, {data : data,  width: '70vw',
+      maxWidth: '70vw'});
     });
   }
 }

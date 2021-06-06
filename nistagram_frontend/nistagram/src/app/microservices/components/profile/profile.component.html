@@ -17,6 +17,7 @@
             <button mat-stroked-button style="margin-left: 10px;" *ngIf="profile.owned">Settings</button>
             <button mat-stroked-button style="margin-left: 10px;" *ngIf="profile.owned" (click)="editProfile()">Edit profile</button>
             <button mat-stroked-button style="margin-left: 10px;" *ngIf="profile.owned" (click)="followRequests()">Follow requests</button>
+            <button mat-stroked-button style="margin-left: 10px;" *ngIf="profile.owned" (click)="closeFriends()">Close friends</button>
             <button mat-raised-button color="primary" style="margin-left: 10px;" (click) = "follow(profile.privateProfile, profile.username)" *ngIf="!profile.owned && !profile.following">Follow</button>
             <button mat-raised-button color="primary" style="margin-left: 10px;" (click) = "unfollow(profile.username)"*ngIf="!profile.owned && profile.following">Unfollow</button>
         </p>

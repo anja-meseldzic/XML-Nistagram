@@ -42,5 +42,7 @@ public interface ProfileService {
 
 	List<FollowerDto> getFollowing(String username);
 
-	void addCloseFriend(String myUsername, String usernameOfFriend);
+	String addCloseFriend(String myUsername, String usernameOfFriend);
+
+	String removeCloseFriend(String myUsername, String usernameOfFriend);
 }

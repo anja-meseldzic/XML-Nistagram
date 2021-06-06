@@ -1,0 +1,41 @@
+<h2 mat-dialog-title style="margin-left: 39%; font-size:x-large;">Add close friends</h2>
+<div style="display: flex; justify-content: center; ">
+    <table *ngIf= "dataSource.length != 0" mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="username">
+          <th mat-header-cell *matHeaderCellDef> Username </th>
+          <td mat-cell *matCellDef="let element"> {{element.username}} </td>
+        </ng-container>
+      
+        <ng-container matColumnDef="addClose" >
+          <th mat-header-cell *matHeaderCellDef> Add close friend</th>
+          <td mat-cell *matCellDef="let element"> 
+            <button mat-stroked-button  type="button" id="selectButton" (click)="OnClick(element.username)"  >CLOSE FRIEND</button>
+          </td>
+        </ng-container>
+      
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+</div>
+<h2 style="margin-left: 39%; font-size: x-large; margin-top: 5%;">Close friends list</h2>
+<div style="display: flex; justify-content: center;">
+    <table *ngIf= "dataSource.length != 0" mat-table [dataSource]="closeFriends" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="username2">
+          <th mat-header-cell *matHeaderCellDef> Username </th>
+          <td mat-cell *matCellDef="let element"> {{element}} </td>
+        </ng-container>
+      
+        <ng-container matColumnDef="removeClose" >
+          <th mat-header-cell *matHeaderCellDef> Remove close friend</th>
+          <td mat-cell *matCellDef="let element"> 
+            <button mat-stroked-button  type="button" id="selectButton2" (click)="Remove(element)"> REMOVE</button>
+          </td>
+        </ng-container>
+      
+        <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
+      </table>
+</div>
+<div *ngIf= "dataSource.length == 0">No followers</div>

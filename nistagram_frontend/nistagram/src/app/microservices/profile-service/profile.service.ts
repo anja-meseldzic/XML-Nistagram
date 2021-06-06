@@ -58,4 +58,19 @@ export class ProfileService {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }
+  public addCloseFriend(data : string) {
+    return this._http.post("http://localhost:8085/profile/addCloseFriend", data, {responseType: 'text',headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+  public removeCloseFriend(data : string) {
+    return this._http.post("http://localhost:8085/profile/removeCloseFriend", data, {responseType: 'text',headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+  public getCloseFriends() : Observable<String[]> {
+    return this._http.get<String[]>("http://localhost:8085/profile/getCloseFriends", {headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
 }
