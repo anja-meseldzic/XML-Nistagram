@@ -150,14 +150,12 @@ public class PostServiceImpl implements PostService{
     }
 
     private Set<String> getAllProfiles(String requestedBy) {
-        Set<String> result = new HashSet<>();
-        profileService.getAll().stream()
-                .filter(p -> profileService.isPublic(p)
-                        || p.equals(requestedBy)
-                        || (profileService.getFollowing(p).contains(requestedBy)
-                        && !profileService.getBlocked(requestedBy).contains(p)))
-                .forEach(p -> result.add(p));
-        return result;
+        if(requestedBy != null) {
+            return profileService.getAll().stream()
+                    .filter(p -> !profileService.getBlocked(requestedBy).contains(p))
+                    .collect(Collectors.toSet());
+        }
+        return profileService.getAll().stream().collect(Collectors.toSet());
     }
 
     private List<PostInfoDTO> getForProfileWhenUnauthenticated(String profile) throws ProfilePrivateException {

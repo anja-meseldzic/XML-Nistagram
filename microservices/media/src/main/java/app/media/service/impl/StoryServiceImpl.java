@@ -68,10 +68,12 @@ public class StoryServiceImpl implements StoryService {
         if(!profileService.isPublic(profile) && !follower && !profile.equals(requestedBy))
             throw new ProfilePrivateException();
 
-        List<String> blockedProfiles = profileService.getBlocked(requestedBy);
-        boolean blocked = blockedProfiles.contains(profile);
-        if(blocked)
-            throw new ProfileBlockedException();
+        if(requestedBy != null) {
+            List<String> blockedProfiles = profileService.getBlocked(requestedBy);
+            boolean blocked = blockedProfiles.contains(profile);
+            if(blocked)
+                throw new ProfileBlockedException();
+        }
 
         List<Story> stories = storyRepository.findAll().stream()
                 .filter(p -> p.getMedia().getUsername().equals(profile)

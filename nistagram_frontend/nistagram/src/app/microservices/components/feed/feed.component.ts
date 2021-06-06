@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { MediaService } from '../../media-service/media.service';
 import { Post } from '../../model/post';
@@ -14,15 +15,16 @@ export class FeedComponent implements OnInit {
   stories : Object[] = [];
   posts : Post[] = [];
   
-  constructor(private mediaService : MediaService, private router : Router) {}
+  constructor(private mediaService : MediaService, private router : Router, private snackBar : MatSnackBar) {}
 
   ngOnInit(): void {
      this.mediaService.getStoriesForFeed().subscribe(
       data => { const stories : Story[] = data; this.constructSliderObjectsForStories(stories) },
-      error => console.log(error.error.message)
+      error => this.openSnackBar(error.error.message)
     );
     this.mediaService.getPostsForFeed().subscribe(
-      data => { this.posts = data; this.constructSliderObjectsForPosts(); }
+      data => { this.posts = data; this.constructSliderObjectsForPosts(); },
+      error => this.openSnackBar(error.error.message)
     );
   }
 
@@ -60,5 +62,11 @@ export class FeedComponent implements OnInit {
 
   public seeDetails(id) {
     this.router.navigate(['./post/' + id]);
+  }
+
+  openSnackBar(message: string) {
+    this.snackBar.open(message, "Okay", {
+      duration: 5000,
+    });
   }
 }

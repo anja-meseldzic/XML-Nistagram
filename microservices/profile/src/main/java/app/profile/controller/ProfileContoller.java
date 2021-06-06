@@ -38,7 +38,7 @@ public class ProfileContoller {
 	
 	@GetMapping(value = "follow/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> followProfile(@RequestHeader("Authorization") String auth ,@PathVariable String username){
-		if(!TokenUtils.verify(auth, "USER")) {
+		if(!TokenUtils.verify(auth, "USER", "AGENT")) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		String token = TokenUtils.getToken(auth);
@@ -51,7 +51,7 @@ public class ProfileContoller {
 	
 	@GetMapping(value = "unfollow/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> unfollowProfile(@RequestHeader("Authorization") String auth,@PathVariable String username){
-		if(!TokenUtils.verify(auth, "USER")) {
+		if(!TokenUtils.verify(auth, "USER", "AGENT"))  {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		String loggedInUsername = TokenUtils.getUsernameFromToken(TokenUtils.getToken(auth));
@@ -62,7 +62,7 @@ public class ProfileContoller {
 	
 	@GetMapping(value = "followRequest/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Set<FollowRequestDto>> getFollowRequests(@RequestHeader("Authorization") String auth,@PathVariable String username){
-		if(!TokenUtils.verify(auth, "USER")) {
+		if(!TokenUtils.verify(auth, "USER", "AGENT")) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		Set<FollowRequestDto> requests = profileService.getFollowRequests(username);
@@ -71,7 +71,7 @@ public class ProfileContoller {
 	
 	@GetMapping(value = "acceptRequest/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Set<FollowRequestDto>> acceptRequest(@RequestHeader("Authorization") String auth,@PathVariable String username){
-		if(!TokenUtils.verify(auth, "USER")) {
+		if(!TokenUtils.verify(auth, "USER", "AGENT")) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		String loggedInUsername = TokenUtils.getUsernameFromToken(TokenUtils.getToken(auth));
@@ -81,7 +81,7 @@ public class ProfileContoller {
 	
 	@GetMapping(value = "deleteRequest/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Set<FollowRequestDto>> deleteRequest(@RequestHeader("Authorization") String auth,@PathVariable String username){
-		if(!TokenUtils.verify(auth, "USER")) {
+		if(!TokenUtils.verify(auth, "USER", "AGENT")) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		String loggedInUsername = TokenUtils.getUsernameFromToken(TokenUtils.getToken(auth));
@@ -120,7 +120,7 @@ public class ProfileContoller {
 	public ResponseEntity<ProfileInfoDTO> getInfo(@PathVariable String username, @RequestHeader("Authorization") String auth) {
 		try {
 			String requestedBy = null;
-			if(auth != null)
+			if (!auth.equals("Bearer null"))
 				requestedBy = TokenUtils.getUsernameFromToken(auth.substring(7));
 			return new ResponseEntity<>(profileService.getProfile(requestedBy, username), HttpStatus.OK);
 		} catch (ProfileNotFoundException e) {
@@ -175,7 +175,7 @@ public class ProfileContoller {
 	@PostMapping(value = "addCloseFriend")
 	public ResponseEntity<String> addCloseFriend(@RequestBody String usernameOfFriend,  @RequestHeader("Authorization") String auth)
 	{
-		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+		if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String myUsername = TokenUtils.getUsernameFromToken(token);

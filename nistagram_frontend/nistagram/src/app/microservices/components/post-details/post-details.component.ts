@@ -100,7 +100,7 @@ export class PostDetailsComponent implements OnInit {
           this.constructSliderObjectsForPost();
         }
       },
-      error => this.openSnackBar(error.error.message, "Okay")
+      error => { this.openSnackBar(error.error.message, "Okay"); this.router.navigate(['./feed']) }
     )
   }
 

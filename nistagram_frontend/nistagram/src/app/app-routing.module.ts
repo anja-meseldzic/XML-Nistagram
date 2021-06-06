@@ -8,12 +8,13 @@ import { PostDetailsComponent } from './microservices/components/post-details/po
 import { ProfileComponent } from './microservices/components/profile/profile.component';
 import { SearchResultsComponent } from './microservices/components/search-results/search-results.component';
 import {UnauthorizedPageComponent} from './microservices/auth-service/unauthorized-page/unauthorized-page.component';
+import { RouteGuardService } from './microservices/guards/route-guard.service';
 
 const routes: Routes = [
-  {path: 'registration', component: RegistrationComponent},
-  {path: 'personal-edit', component: PersonalInfoEditComponent},
-  {path: 'login', component: LoginComponent},
-  {path: 'feed', component: FeedComponent},
+  {path: 'registration', component: RegistrationComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
+  {path: 'personal-edit', component: PersonalInfoEditComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
+  {path: 'login', component: LoginComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
+  {path: 'feed', component: FeedComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
   {path: 'post/:id', component: PostDetailsComponent},
   {path: 'post', component: SearchResultsComponent},
   {path: 'profile/:username', component: ProfileComponent},

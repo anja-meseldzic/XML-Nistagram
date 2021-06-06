@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
+import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { AuthService } from './microservices/auth-service/auth.service';
 import { MediaService } from './microservices/media-service/media.service';
 import { SearchResult } from './microservices/model/search-result';
 
@@ -11,7 +14,9 @@ import { SearchResult } from './microservices/model/search-result';
 export class AppComponent {
   title = 'nistagram';
 
-  constructor(private mediaService : MediaService, private router : Router) {
+  
+  
+  constructor(private mediaService : MediaService, private router : Router, public authService : AuthService) {
   }
 
   options: SearchResult[] = [];
@@ -40,5 +45,9 @@ export class AppComponent {
     } else if(res.type == 'location' || res.type == 'hashtag') {
       this.router.navigate(['../post'], { queryParams: { type: res.type, value: res.name }});
     }
+  }
+
+  public goToProfile() {
+    this.router.navigate(['../profile/' + this.authService.getUsername()])
   }
 }

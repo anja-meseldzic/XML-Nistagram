@@ -81,7 +81,7 @@ public class MediaController {
 	@PostMapping(value = "reactOnPost")
 	public ResponseEntity<String> reactOnPost(@RequestBody RatingDTO dto, @RequestHeader("Authorization") String auth)
 	{
-		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+		if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String username = TokenUtils.getUsernameFromToken(token);
@@ -112,7 +112,7 @@ public class MediaController {
 	@PostMapping(value = "postComment")
 	public ResponseEntity<String> postComment(@RequestBody CommentDTO dto, @RequestHeader("Authorization") String auth)
 	{
-		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+		if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String username = TokenUtils.getUsernameFromToken(token);
@@ -127,7 +127,7 @@ public class MediaController {
 
     @PostMapping(value="createAlbum")
     public ResponseEntity<Void> uploadFiles(MultipartHttpServletRequest request, @RequestHeader("Authorization") String auth) throws IOException {
-    	if(!TokenUtils.verify(auth, "USER","ADMIN"))
+    	if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String username = TokenUtils.getUsernameFromToken(token);
@@ -152,7 +152,7 @@ public class MediaController {
     }
     @PostMapping(value="createStory",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
    	public ResponseEntity<Void> creatStory(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "story", required = false) String model,  @RequestHeader("Authorization") String auth) throws JsonMappingException, JsonProcessingException{
-    	if(!TokenUtils.verify(auth, "USER","ADMIN"))
+    	if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String username = TokenUtils.getUsernameFromToken(token);
@@ -169,7 +169,7 @@ public class MediaController {
 
     @PostMapping(value="createPost",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Void> createPost(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "post", required = false) String model, @RequestHeader("Authorization") String auth) throws JsonMappingException, JsonProcessingException{
-    	if(!TokenUtils.verify(auth, "USER","ADMIN"))
+    	if(!TokenUtils.verify(auth, "USER","AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String username = TokenUtils.getUsernameFromToken(token);

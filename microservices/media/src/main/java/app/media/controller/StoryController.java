@@ -39,7 +39,7 @@ public class StoryController {
                 String username = TokenUtils.getUsernameFromToken(auth.substring(7));
                 return new ResponseEntity<>(storyService.getForProfile(username, profile), HttpStatus.OK);
             }
-            else if (auth == null)
+            else if (auth.equals("Bearer null"))
                 return new ResponseEntity<>(storyService.getForProfile(null, profile), HttpStatus.OK);
             else
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
