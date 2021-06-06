@@ -117,7 +117,7 @@ public class PostServiceImpl implements PostService{
         Post post = postRepository.findAll().stream()
                 .filter(p -> (profileService.isPublic(p.getMedia().getUsername())
                         || p.getMedia().getUsername().equals(requestedBy)
-                        || (profileService.getFollowing(p.getMedia().getUsername()).contains(requestedBy)
+                        || (profileService.getFollowers(p.getMedia().getUsername()).contains(requestedBy)
                         && !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername())))
                         && p.getId() == postId).findFirst().orElse(null);
         if(post == null)
@@ -165,7 +165,7 @@ public class PostServiceImpl implements PostService{
     }
 
     private List<PostInfoDTO> getForProfileWhenAuthenticated(String requestedBy, String profile) throws ProfilePrivateException, ProfileBlockedException {
-        List<String> followers = profileService.getFollowing(profile);
+        List<String> followers = profileService.getFollowers(profile);
         boolean follower = followers.contains(requestedBy);
         if(!profileService.isPublic(profile) && !follower && !profile.equals(requestedBy))
             throw new ProfilePrivateException();
