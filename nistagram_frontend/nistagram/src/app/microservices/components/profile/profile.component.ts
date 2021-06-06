@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FollowRequestDto } from '../../DTOs/follow-request-dto';
 import { MediaService } from '../../media-service/media.service';
 import { Post } from '../../model/post';
 import { ProfileInfo } from '../../model/profile-info';
 import { Story } from '../../model/story';
 import { ProfileService } from '../../profile-service/profile.service';
+import { FollowerRequestDialogComponent } from '../follower-request-dialog/follower-request-dialog.component';
+import { FollowersDialogComponent } from '../followers-dialog/followers-dialog.component';
 
 @Component({
   selector: 'app-profile',
@@ -13,7 +17,7 @@ import { ProfileService } from '../../profile-service/profile.service';
 })
 export class ProfileComponent implements OnInit {
 
-  constructor(private route : ActivatedRoute, private router : Router, private profileService : ProfileService, private mediaService : MediaService) { }
+  constructor(private route : ActivatedRoute, private router : Router, private profileService : ProfileService, private mediaService : MediaService, private matDialog : MatDialog) { }
 
   profile : ProfileInfo = new ProfileInfo(0, '', '', '', new Date(1998, 11, 29), '', '', '', 0, 0, false, false, false);
   posts : Post[] = [];
@@ -28,16 +32,24 @@ export class ProfileComponent implements OnInit {
   }
 
   getProfileInfo(username : String) {
-    this.profile = this.profileService.getProfileInfo(username);
-    if(this.profile == null) {
-      this.router.navigate(['../feed']);
-    }
-    if(this.profile.owned || this.profile.following || !this.profile.privateProfile) {
-      this.posts = this.mediaService.getPostsByUser(this.profile.username);
-      this.stories = this.mediaService.getStoriesByUser(this.profile.username);
-      this.constructSliderObjectsForPosts();
-      this.constructSliderObjectsForStories();
-    }
+    this.profileService.getProfileInfo(username).subscribe(
+      data => {
+        this.profile = data;
+        if(this.profile == null) {
+          this.router.navigate(['../feed']);
+        }
+        if(this.profile.owned || this.profile.following || !this.profile.privateProfile) {
+          this.mediaService.getPostsByUser(this.profile.username).subscribe(
+            data => { this.posts = data; this.constructSliderObjectsForPosts(); },
+            error => console.log(error.error.message)
+          )
+          this.mediaService.getStoriesByUser(this.profile.username).subscribe(
+            data => { this.stories = data; this.constructSliderObjectsForStories(); },
+            error => console.log(error.error.message)
+          );
+        }
+      }
+    );
   }
 
   constructSliderObjectsForPosts() {
@@ -85,5 +97,23 @@ export class ProfileComponent implements OnInit {
 
   editProfile(): void {
     this.router.navigate(['/personal-edit']);
+  }
+
+  followRequests(){
+    this.profileService.getFollowRequests(this.profile.username).subscribe(data =>{
+      this.matDialog.open(FollowerRequestDialogComponent, {data : data});
+    });
+  }
+
+  getFollowers(){
+    this.profileService.getFollowers(this.profile.username).subscribe(data =>{
+      console.log(data);
+      this.matDialog.open(FollowersDialogComponent, {data : data});
+    });
+  }
+  getFollowing(){
+    this.profileService.getFollowing(this.profile.username).subscribe(data =>{
+      this.matDialog.open(FollowersDialogComponent, {data : data});
+    });
   }
 }

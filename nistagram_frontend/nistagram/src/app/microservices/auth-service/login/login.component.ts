@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
       .post('http://localhost:8081/auth', {
         username : this.username,
         password : this.password
-      })
+      },)
       .then(res => {
         localStorage.setItem('jwt', res.data);
       });

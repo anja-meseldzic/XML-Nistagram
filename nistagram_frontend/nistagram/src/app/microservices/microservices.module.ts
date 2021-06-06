@@ -27,10 +27,12 @@ import { CreateStoryComponent } from './create-story/create-story.component';
 import { CreateAlbumComponent } from './create-album/create-album.component';
 import { MatListModule } from '@angular/material/list';
 import { UnauthorizedPageComponent } from './auth-service/unauthorized-page/unauthorized-page.component'; 
-
+import { FollowerRequestDialogComponent } from './components/follower-request-dialog/follower-request-dialog.component';
+import { FollowersDialogComponent } from './components/followers-dialog/followers-dialog.component'; 
+import { ReactionsListComponent } from './reactions-list/reactions-list.component'; 
 
 @NgModule({
-  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, UnauthorizedPageComponent],
+  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent],
   imports: [
     CommonModule,
     MicroservicesRoutingModule,

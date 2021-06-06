@@ -20,8 +20,9 @@ export class AppComponent {
   public updated() {
     this.options = [];
     if (this.data.length > 0) {
-      this.options = this.mediaService.getSearchResults(this.data);
-      this.assignIds();
+      this.mediaService.getSearchResults(this.data).subscribe(
+        data => { this.options = data; this.assignIds(); }
+      );
     }
   }
 

@@ -1,12 +1,15 @@
 package app.auth.controller;
 
+import app.auth.exception.UserNotFoundException;
 import app.auth.model.RegularUser;
+import app.auth.model.dto.UserInfoDTO;
 import app.auth.util.TokenUtils;
 import app.auth.service.RegularUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping(value = "/regulars")
@@ -43,5 +46,15 @@ public class RegularUserController {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    //don't put in api gateway
+    @GetMapping(value = "ms/{username}")
+    public UserInfoDTO get(@PathVariable String username) {
+        try {
+            return service.get(username);
+        } catch (UserNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 }

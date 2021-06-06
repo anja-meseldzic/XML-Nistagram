@@ -9,7 +9,7 @@
     
     <span style="margin-left: 100px;">
         <mat-form-field>
-            <input type="text" placeholder="search" matInput [matAutocomplete]="auto" (keyup)="updated()" [(ngModel)]="data">
+            <input type="text" placeholder="search" matInput [matAutocomplete]="auto" (input)="updated()" [(ngModel)]="data">
             <mat-autocomplete #auto="matAutocomplete">
               <mat-option *ngFor="let option of options" [value]="option.name" (click)="seeDetails(option.id)">
                 <span>{{option.name}}</span> |

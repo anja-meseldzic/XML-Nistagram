@@ -1,5 +1,6 @@
 package app.media.model;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
@@ -23,15 +24,19 @@ public class Media {
 	@ElementCollection(targetClass=String.class, fetch = FetchType.LAZY)
 	private Set<String> path = new HashSet<String>();
 
+	@Column(name = "created", nullable = false)
+	private LocalDateTime created;
+
 	public Media() {
 		super();
 	}
 	
-	public Media(long id, String username, Set<String> path) {
+	public Media(long id, String username, Set<String> path, LocalDateTime created) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.path = path;
+		this.created = created;
 	}
 
 
@@ -59,5 +64,7 @@ public class Media {
 		this.path = path;
 	}
 
+	public LocalDateTime getCreated() { return created; }
 
+	public void setCreated(LocalDateTime created) { this.created = created; }
 }

@@ -6,6 +6,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -19,17 +20,17 @@ public class FollowRequest {
 	private Profile profile;
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Profile profileToFollow;
+	private Profile followedBy;
 
 	public FollowRequest() {
 		super();
 	}
 
-	public FollowRequest(long id, Profile profile, Profile profileToFollow) {
+	public FollowRequest(long id, Profile profile, Profile followedBy) {
 		super();
 		this.id = id;
 		this.profile = profile;
-		this.profileToFollow = profileToFollow;
+		this.followedBy = followedBy;
 	}
 
 	public long getId() {
@@ -48,12 +49,12 @@ public class FollowRequest {
 		this.profile = profile;
 	}
 
-	public Profile getProfileToFollow() {
-		return profileToFollow;
+	public Profile getFollowedBy() {
+		return followedBy;
 	}
 
-	public void setProfileToFollow(Profile profileToFollow) {
-		this.profileToFollow = profileToFollow;
+	public void setFollowedBy(Profile followedBy) {
+		this.followedBy = followedBy;
 	}
 	
 }

@@ -14,11 +14,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatTableModule} from '@angular/material/table';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgImageSliderModule } from 'ng-image-slider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete'; 
 import { MatListModule } from '@angular/material/list'; 
+import { AuthInterceptorService } from './interceptors/auth-interceptor.service';
+import {MatDialogModule} from '@angular/material/dialog';
+import { FollowerRequestDialogComponent } from './microservices/components/follower-request-dialog/follower-request-dialog.component';
+import { FollowersDialogComponent } from './microservices/components/followers-dialog/followers-dialog.component';
+
 
 
 @NgModule({
@@ -44,9 +49,16 @@ import { MatListModule } from '@angular/material/list';
     NgbModule,
     NgImageSliderModule,
     MatAutocompleteModule,
-    MatListModule
+    MatListModule,
+    MatDialogModule
+    
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptorService,
+    multi: true
+  }],
+  entryComponents:[FollowerRequestDialogComponent, FollowersDialogComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

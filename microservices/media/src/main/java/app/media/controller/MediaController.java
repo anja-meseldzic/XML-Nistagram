@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.media.dtos.AlbumDTO;
 import app.media.dtos.AllCommentDTO;
+import app.media.dtos.AllReactionsDTO;
 import app.media.dtos.CommentDTO;
 import app.media.dtos.PostDTO;
 import app.media.dtos.RatingDTO;
@@ -47,9 +48,27 @@ public class MediaController {
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "getReactionsNumber")
-	public ResponseEntity<ReactionsNumberDTO> getReactionsNumber(@RequestBody long id)
+	@PostMapping(value = "allReactions")
+	public ResponseEntity<AllReactionsDTO> getReactions(@RequestBody long id,  @RequestHeader("Authorization") String auth)
 	{
+		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		
+		AllReactionsDTO dto;
+		try {
+			dto = mediaService.getAllReactions(id);
+		} catch (PostDoesNotExistException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+		return new ResponseEntity<>(dto, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "getReactionsNumber")
+	public ResponseEntity<ReactionsNumberDTO> getReactionsNumber(@RequestBody long id,  @RequestHeader("Authorization") String auth)
+	{
+		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		
 		ReactionsNumberDTO dto;
 		try {
 			dto = mediaService.getReactionsNumber(id);
@@ -60,11 +79,15 @@ public class MediaController {
 		return new ResponseEntity<>(dto,HttpStatus.OK);	
 	}
 	@PostMapping(value = "reactOnPost")
-	public ResponseEntity<String> reactOnPost(@RequestBody RatingDTO dto)
+	public ResponseEntity<String> reactOnPost(@RequestBody RatingDTO dto, @RequestHeader("Authorization") String auth)
 	{
-		System.out.println("REAKCIJA:" + dto.isLike());
+		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		String token = TokenUtils.getToken(auth);
+		String username = TokenUtils.getUsernameFromToken(token);
+		
 		try {
-			mediaService.reactOnPost(dto);
+			mediaService.reactOnPost(dto, username);
 		} catch (PostDoesNotExistException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
@@ -72,8 +95,11 @@ public class MediaController {
 	}
 	
 	@PostMapping(value = "allComments")
-	public ResponseEntity<Set<AllCommentDTO>> getAllComments(@RequestBody long id)
+	public ResponseEntity<Set<AllCommentDTO>> getAllComments(@RequestBody long id,  @RequestHeader("Authorization") String auth)
 	{
+		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		
 		Set<AllCommentDTO> comments;
 		try {
 			comments = mediaService.getAllComments(id);
@@ -84,10 +110,15 @@ public class MediaController {
 	}
 	
 	@PostMapping(value = "postComment")
-	public ResponseEntity<String> postComment(@RequestBody CommentDTO dto)
+	public ResponseEntity<String> postComment(@RequestBody CommentDTO dto, @RequestHeader("Authorization") String auth)
 	{
+		if(!TokenUtils.verify(auth, "USER","ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		String token = TokenUtils.getToken(auth);
+		String username = TokenUtils.getUsernameFromToken(token);
+		
 		try {
-			mediaService.postComment(dto);
+			mediaService.postComment(dto, username);
 		} catch (PostDoesNotExistException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
@@ -95,7 +126,12 @@ public class MediaController {
 	}
 
     @PostMapping(value="createAlbum")
-    public ResponseEntity<Void> uploadFiles(MultipartHttpServletRequest request) throws IOException {
+    public ResponseEntity<Void> uploadFiles(MultipartHttpServletRequest request, @RequestHeader("Authorization") String auth) throws IOException {
+    	if(!TokenUtils.verify(auth, "USER","ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		String token = TokenUtils.getToken(auth);
+		String username = TokenUtils.getUsernameFromToken(token);
+    	
     	ObjectMapper mapper = new ObjectMapper();
     	AlbumDTO albumDTO = mapper.readValue(request.getParameter("album"), AlbumDTO.class);
     	
@@ -107,18 +143,23 @@ public class MediaController {
         }
 
         if(albumDTO.isPostSelected() == true) {
-        	mediaService.createAlbumAsPost(files, albumDTO);
+        	mediaService.createAlbumAsPost(files, albumDTO, username);
         } else {
-        	mediaService.createAlbumAsStory(files, albumDTO);
+        	mediaService.createAlbumAsStory(files, albumDTO, username);
         }
     	return new ResponseEntity<>(HttpStatus.OK);
     
     }
     @PostMapping(value="createStory",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-   	public ResponseEntity<Void> creatStory(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "story", required = false) String model) throws JsonMappingException, JsonProcessingException{
+   	public ResponseEntity<Void> creatStory(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "story", required = false) String model,  @RequestHeader("Authorization") String auth) throws JsonMappingException, JsonProcessingException{
+    	if(!TokenUtils.verify(auth, "USER","ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		String token = TokenUtils.getToken(auth);
+		String username = TokenUtils.getUsernameFromToken(token);
+    	
     	boolean close = model.equals("true") ? true : false;
 		try {
-			mediaService.createStory(data, close);
+			mediaService.createStory(data, close, username);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
@@ -127,11 +168,16 @@ public class MediaController {
     }
 
     @PostMapping(value="createPost",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<Void> createPost(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "post", required = false) String model) throws JsonMappingException, JsonProcessingException{
+	public ResponseEntity<Void> createPost(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "post", required = false) String model, @RequestHeader("Authorization") String auth) throws JsonMappingException, JsonProcessingException{
+    	if(!TokenUtils.verify(auth, "USER","ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		String token = TokenUtils.getToken(auth);
+		String username = TokenUtils.getUsernameFromToken(token);
+    	
     	ObjectMapper mapper = new ObjectMapper();
     	PostDTO postDTO = mapper.readValue(model, PostDTO.class);
 		try {
-			mediaService.createPost(data, postDTO);
+			mediaService.createPost(data, postDTO, username);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
