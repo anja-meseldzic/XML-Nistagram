@@ -90,4 +90,25 @@ public class PostController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
+    @GetMapping(value = "saveFavourite/{postId}")
+    public ResponseEntity<String> saveToFavourites(@PathVariable long postId, @RequestHeader("Authorization") String auth) {
+    	if(!TokenUtils.verify(auth, "USER")) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		String token = TokenUtils.getToken(auth);
+		String loggedInUsername = TokenUtils.getUsernameFromToken(token);
+		
+		postService.saveToFavourites(postId, loggedInUsername);
+		return new ResponseEntity<>("ok", HttpStatus.OK);
+	}
+    
+    @GetMapping(value = "favourites")
+    public ResponseEntity<List<PostInfoDTO>> saveToFavourites(@RequestHeader("Authorization") String auth) {
+    	if(!TokenUtils.verify(auth, "USER")) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		String token = TokenUtils.getToken(auth);
+		String loggedInUsername = TokenUtils.getUsernameFromToken(token);
+		return new ResponseEntity<List<PostInfoDTO>>(postService.getFavouritesForProfile(loggedInUsername), HttpStatus.OK);
+	}
 }

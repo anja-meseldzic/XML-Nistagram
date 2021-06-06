@@ -92,4 +92,13 @@ public class StoryServiceImpl implements StoryService {
         result.setUrl(url);
         return result;
     }
+    
+    @Override
+    public List<StoryInfoDTO> getAllUserStories(String username) {
+  
+    	List<StoryInfoDTO> result = new ArrayList<StoryInfoDTO>();
+    	List<Story> stories = storyRepository.findAll().stream().filter(s-> s.getMedia().getUsername().equals(username)).collect(Collectors.toList());
+    	stories.forEach(s -> s.getMedia().getPath().forEach(url -> result.add(toStoryInfoDTO(s, url))));
+    	return result;
+    }
 }

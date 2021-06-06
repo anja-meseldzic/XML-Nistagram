@@ -39,6 +39,7 @@ public class Post {
 	
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Media media;
+	
 
 	public Post() {
 		super();
@@ -111,6 +112,5 @@ public class Post {
 	public void setMedia(Media media) {
 		this.media = media;
 	}
-	
-	
+
 }

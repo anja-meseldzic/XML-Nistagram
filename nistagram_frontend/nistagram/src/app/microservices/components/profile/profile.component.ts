@@ -22,7 +22,9 @@ export class ProfileComponent implements OnInit {
 
   profile : ProfileInfo = new ProfileInfo(0, '', '', '', new Date(1998, 11, 29), '', '', '', 0, 0, false, false, false);
   posts : Post[] = [];
+  favourites : Post[] = [];
   stories : Story[] = [];
+  allStories : Story[] = [];
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(
@@ -39,11 +41,21 @@ export class ProfileComponent implements OnInit {
         if(this.profile == null) {
           this.router.navigate(['../feed']);
         }
+        if(this.profile.owned){
+          this.mediaService.getFavouritesForUser().subscribe(
+            data => { this.favourites = data; this.constructSliderObjectsForFav(); },
+            error => console.log(error.error.message)
+          );
+          this.mediaService.getStoriesForUser().subscribe(
+            data => { this.allStories = data; this.constructSliderObjectsForAllStories(); },
+            error => console.log(error.error.message)
+          );
+        }
         if(this.profile.owned || this.profile.following || !this.profile.privateProfile) {
           this.mediaService.getPostsByUser(this.profile.username).subscribe(
             data => { this.posts = data; this.constructSliderObjectsForPosts(); },
             error => console.log(error.error.message)
-          )
+          );
           this.mediaService.getStoriesByUser(this.profile.username).subscribe(
             data => { this.stories = data; this.constructSliderObjectsForStories(); },
             error => console.log(error.error.message)
@@ -67,6 +79,20 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  constructSliderObjectsForFav() {
+    for(const fav of this.favourites) {
+      const storyObject = new Array<Object>();
+      for(const url of fav.urls) {
+        if(url.endsWith('.jpg') || url.endsWith('.png')) {
+          storyObject.push( {image: url, thumbImage: url});
+        } else {
+          storyObject.push({video: url, alt: 'video unavailable'});
+        }
+      }
+      fav['slider'] = storyObject;
+    }
+  }
+
   constructSliderObjectsForStories() {
     const storyObject = new Array<Object>();
     for(const story of this.stories) {
@@ -77,6 +103,19 @@ export class ProfileComponent implements OnInit {
       }
     }
     this.stories['slider'] = storyObject;
+  }
+
+  constructSliderObjectsForAllStories() {
+   
+    for(const story of this.allStories) {
+      const storyObject = new Array<Object>();
+      if(story.url.endsWith('.jpg') || story.url.endsWith('.png')) {
+        storyObject.push( {image: story.url, thumbImage: story.url});
+      } else {
+        storyObject.push({video: story.url, alt: 'video unavailable'});
+      }
+      story['slider'] = storyObject;
+    }
   }
 
   follow(privateProfile : boolean, profileUsername : string){

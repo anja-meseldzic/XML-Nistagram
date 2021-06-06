@@ -19,6 +19,7 @@ export class PostDetailsComponent implements OnInit {
   public likes : number = 0;
   public dislikes : number = 0;
   public comment : string;
+  public hidden : boolean = false;
   
   constructor(private mediaService : MediaService, private route : ActivatedRoute, private router : Router, private _snackBar: MatSnackBar) { }
 
@@ -118,5 +119,11 @@ export class PostDetailsComponent implements OnInit {
 
   public goToProfile(username : String) {
     this.router.navigate(['../profile/' + username])
+  }
+
+  public favourites(id :Number){
+    this.mediaService.saveToFavourites(id).subscribe(data => console.log(data));
+    this._snackBar.open("You have successfully saved post to favourites.", "Okay");
+    this.hidden = true;
   }
 }

@@ -102,4 +102,18 @@ export class MediaService {
   public getStoriesByUser(username : String) : Observable<Story[]> {
     return this._http.get<Story[]>(environment.mediaBaseUrl + 'story/profile/' + username);
   }
+
+  public saveToFavourites(id : Number){
+    return this._http.get(environment.mediaBaseUrl + 'post/saveFavourite/' + id, {responseType: 'text',headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }})
+  }
+
+  public getFavouritesForUser() : Observable<Post[]> {
+    return this._http.get<Post[]>(environment.mediaBaseUrl + 'post/favourites');
+  }
+
+  public getStoriesForUser() : Observable<Story[]> {
+    return this._http.get<Story[]>(environment.mediaBaseUrl + 'story/allStories');
+  }
 }

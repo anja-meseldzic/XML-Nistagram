@@ -5,6 +5,8 @@ import app.media.dtos.SearchResultDTO;
 import app.media.exception.PostDoesNotExistException;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
+import app.media.model.Favourites;
+import app.media.model.Post;
 
 import java.util.List;
 
@@ -21,4 +23,8 @@ public interface PostService {
     List<PostInfoDTO> getAllWithHashtag(String requestedBy, String hashtag);
 
     PostInfoDTO get(String requestedBy, long postId) throws PostDoesNotExistException;
+    
+    Favourites saveToFavourites(long postId ,String username);
+    
+    List<PostInfoDTO> getFavouritesForProfile(String profile);
 }

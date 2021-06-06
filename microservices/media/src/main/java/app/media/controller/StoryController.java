@@ -49,4 +49,15 @@ public class StoryController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You blocked this profile");
         }
     }
+    @GetMapping(value = "allStories")
+    public ResponseEntity<List<StoryInfoDTO>> getForProfile(@RequestHeader("Authorization") String auth) {
+  
+            if(TokenUtils.verify(auth, "USER") || TokenUtils.verify(auth, "AGENT")) {
+                String username = TokenUtils.getUsernameFromToken(auth.substring(7));
+                return new ResponseEntity<>(storyService.getAllUserStories(username), HttpStatus.OK);
+            }
+            else
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+      
+    }
 }
