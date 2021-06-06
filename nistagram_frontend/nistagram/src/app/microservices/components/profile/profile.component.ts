@@ -8,6 +8,7 @@ import { Post } from '../../model/post';
 import { ProfileInfo } from '../../model/profile-info';
 import { Story } from '../../model/story';
 import { ProfileService } from '../../profile-service/profile.service';
+import { CloseFriendsComponent } from '../close-friends/close-friends.component';
 import { FollowerRequestDialogComponent } from '../follower-request-dialog/follower-request-dialog.component';
 import { FollowersDialogComponent } from '../followers-dialog/followers-dialog.component';
 
@@ -84,7 +85,8 @@ export class ProfileComponent implements OnInit {
       this.profile.following = true;
       this.profileService.followProfile(profileUsername).subscribe(data => this.profile.followerCount = Number(data));
     }else{
-      console.log("Follow request have been sent.")
+      this.openSnackBar("You have successfully sent follow request.")
+      this.profileService.followProfile(profileUsername).subscribe(data => this.profile.followerCount = Number(data));
     }
   }
   unfollow(profileUsername : string){
@@ -122,5 +124,13 @@ export class ProfileComponent implements OnInit {
     this.snackBar.open(message, "Okay", {
       duration: 5000,
     });
+  }
+
+  closeFriends(){
+    this.profileService.getFollowers(this.profile.username).subscribe(data =>{
+      console.log(data);
+      this.matDialog.open(CloseFriendsComponent, {data : data,  width: '70vw',
+      maxWidth: '70vw'});
+    }); 
   }
 }

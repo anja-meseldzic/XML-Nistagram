@@ -17,6 +17,7 @@
             <button *ngIf="this.authService.isLoggedIn() && profile.owned" mat-stroked-button style="margin-left: 10px;">Settings</button>
             <button *ngIf="this.authService.isLoggedIn() && profile.owned" mat-stroked-button style="margin-left: 10px;" (click)="editProfile()">Edit profile</button>
             <button *ngIf="this.authService.isLoggedIn() && profile.owned" mat-stroked-button style="margin-left: 10px;" (click)="followRequests()">Follow requests</button>
+            <button *ngIf="this.authService.isLoggedIn() && profile.owned" mat-stroked-button style="margin-left: 10px;" (click)="closeFriends()">Close friends</button>
             <button *ngIf="this.authService.isLoggedIn() && !profile.owned && !profile.following" mat-raised-button color="primary" style="margin-left: 10px;" (click) = "follow(profile.privateProfile, profile.username)">Follow</button>
             <button *ngIf="this.authService.isLoggedIn() && !profile.owned && profile.following" mat-raised-button color="primary" style="margin-left: 10px;" (click) = "unfollow(profile.username)">Unfollow</button>
         </p>
