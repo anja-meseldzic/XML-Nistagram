@@ -33,7 +33,8 @@ public class ProfileServiceImpl implements ProfileService {
 	private AuthService authService;
 
 	@Autowired
-	public ProfileServiceImpl(ProfileRepository profileRepository, FollowRepository followRepository, AuthService authService, FollowRequestRepository followRequestRepo) {
+	public ProfileServiceImpl(ProfileRepository profileRepository, FollowRepository followRepository,
+			AuthService authService, FollowRequestRepository followRequestRepo) {
 		this.profileRepository = profileRepository;
 		this.followRepository = followRepository;
 		this.authService = authService;
@@ -59,8 +60,16 @@ public class ProfileServiceImpl implements ProfileService {
 			FollowRequest request = new FollowRequest();
 			request.setProfile(profile);
 			request.setFollowedBy(followedBy);
+			boolean exists = false;
 
-			followRequestRepo.save(request);
+			for (FollowRequest f : followRequestRepo.findAll()) {
+				if (f.getFollowedBy().equals(followedBy) && f.getProfile().equals(profile)) {
+					exists = true;
+				}
+			}
+			if (!exists) {
+				followRequestRepo.save(request);
+			}
 		}
 		return getFollowers(username).size();
 	}
@@ -120,8 +129,8 @@ public class ProfileServiceImpl implements ProfileService {
 
 	@Override
 	public Set<FollowRequestDto> acceptRequest(String username, String loggedInUsername) {
-		Profile profile = profileRepository.findByRegularUserUsername(username);
-		Profile followedBy = profileRepository.findByRegularUserUsername(loggedInUsername);
+		Profile profile = profileRepository.findByRegularUserUsername(loggedInUsername);
+		Profile followedBy = profileRepository.findByRegularUserUsername(username);
 
 		Follow follow = new Follow();
 		follow.setFollowedBy(followedBy);
@@ -131,38 +140,41 @@ public class ProfileServiceImpl implements ProfileService {
 		follow.setMuted(false);
 
 		followRepository.save(follow);
-		
+
 		return deleteRequest(username, loggedInUsername);
 	}
 
 	@Override
-	public Set<FollowRequestDto> deleteRequest(String username, String loggedInUsername){
+	public Set<FollowRequestDto> deleteRequest(String username, String loggedInUsername) {
 		Set<FollowRequest> requests = followRequestRepo
-				.findByProfile(profileRepository.findByRegularUserUsername(username));
-		
+				.findByProfile(profileRepository.findByRegularUserUsername(loggedInUsername));
+
 		Set<FollowRequestDto> followRequests = new HashSet<FollowRequestDto>();
-		
+
 		FollowRequest delete = new FollowRequest();
 		for (FollowRequest f : requests) {
-			if(f.getFollowedBy().getRegularUserUsername().equals(loggedInUsername)){
+			if (f.getFollowedBy().getRegularUserUsername().equals(username)) {
 				delete = f;
 				break;
 			}
 		}
-		
-		followRequestRepo.delete(delete);
-		
-		for (FollowRequest f : requests) {
+		if (delete != null) {
+			followRequestRepo.delete(delete);
+		}
+		Set<FollowRequest> newRequests = followRequestRepo
+				.findByProfile(profileRepository.findByRegularUserUsername(loggedInUsername));
+
+		for (FollowRequest f : newRequests) {
 			FollowRequestDto dto = new FollowRequestDto();
 			dto.setUsername1(f.getProfile().getRegularUserUsername());
 			dto.setUsername2(f.getFollowedBy().getRegularUserUsername());
 			dto.setId(f.getId());
 			followRequests.add(dto);
 		}
-		
+
 		return followRequests;
 	}
-	
+
 	@Override
 	public void createFromUser(String username) {
 		Profile profile = new Profile(username);
@@ -172,7 +184,7 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public ProfileInfoDTO getProfile(String requestedBy, String profile) throws ProfileNotFoundException {
 		Profile p = profileRepository.findByRegularUserUsername(profile);
-		if(p == null)
+		if (p == null)
 			throw new ProfileNotFoundException();
 
 		ProfileInfoDTO result = new ProfileInfoDTO();
@@ -225,35 +237,29 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<String> getBlocked(String profile) {
 		return followRepository.findAll().stream()
-				.filter(f -> f.getFollowedBy().getRegularUserUsername().equals(profile)
-						&& f.isBlocked())
-				.map(f -> f.getProfile().getRegularUserUsername())
-				.collect(Collectors.toList());
+				.filter(f -> f.getFollowedBy().getRegularUserUsername().equals(profile) && f.isBlocked())
+				.map(f -> f.getProfile().getRegularUserUsername()).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<String> getMuted(String profile) {
 		return followRepository.findAll().stream()
-				.filter(f -> f.getFollowedBy().getRegularUserUsername().equals(profile)
-						&& f.isMuted())
-				.map(f -> f.getProfile().getRegularUserUsername())
-				.collect(Collectors.toList());
+				.filter(f -> f.getFollowedBy().getRegularUserUsername().equals(profile) && f.isMuted())
+				.map(f -> f.getProfile().getRegularUserUsername()).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<String> getCloseFriends(String profile) {
 		return followRepository.findAll().stream()
-				.filter(f -> f.getProfile().getRegularUserUsername().equals(profile)
-						&& f.isCloseFriend())
-				.map(f -> f.getFollowedBy().getRegularUserUsername())
-				.collect(Collectors.toList());
+				.filter(f -> f.getProfile().getRegularUserUsername().equals(profile) && f.isCloseFriend())
+				.map(f -> f.getFollowedBy().getRegularUserUsername()).collect(Collectors.toList());
 	}
 
 	@Override
 	public boolean isPublic(String profile) throws ProfileNotFoundException {
-		Optional<Profile> p = profileRepository.findAll().stream().
-				filter(prof -> prof.getRegularUserUsername().equals(profile)).findFirst();
-		if(!p.isPresent())
+		Optional<Profile> p = profileRepository.findAll().stream()
+				.filter(prof -> prof.getRegularUserUsername().equals(profile)).findFirst();
+		if (!p.isPresent())
 			throw new ProfileNotFoundException();
 		return !p.get().isPrivateProfile();
 	}
@@ -267,20 +273,22 @@ public class ProfileServiceImpl implements ProfileService {
 	}
 
 	private boolean isFollowing(Profile profile, String follower) {
-		return followRepository.findAll().stream().
-				filter(f -> f.getProfile().getRegularUserUsername().equals(profile.getRegularUserUsername())
-						&& f.getFollowedBy().getRegularUserUsername().equals(follower)).count() > 0;
+		return followRepository.findAll().stream()
+				.filter(f -> f.getProfile().getRegularUserUsername().equals(profile.getRegularUserUsername())
+						&& f.getFollowedBy().getRegularUserUsername().equals(follower))
+				.count() > 0;
 	}
 
 	@Override
 	public void addCloseFriend(String myUsername, String usernameOfFriend) {
 		for (Follow f : followRepository.findAll()) {
-			if (f.getProfile().getRegularUserUsername().equals(myUsername) && f.getFollowedBy().getRegularUserUsername().equals(usernameOfFriend)){
+			if (f.getProfile().getRegularUserUsername().equals(myUsername)
+					&& f.getFollowedBy().getRegularUserUsername().equals(usernameOfFriend)) {
 				f.setCloseFriend(true);
 				followRepository.save(f);
 				return;
 			}
 		}
-		
+
 	}
 }
