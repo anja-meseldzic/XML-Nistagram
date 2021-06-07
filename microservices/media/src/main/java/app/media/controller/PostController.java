@@ -1,6 +1,7 @@
 package app.media.controller;
 
 import app.media.dtos.CollectionDTO;
+import app.media.dtos.CollectionInfoDTO;
 import app.media.dtos.PostInfoDTO;
 import app.media.dtos.SearchResultDTO;
 import app.media.exception.PostDoesNotExistException;
@@ -104,7 +105,7 @@ public class PostController {
 	}
     
     @GetMapping(value = "favourites")
-    public ResponseEntity<List<PostInfoDTO>> saveToFavourites(@RequestHeader("Authorization") String auth) {
+    public ResponseEntity<List<PostInfoDTO>> getFavourites(@RequestHeader("Authorization") String auth) {
     	if(!TokenUtils.verify(auth, "USER")) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
@@ -122,5 +123,15 @@ public class PostController {
 		String loggedInUsername = TokenUtils.getUsernameFromToken(token);
 		postService.addFavouritesToCollection(loggedInUsername, dto);
 		return new ResponseEntity<>("You have added post to collection " + dto.getName(), HttpStatus.OK);
+	}
+    
+    @GetMapping(value = "collections")
+    public ResponseEntity<List<CollectionInfoDTO>> getAllCollections(@RequestHeader("Authorization") String auth) {
+    	if(!TokenUtils.verify(auth, "USER")) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		String token = TokenUtils.getToken(auth);
+		String loggedInUsername = TokenUtils.getUsernameFromToken(token);
+		return new ResponseEntity<List<CollectionInfoDTO>>(postService.getCollectionsForProfile(loggedInUsername), HttpStatus.OK);
 	}
 }

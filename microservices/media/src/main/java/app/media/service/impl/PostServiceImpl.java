@@ -1,6 +1,7 @@
 package app.media.service.impl;
 
 import app.media.dtos.CollectionDTO;
+import app.media.dtos.CollectionInfoDTO;
 import app.media.dtos.PostInfoDTO;
 import app.media.dtos.SearchResultDTO;
 import app.media.exception.PostDoesNotExistException;
@@ -33,191 +34,188 @@ public class PostServiceImpl implements PostService {
 	private FavouritesRepository favouritesRepository;
 	private CollectionRepository collectionRepository;
 
-	
-    @Autowired
-    public PostServiceImpl(PostRepository postRepository, ProfileService profileService, FavouritesRepository favRepo, CollectionRepository collectionRepository) {
-        this.postRepository = postRepository;
-        this.profileService = profileService;
-        this.favouritesRepository = favRepo;
-        this.collectionRepository = collectionRepository;
-        
-    }
+	@Autowired
+	public PostServiceImpl(PostRepository postRepository, ProfileService profileService, FavouritesRepository favRepo,
+			CollectionRepository collectionRepository) {
+		this.postRepository = postRepository;
+		this.profileService = profileService;
+		this.favouritesRepository = favRepo;
+		this.collectionRepository = collectionRepository;
 
-    @Override
-    public List<PostInfoDTO> getFeed(String username) {
-        System.out.println("USERNAME FROM TOKEN: " + username);
-        List<PostInfoDTO> result = new ArrayList<>();
+	}
 
-        List<String> targetedProfiles = profileService.getFollowing(username);
-        List<String> mutedProfiles = profileService.getMuted(username);
-        List<String> blockedProfiles = profileService.getBlocked(username);
+	@Override
+	public List<PostInfoDTO> getFeed(String username) {
+		System.out.println("USERNAME FROM TOKEN: " + username);
+		List<PostInfoDTO> result = new ArrayList<>();
 
-        targetedProfiles.removeAll(mutedProfiles);
-        targetedProfiles.removeAll(blockedProfiles);
+		List<String> targetedProfiles = profileService.getFollowing(username);
+		List<String> mutedProfiles = profileService.getMuted(username);
+		List<String> blockedProfiles = profileService.getBlocked(username);
 
-        List<Post> targetedPosts = postRepository.findAll().stream()
-                .filter(p -> targetedProfiles.contains(p.getMedia().getUsername()))
-                .collect(Collectors.toList());Collectors.toList();
+		targetedProfiles.removeAll(mutedProfiles);
+		targetedProfiles.removeAll(blockedProfiles);
 
-        for(Post post : targetedPosts)
-            result.add(toPostInfoDTO(post));
-        postRepository.findAll().stream()
-                .filter(p -> p.getMedia().getUsername().equals(username))
-                .forEach(p -> result.add(toPostInfoDTO(p)));
+		List<Post> targetedPosts = postRepository.findAll().stream()
+				.filter(p -> targetedProfiles.contains(p.getMedia().getUsername())).collect(Collectors.toList());
+		Collectors.toList();
 
-        result.sort((r1, r2) -> r1.getCreated().isBefore(r2.getCreated()) ? 1 : -1);
-        return result;
-    }
+		for (Post post : targetedPosts)
+			result.add(toPostInfoDTO(post));
+		postRepository.findAll().stream().filter(p -> p.getMedia().getUsername().equals(username))
+				.forEach(p -> result.add(toPostInfoDTO(p)));
 
-    @Override
-    public List<PostInfoDTO> getForProfile(String requestedBy, String profile) throws ProfilePrivateException, ProfileBlockedException {
-        System.out.println("USERNAME FROM TOKEN: " + requestedBy);
-        List<PostInfoDTO> result;
-        if(requestedBy == null)
-            result = getForProfileWhenUnauthenticated(profile);
-        else
-            result = getForProfileWhenAuthenticated(requestedBy, profile);
-        result.sort((r1, r2) -> r1.getCreated().isBefore(r2.getCreated()) ? 1 : -1);
-        return result;
-    }
+		result.sort((r1, r2) -> r1.getCreated().isBefore(r2.getCreated()) ? 1 : -1);
+		return result;
+	}
 
-    @Override
-    public List<SearchResultDTO> search(String requestedBy, String criterion) {
-        System.out.println("USERNAME FROM TOKEN: " + requestedBy);
-        List<SearchResultDTO> result = new ArrayList<>();
-        for(String location : getAllLocations(requestedBy))
-            if(location.contains(criterion.toLowerCase()))
-                result.add(new SearchResultDTO(location, "location"));
-        for(String hashtag : getAllHashtags(requestedBy))
-            if(hashtag.contains(criterion.toLowerCase()))
-                result.add(new SearchResultDTO(hashtag, "hashtag"));
-        for(String profile : getAllProfiles(requestedBy))
-            if(profile.contains(criterion.toLowerCase()))
-                result.add(new SearchResultDTO(profile, "profile"));
-        return result;
-    }
+	@Override
+	public List<PostInfoDTO> getForProfile(String requestedBy, String profile)
+			throws ProfilePrivateException, ProfileBlockedException {
+		System.out.println("USERNAME FROM TOKEN: " + requestedBy);
+		List<PostInfoDTO> result;
+		if (requestedBy == null)
+			result = getForProfileWhenUnauthenticated(profile);
+		else
+			result = getForProfileWhenAuthenticated(requestedBy, profile);
+		result.sort((r1, r2) -> r1.getCreated().isBefore(r2.getCreated()) ? 1 : -1);
+		return result;
+	}
 
-    @Override
-    public List<PostInfoDTO> getAllWithLocation(String requestedBy, String location) {
-        System.out.println("USERNAME FROM TOKEN: " + requestedBy);
-        return postRepository.findAll().stream()
-                .filter(p -> (profileService.isPublic(p.getMedia().getUsername())
-                        || p.getMedia().getUsername().equals(requestedBy)
-                        || (profileService.getFollowing(p.getMedia().getUsername()).contains(requestedBy)
-                        && !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername())))
-                        &&p.getLocation() != null && location.toLowerCase().equals(p.getLocation().toLowerCase()))
-                .map(p -> toPostInfoDTO(p))
-                .collect(Collectors.toList());
-    }
+	@Override
+	public List<SearchResultDTO> search(String requestedBy, String criterion) {
+		System.out.println("USERNAME FROM TOKEN: " + requestedBy);
+		List<SearchResultDTO> result = new ArrayList<>();
+		for (String location : getAllLocations(requestedBy))
+			if (location.contains(criterion.toLowerCase()))
+				result.add(new SearchResultDTO(location, "location"));
+		for (String hashtag : getAllHashtags(requestedBy))
+			if (hashtag.contains(criterion.toLowerCase()))
+				result.add(new SearchResultDTO(hashtag, "hashtag"));
+		for (String profile : getAllProfiles(requestedBy))
+			if (profile.contains(criterion.toLowerCase()))
+				result.add(new SearchResultDTO(profile, "profile"));
+		return result;
+	}
 
-    @Override
-    public List<PostInfoDTO> getAllWithHashtag(String requestedBy, String hashtag) {
-        System.out.println("USERNAME FROM TOKEN: " + requestedBy);
-        return postRepository.findAll().stream()
-                .filter(p -> (profileService.isPublic(p.getMedia().getUsername())
-                        || p.getMedia().getUsername().equals(requestedBy)
-                        || (profileService.getFollowing(p.getMedia().getUsername()).contains(requestedBy)
-                        && !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername())))
-                        && p.getTags() != null && p.getTags().stream().filter(t -> hashtag.toLowerCase().equals(t.toLowerCase())).count() > 0)
-                .map(p -> toPostInfoDTO(p))
-                .collect(Collectors.toList());
-    }
+	@Override
+	public List<PostInfoDTO> getAllWithLocation(String requestedBy, String location) {
+		System.out.println("USERNAME FROM TOKEN: " + requestedBy);
+		return postRepository.findAll().stream()
+				.filter(p -> (profileService.isPublic(p.getMedia().getUsername())
+						|| p.getMedia().getUsername().equals(requestedBy)
+						|| (profileService.getFollowing(p.getMedia().getUsername()).contains(requestedBy)
+								&& !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername())))
+						&& p.getLocation() != null && location.toLowerCase().equals(p.getLocation().toLowerCase()))
+				.map(p -> toPostInfoDTO(p)).collect(Collectors.toList());
+	}
 
-    @Override
-    public PostInfoDTO get(String requestedBy, long postId) throws PostDoesNotExistException {
-        System.out.println("USERNAME FROM TOKEN: " + requestedBy);
-        Post post = postRepository.findAll().stream()
-                .filter(p -> (profileService.isPublic(p.getMedia().getUsername())
-                        || p.getMedia().getUsername().equals(requestedBy)
-                        || (profileService.getFollowers(p.getMedia().getUsername()).contains(requestedBy)
-                        && !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername())))
-                        && p.getId() == postId).findFirst().orElse(null);
-        if(post == null)
-            throw new PostDoesNotExistException();
-        return toPostInfoDTO(post);
-    }
+	@Override
+	public List<PostInfoDTO> getAllWithHashtag(String requestedBy, String hashtag) {
+		System.out.println("USERNAME FROM TOKEN: " + requestedBy);
+		return postRepository.findAll().stream()
+				.filter(p -> (profileService.isPublic(p.getMedia().getUsername())
+						|| p.getMedia().getUsername().equals(requestedBy)
+						|| (profileService.getFollowing(p.getMedia().getUsername()).contains(requestedBy)
+								&& !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername())))
+						&& p.getTags() != null
+						&& p.getTags().stream().filter(t -> hashtag.toLowerCase().equals(t.toLowerCase())).count() > 0)
+				.map(p -> toPostInfoDTO(p)).collect(Collectors.toList());
+	}
 
-    private Set<String> getAllLocations(String requestedBy) {
-        Set<String> result = new HashSet<>();
-        postRepository.findAll().stream()
-                .filter(p ->p.getLocation() != null && (
-                            profileService.isPublic(p.getMedia().getUsername())
-                            || p.getMedia().getUsername().equals(requestedBy)
-                            || (profileService.getFollowing(p.getMedia().getUsername()).contains(requestedBy)
-                                && !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername()))))
-                .forEach(p -> result.add(p.getLocation().toLowerCase()));
-        return result;
-    }
+	@Override
+	public PostInfoDTO get(String requestedBy, long postId) throws PostDoesNotExistException {
+		System.out.println("USERNAME FROM TOKEN: " + requestedBy);
+		Post post = postRepository.findAll().stream()
+				.filter(p -> (profileService.isPublic(p.getMedia().getUsername())
+						|| p.getMedia().getUsername().equals(requestedBy)
+						|| (profileService.getFollowers(p.getMedia().getUsername()).contains(requestedBy)
+								&& !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername())))
+						&& p.getId() == postId)
+				.findFirst().orElse(null);
+		if (post == null)
+			throw new PostDoesNotExistException();
+		return toPostInfoDTO(post);
+	}
 
-    private Set<String> getAllHashtags(String requestedBy) {
-        Set<String> result = new HashSet<>();
-        postRepository.findAll().stream()
-                .filter(p -> p.getTags() != null && (
-                        profileService.isPublic(p.getMedia().getUsername())
-                        || p.getMedia().getUsername().equals(requestedBy)
-                        || (profileService.getFollowing(p.getMedia().getUsername()).contains(requestedBy)
-                        && !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername()))))
-                .forEach(p -> p.getTags().forEach(t -> result.add(t.toLowerCase())));
-        return result;
-    }
+	private Set<String> getAllLocations(String requestedBy) {
+		Set<String> result = new HashSet<>();
+		postRepository.findAll().stream()
+				.filter(p -> p.getLocation() != null && (profileService.isPublic(p.getMedia().getUsername())
+						|| p.getMedia().getUsername().equals(requestedBy)
+						|| (profileService.getFollowing(p.getMedia().getUsername()).contains(requestedBy)
+								&& !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername()))))
+				.forEach(p -> result.add(p.getLocation().toLowerCase()));
+		return result;
+	}
 
-    private Set<String> getAllProfiles(String requestedBy) {
-        if(requestedBy != null) {
-            return profileService.getAll().stream()
-                    .filter(p -> !profileService.getBlocked(requestedBy).contains(p))
-                    .collect(Collectors.toSet());
-        }
-        return profileService.getAll().stream().collect(Collectors.toSet());
-    }
+	private Set<String> getAllHashtags(String requestedBy) {
+		Set<String> result = new HashSet<>();
+		postRepository.findAll().stream()
+				.filter(p -> p.getTags() != null && (profileService.isPublic(p.getMedia().getUsername())
+						|| p.getMedia().getUsername().equals(requestedBy)
+						|| (profileService.getFollowing(p.getMedia().getUsername()).contains(requestedBy)
+								&& !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername()))))
+				.forEach(p -> p.getTags().forEach(t -> result.add(t.toLowerCase())));
+		return result;
+	}
 
-    private List<PostInfoDTO> getForProfileWhenUnauthenticated(String profile) throws ProfilePrivateException {
-        if(!profileService.isPublic(profile))
-            throw new ProfilePrivateException();
-        return getForProfile(profile);
-    }
+	private Set<String> getAllProfiles(String requestedBy) {
+		if (requestedBy != null) {
+			return profileService.getAll().stream().filter(p -> !profileService.getBlocked(requestedBy).contains(p))
+					.collect(Collectors.toSet());
+		}
+		return profileService.getAll().stream().collect(Collectors.toSet());
+	}
 
-    private List<PostInfoDTO> getForProfileWhenAuthenticated(String requestedBy, String profile) throws ProfilePrivateException, ProfileBlockedException {
-        List<String> followers = profileService.getFollowers(profile);
-        boolean follower = followers.contains(requestedBy);
-        if(!profileService.isPublic(profile) && !follower && !profile.equals(requestedBy))
-            throw new ProfilePrivateException();
+	private List<PostInfoDTO> getForProfileWhenUnauthenticated(String profile) throws ProfilePrivateException {
+		if (!profileService.isPublic(profile))
+			throw new ProfilePrivateException();
+		return getForProfile(profile);
+	}
 
-        List<String> blockedProfiles = profileService.getBlocked(requestedBy);
-        boolean blocked = blockedProfiles.contains(profile);
-        if(blocked)
-            throw new ProfileBlockedException();
+	private List<PostInfoDTO> getForProfileWhenAuthenticated(String requestedBy, String profile)
+			throws ProfilePrivateException, ProfileBlockedException {
+		List<String> followers = profileService.getFollowers(profile);
+		boolean follower = followers.contains(requestedBy);
+		if (!profileService.isPublic(profile) && !follower && !profile.equals(requestedBy))
+			throw new ProfilePrivateException();
 
-        return getForProfile(profile);
-    }
+		List<String> blockedProfiles = profileService.getBlocked(requestedBy);
+		boolean blocked = blockedProfiles.contains(profile);
+		if (blocked)
+			throw new ProfileBlockedException();
 
-    private List<PostInfoDTO> getForProfile(String profile) {
-        return postRepository.findAll().stream()
-                .filter(p -> p.getMedia().getUsername().equals(profile))
-                .map(p -> toPostInfoDTO(p))
-                .collect(Collectors.toList());
-    }
+		return getForProfile(profile);
+	}
 
-    private PostInfoDTO toPostInfoDTO(Post post) {
-        PostInfoDTO result = new PostInfoDTO();
-        result.setId(post.getId());
-        result.setUsername(post.getMedia().getUsername());
-        result.setDescription(post.getDescription());
-        result.setHashtags(post.getTags());
-        result.setLocation(post.getLocation());
-        result.setCreated(post.getMedia().getCreated());
-        result.setUrls(post.getMedia().getPath());
-        return result;
-    }
-    
-    @Override
+	private List<PostInfoDTO> getForProfile(String profile) {
+		return postRepository.findAll().stream().filter(p -> p.getMedia().getUsername().equals(profile))
+				.map(p -> toPostInfoDTO(p)).collect(Collectors.toList());
+	}
+
+	private PostInfoDTO toPostInfoDTO(Post post) {
+		PostInfoDTO result = new PostInfoDTO();
+		result.setId(post.getId());
+		result.setUsername(post.getMedia().getUsername());
+		result.setDescription(post.getDescription());
+		result.setHashtags(post.getTags());
+		result.setLocation(post.getLocation());
+		result.setCreated(post.getMedia().getCreated());
+		result.setUrls(post.getMedia().getPath());
+		return result;
+	}
+
+	@Override
 	public List<PostInfoDTO> getFavouritesForProfile(String profile) {
 		List<PostInfoDTO> result = new ArrayList<PostInfoDTO>();
-		for( Favourites f : favouritesRepository.findAll().stream().filter(p -> p.getUsername().equals(profile)).collect(Collectors.toList())) {
-			 for(Post p : postRepository.findAll()) {
-				 if(p.getId() == f.getPost().getId()) {
-					 result.add( toPostInfoDTO(p));
-				 }
-			 }
+		for (Favourites f : favouritesRepository.findAll().stream().filter(p -> p.getUsername().equals(profile))
+				.collect(Collectors.toList())) {
+			for (Post p : postRepository.findAll()) {
+				if (p.getId() == f.getPost().getId()) {
+					result.add(toPostInfoDTO(p));
+				}
+			}
 		}
 		return result;
 	}
@@ -245,12 +243,30 @@ public class PostServiceImpl implements PostService {
 	public void addFavouritesToCollection(String loggedInUsername, CollectionDTO dto) {
 		Collection collection = new Collection();
 		collection.setUsername(loggedInUsername);
-		Post post =  postRepository.findOneById(dto.getId());
+		Post post = postRepository.findOneById(dto.getId());
 		Favourites fav = favouritesRepository.findByPost(post);
 		collection.setFavourite(fav);
 		collection.setName(dto.getName());
-		
+
 		collectionRepository.save(collection);
+	}
+
+	@Override
+	public List<CollectionInfoDTO> getCollectionsForProfile(String loggedInUsername) {
+		List<CollectionInfoDTO> result = new ArrayList<CollectionInfoDTO>();
+		for (Collection c : collectionRepository.findAll().stream()
+				.filter(c -> c.getUsername().equals(loggedInUsername)).collect(Collectors.toList())) {
+			result.add(toCollectionInfoDto(c));
+		}
+		return result;
+	}
+	
+	private CollectionInfoDTO toCollectionInfoDto(Collection c) {
+		CollectionInfoDTO dto = new CollectionInfoDTO();
+		dto.setId(c.getId());
+		dto.setName(c.getName());
+		dto.setUrls(c.getFavourite().getPost().getMedia().getPath());
+		return dto;
 	}
 
 }

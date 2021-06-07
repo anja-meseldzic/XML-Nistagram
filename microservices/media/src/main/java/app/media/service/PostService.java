@@ -1,6 +1,7 @@
 package app.media.service;
 
 import app.media.dtos.CollectionDTO;
+import app.media.dtos.CollectionInfoDTO;
 import app.media.dtos.PostInfoDTO;
 import app.media.dtos.SearchResultDTO;
 import app.media.exception.PostDoesNotExistException;
@@ -30,4 +31,6 @@ public interface PostService {
     List<PostInfoDTO> getFavouritesForProfile(String profile);
 
 	void addFavouritesToCollection(String loggedInUsername, CollectionDTO dto);
+
+	List<CollectionInfoDTO> getCollectionsForProfile(String loggedInUsername);
 }

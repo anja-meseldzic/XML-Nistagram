@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { AllCommentDTO } from '../DTOs/all-comment-dto';
 import { AllReactionsDTO } from '../DTOs/all-reactions-dto';
 import { CollectionDTO } from '../DTOs/collection-dto';
+import { CollectionInfoDto } from '../DTOs/collection-info-dto';
 import { CommentDTO } from '../DTOs/comment-dto';
 import { RatingDTO } from '../DTOs/rating-dto';
 import { ReactionsNumberDTO } from '../DTOs/reactions-number-dto';
@@ -131,6 +132,12 @@ export class MediaService {
 
   public addToCollection(dto : CollectionDTO){
     return this._http.post(environment.mediaBaseUrl + 'post/addToCollection', dto,{responseType: 'text',headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+
+  public getCollections(): Observable<CollectionInfoDto[]>{
+    return this._http.get<CollectionInfoDto[]>(environment.mediaBaseUrl + 'post/collections',{headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }

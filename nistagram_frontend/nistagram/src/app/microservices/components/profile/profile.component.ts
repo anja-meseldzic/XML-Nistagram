@@ -3,6 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../auth-service/auth.service';
+import { CollectionDTO } from '../../DTOs/collection-dto';
+import { CollectionInfoDto } from '../../DTOs/collection-info-dto';
 import { MediaService } from '../../media-service/media.service';
 import { Post } from '../../model/post';
 import { ProfileInfo } from '../../model/profile-info';
@@ -28,6 +30,8 @@ export class ProfileComponent implements OnInit {
   stories : Story[] = [];
   allStories : Story[] = [];
   storyHighlights : Story[] = [];
+  collections : CollectionInfoDto[] = [];
+  collections1 = [];
   hiddenBut :Number[] = [];
   
 
@@ -54,6 +58,10 @@ export class ProfileComponent implements OnInit {
           );
           this.mediaService.getStoriesForUser().subscribe(
             data => { this.allStories = data; this.constructSliderObjectsForAllStories(); },
+            error => console.log(error.error.message)
+          );
+          this.mediaService.getCollections().subscribe(
+            data => { this.collections = data; this.constructSliderObjectsForCollections(this.collections); },
             error => console.log(error.error.message)
           );
         }
@@ -86,6 +94,25 @@ export class ProfileComponent implements OnInit {
         }
       }
       post['slider'] = storyObject;
+    }
+  }
+
+  constructSliderObjectsForCollections(collections : CollectionInfoDto[]){
+    this.collections1 = [];
+    const names : String[] = Array.from(new Set(collections.map(c => c.name)));
+    for(const name of names) {
+      const nameCollections = collections.filter(c => c.name === name)
+      const storyObject = new Array<Object>();
+      for(const collection of nameCollections) {
+        for(const url of collection.urls){
+          if(url.endsWith('.jpg') || url.endsWith('.png')) {
+            storyObject.push( {image: url, thumbImage: url, title: name});
+          } else {
+            storyObject.push({video: url, alt: 'video unavailable', title: name});
+          }
+        }
+      }
+      this.collections1.push(storyObject);
     }
   }
 
@@ -195,13 +222,15 @@ export class ProfileComponent implements OnInit {
   }
 
   addToHighlights(story : Story){
-    this.mediaService.saveToHighlights(story).subscribe(data => this.snackBar.open(data, "Okay"));
+    this.mediaService.saveToHighlights(story).subscribe(data => {this.snackBar.open(data, "Okay");
+    this.mediaService.getHiddenButtons().push(story.id);
+    this.hiddenBut = this.mediaService.getHiddenButtons();
+
     this.mediaService.getHighlights().subscribe(
       data => { this.storyHighlights = data; this.constructSliderObjectsForHighlights(); },
       error => {this.openSnackBar(error.error.message); this.router.navigate(['./feed']);}
     );
-    this.mediaService.getHiddenButtons().push(story.id);
-    this.hiddenBut = this.mediaService.getHiddenButtons();
+  });
     
   }
 

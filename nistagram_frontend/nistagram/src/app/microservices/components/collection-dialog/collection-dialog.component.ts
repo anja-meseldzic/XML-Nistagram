@@ -3,6 +3,7 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectionDTO } from '../../DTOs/collection-dto';
+import { CollectionInfoDto } from '../../DTOs/collection-info-dto';
 import { MediaService } from '../../media-service/media.service';
 import { ProfileService } from '../../profile-service/profile.service';
 
@@ -20,6 +21,16 @@ export class CollectionDialogComponent implements OnInit {
   }
 
   submit(){
-    this.mediaService.addToCollection(new CollectionDTO(this.data, this.name)).subscribe(data => console.log(data));
+    this.mediaService.addToCollection(new CollectionDTO(this.data, this.name)).subscribe(data => {
+      this._snackBar.open(data, "okay");
+    });
   }
+
+  openSnackBar(message: string) {
+    this._snackBar.open(message, "Okay", {
+      duration: 5000,
+    });
+  }
+
+
 }
