@@ -18,58 +18,58 @@ export class ProfileService {
   }
 
   public followProfile(username : string){
-    return this._http.get("http://localhost:8085/profile/follow/"+ username, {responseType: 'text',headers : {
+    return this._http.get(environment.profileBaseUrl + 'profile/follow/' + username, {responseType: 'text',headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }
 
   public unfollowProfile(username : string) {
-    return this._http.get("http://localhost:8085/profile/unfollow/"+ username, {responseType: 'text',headers : {
+    return this._http.get(environment.profileBaseUrl + "profile/unfollow/"+ username, {responseType: 'text',headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }
 
   public getFollowRequests(username : String) : Observable<FollowRequestDto[]> {
-    return this._http.get<FollowRequestDto[]>("http://localhost:8085/profile/followRequest/"+ username, {headers : {
+    return this._http.get<FollowRequestDto[]>(environment.profileBaseUrl + "profile/followRequest/"+ username, {headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }
 
   public acceptRequest(username : String) : Observable<FollowRequestDto[]> {
-    return this._http.get<FollowRequestDto[]>("http://localhost:8085/profile/acceptRequest/"+ username, {headers : {
+    return this._http.get<FollowRequestDto[]>(environment.profileBaseUrl + "profile/acceptRequest/"+ username, {headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }
 
   public deleteRequest(username : String) : Observable<FollowRequestDto[]> {
-    return this._http.get<FollowRequestDto[]>("http://localhost:8085/profile/deleteRequest/"+ username, {headers : {
+    return this._http.get<FollowRequestDto[]>(environment.profileBaseUrl + "profile/deleteRequest/"+ username, {headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }
 
   public getFollowers(username : String){
-    return this._http.get<FollowerDto[]>("http://localhost:8085/profile/followers/"+ username, {headers : {
+    return this._http.get<FollowerDto[]>(environment.profileBaseUrl + "profile/followers/"+ username, {headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }
 
   public getFollowing(username : String){
-    return this._http.get<FollowerDto[]>("http://localhost:8085/profile/following/"+ username, {headers : {
+    return this._http.get<FollowerDto[]>(environment.profileBaseUrl + "profile/following/"+ username, {headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }
   public addCloseFriend(data : string) {
-    return this._http.post("http://localhost:8085/profile/addCloseFriend", data, {responseType: 'text',headers : {
+    return this._http.post(environment.profileBaseUrl + "profile/addCloseFriend", data, {responseType: 'text',headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }
   public removeCloseFriend(data : string) {
-    return this._http.post("http://localhost:8085/profile/removeCloseFriend", data, {responseType: 'text',headers : {
+    return this._http.post(environment.profileBaseUrl + "profile/removeCloseFriend", data, {responseType: 'text',headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }
   public getCloseFriends() : Observable<String[]> {
-    return this._http.get<String[]>("http://localhost:8085/profile/getCloseFriends", {headers : {
+    return this._http.get<String[]>(environment.profileBaseUrl + "profile/getCloseFriends", {headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }

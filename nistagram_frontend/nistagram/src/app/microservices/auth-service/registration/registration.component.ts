@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import axios from 'axios';
 import {Router} from '@angular/router';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-registration',
@@ -46,7 +47,8 @@ export class RegistrationComponent implements OnInit {
     }
 
     axios
-      .post('http://localhost:8081/regulars', {
+      // .post('http://localhost:8081/regulars', {
+      .post('http://localhost:8080/api/auth/regulars', {
         name : this.name,
         surname : this.lastName,
         email : this.email,

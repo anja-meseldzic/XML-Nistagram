@@ -3,6 +3,7 @@ import axios from 'axios';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import jwtDecode from 'jwt-decode';
 import {Router} from '@angular/router';
+import {environment} from '../../../../environments/environment';
 
 
 @Component({
@@ -42,7 +43,7 @@ export class PersonalInfoEditComponent implements OnInit {
 
     axios
       // @ts-ignore
-      .get('http://localhost:8081/regulars/' + jwtDec.id, {
+      .get(environment.authBaseUrl + 'regulars/' + jwtDec.id, {
         headers : {
           Authorization: 'Bearer ' + localStorage.getItem('jwt')
         }
@@ -81,7 +82,7 @@ export class PersonalInfoEditComponent implements OnInit {
     }
 
     axios
-      .post('http://localhost:8081/regulars/update', {
+      .post(environment.authBaseUrl + 'regulars/update', {
         id : this.id,
         name : this.name,
         surname : this.lastName,
