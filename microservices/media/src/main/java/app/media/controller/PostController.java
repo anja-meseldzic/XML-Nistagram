@@ -1,5 +1,6 @@
 package app.media.controller;
 
+import app.media.dtos.CollectionDTO;
 import app.media.dtos.PostInfoDTO;
 import app.media.dtos.SearchResultDTO;
 import app.media.exception.PostDoesNotExistException;
@@ -110,5 +111,16 @@ public class PostController {
 		String token = TokenUtils.getToken(auth);
 		String loggedInUsername = TokenUtils.getUsernameFromToken(token);
 		return new ResponseEntity<List<PostInfoDTO>>(postService.getFavouritesForProfile(loggedInUsername), HttpStatus.OK);
+	}
+    
+    @PostMapping(value = "addToCollection")
+    public ResponseEntity<String> addToCollection(@RequestBody CollectionDTO dto, @RequestHeader("Authorization") String auth) {
+    	if(!TokenUtils.verify(auth, "USER")) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		String token = TokenUtils.getToken(auth);
+		String loggedInUsername = TokenUtils.getUsernameFromToken(token);
+		postService.addFavouritesToCollection(loggedInUsername, dto);
+		return new ResponseEntity<>("You have added post to collection " + dto.getName(), HttpStatus.OK);
 	}
 }

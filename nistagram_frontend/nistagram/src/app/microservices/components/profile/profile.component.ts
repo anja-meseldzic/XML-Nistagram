@@ -9,6 +9,7 @@ import { ProfileInfo } from '../../model/profile-info';
 import { Story } from '../../model/story';
 import { ProfileService } from '../../profile-service/profile.service';
 import { CloseFriendsComponent } from '../close-friends/close-friends.component';
+import { CollectionDialogComponent } from '../collection-dialog/collection-dialog.component';
 import { FollowerRequestDialogComponent } from '../follower-request-dialog/follower-request-dialog.component';
 import { FollowersDialogComponent } from '../followers-dialog/followers-dialog.component';
 
@@ -26,6 +27,9 @@ export class ProfileComponent implements OnInit {
   favourites : Post[] = [];
   stories : Story[] = [];
   allStories : Story[] = [];
+  storyHighlights : Story[] = [];
+  hiddenBut :Number[] = [];
+  
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(
@@ -33,6 +37,7 @@ export class ProfileComponent implements OnInit {
                  this.getProfileInfo(username);
       }
     )
+    this.hiddenBut = this.mediaService.getHiddenButtons();
   }
 
   getProfileInfo(username : String) {
@@ -59,6 +64,10 @@ export class ProfileComponent implements OnInit {
           )
           this.mediaService.getStoriesByUser(this.profile.username).subscribe(
             data => { this.stories = data; this.constructSliderObjectsForStories(); },
+            error => {this.openSnackBar(error.error.message); this.router.navigate(['./feed']);}
+          );
+          this.mediaService.getHighlights().subscribe(
+            data => { this.storyHighlights = data; this.constructSliderObjectsForHighlights(); },
             error => {this.openSnackBar(error.error.message); this.router.navigate(['./feed']);}
           );
         }
@@ -104,6 +113,18 @@ export class ProfileComponent implements OnInit {
       }
     }
     this.stories['slider'] = storyObject;
+  }
+
+  constructSliderObjectsForHighlights() {
+    const storyObject = new Array<Object>();
+    for(const story of this.storyHighlights) {
+      if(story.url.endsWith('.jpg') || story.url.endsWith('.png')) {
+        storyObject.push( {image: story.url, thumbImage: story.url});
+      } else {
+        storyObject.push({video: story.url, alt: 'video unavailable'});
+      }
+    }
+    this.storyHighlights['slider'] = storyObject;
   }
 
   constructSliderObjectsForAllStories() {
@@ -172,4 +193,21 @@ export class ProfileComponent implements OnInit {
       maxWidth: '70vw'});
     }); 
   }
+
+  addToHighlights(story : Story){
+    this.mediaService.saveToHighlights(story).subscribe(data => this.snackBar.open(data, "Okay"));
+    this.mediaService.getHighlights().subscribe(
+      data => { this.storyHighlights = data; this.constructSliderObjectsForHighlights(); },
+      error => {this.openSnackBar(error.error.message); this.router.navigate(['./feed']);}
+    );
+    this.mediaService.getHiddenButtons().push(story.id);
+    this.hiddenBut = this.mediaService.getHiddenButtons();
+    
+  }
+
+  addToCollection(post : Post){
+    this.matDialog.open(CollectionDialogComponent, {data : post.id,  width: '30vw',
+      maxWidth: '30vw'});
+  }
+
 }

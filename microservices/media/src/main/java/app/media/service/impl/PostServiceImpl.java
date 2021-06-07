@@ -1,16 +1,19 @@
 package app.media.service.impl;
 
+import app.media.dtos.CollectionDTO;
 import app.media.dtos.PostInfoDTO;
 import app.media.dtos.SearchResultDTO;
 import app.media.exception.PostDoesNotExistException;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
+import app.media.model.Collection;
 import app.media.model.Favourites;
 import app.media.model.Post;
 import app.media.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import app.media.repository.CollectionRepository;
 import app.media.repository.FavouritesRepository;
 import app.media.repository.PostRepository;
 import app.media.service.PostService;
@@ -28,13 +31,15 @@ public class PostServiceImpl implements PostService {
 	private PostRepository postRepository;
 	private ProfileService profileService;
 	private FavouritesRepository favouritesRepository;
+	private CollectionRepository collectionRepository;
 
 	
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, ProfileService profileService, FavouritesRepository favRepo) {
+    public PostServiceImpl(PostRepository postRepository, ProfileService profileService, FavouritesRepository favRepo, CollectionRepository collectionRepository) {
         this.postRepository = postRepository;
         this.profileService = profileService;
         this.favouritesRepository = favRepo;
+        this.collectionRepository = collectionRepository;
         
     }
 
@@ -234,6 +239,18 @@ public class PostServiceImpl implements PostService {
 			favouritesRepository.save(favourite);
 		}
 		return favourite;
+	}
+
+	@Override
+	public void addFavouritesToCollection(String loggedInUsername, CollectionDTO dto) {
+		Collection collection = new Collection();
+		collection.setUsername(loggedInUsername);
+		Post post =  postRepository.findOneById(dto.getId());
+		Favourites fav = favouritesRepository.findByPost(post);
+		collection.setFavourite(fav);
+		collection.setName(dto.getName());
+		
+		collectionRepository.save(collection);
 	}
 
 }

@@ -50,11 +50,35 @@ public class StoryController {
         }
     }
     @GetMapping(value = "allStories")
-    public ResponseEntity<List<StoryInfoDTO>> getForProfile(@RequestHeader("Authorization") String auth) {
+    public ResponseEntity<List<StoryInfoDTO>> getAllStories(@RequestHeader("Authorization") String auth) {
   
             if(TokenUtils.verify(auth, "USER") || TokenUtils.verify(auth, "AGENT")) {
                 String username = TokenUtils.getUsernameFromToken(auth.substring(7));
                 return new ResponseEntity<>(storyService.getAllUserStories(username), HttpStatus.OK);
+            }
+            else
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+      
+    }
+    
+    @GetMapping(value = "storyHighlights")
+    public ResponseEntity<List<StoryInfoDTO>> getAllHighlights(@RequestHeader("Authorization") String auth) {
+  
+            if(TokenUtils.verify(auth, "USER") || TokenUtils.verify(auth, "AGENT")) {
+                String username = TokenUtils.getUsernameFromToken(auth.substring(7));
+                return new ResponseEntity<>(storyService.getStoryHighlights(username), HttpStatus.OK);
+            }
+            else
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+      
+    }
+    
+    @PostMapping(value = "saveToHighlights")
+    public ResponseEntity<String> addToHighlights(@RequestBody StoryInfoDTO dto ,@RequestHeader("Authorization") String auth) {
+  
+            if(TokenUtils.verify(auth, "USER") || TokenUtils.verify(auth, "AGENT")) {
+                storyService.addToStoryHighlights(dto);
+                return new ResponseEntity<>("Successfully saved to story highlights", HttpStatus.OK);
             }
             else
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AllCommentDTO } from '../DTOs/all-comment-dto';
 import { AllReactionsDTO } from '../DTOs/all-reactions-dto';
+import { CollectionDTO } from '../DTOs/collection-dto';
 import { CommentDTO } from '../DTOs/comment-dto';
 import { RatingDTO } from '../DTOs/rating-dto';
 import { ReactionsNumberDTO } from '../DTOs/reactions-number-dto';
@@ -24,8 +25,9 @@ export class MediaService {
   private reactOnPostUrl = environment.mediaBaseUrl + "media/reactOnPost";
   private getReactionsNumberUrl = environment.mediaBaseUrl + "media/getReactionsNumber";
   private getReactionsUrl = environment.mediaBaseUrl + "media/allReactions";
+  private hiddenButtons : Number[] =[];
 
-  constructor(private _http : HttpClient) { }
+  constructor(private _http : HttpClient) {}
 
   getAllReactions(data : number) : Observable<AllReactionsDTO>{
     return this._http.post<AllReactionsDTO>(this.getReactionsUrl, data, {responseType: 'json',headers : {
@@ -115,5 +117,25 @@ export class MediaService {
 
   public getStoriesForUser() : Observable<Story[]> {
     return this._http.get<Story[]>(environment.mediaBaseUrl + 'story/allStories');
+  }
+
+  public getHighlights() : Observable<Story[]> {
+    return this._http.get<Story[]>(environment.mediaBaseUrl + 'story/storyHighlights');
+  }
+
+  public saveToHighlights(story : Story){
+    return this._http.post(environment.mediaBaseUrl + 'story/saveToHighlights', story,{responseType: 'text',headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+
+  public addToCollection(dto : CollectionDTO){
+    return this._http.post(environment.mediaBaseUrl + 'post/addToCollection', dto,{responseType: 'text',headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+
+  public getHiddenButtons() : Number[]{
+    return this.hiddenButtons;
   }
 }

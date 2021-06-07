@@ -90,20 +90,20 @@ public class ProfileContoller {
 	}
 	
 	@GetMapping(value = "following/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FollowerDto>> getFollowing(@PathVariable String username){
-		/*if(!TokenUtils.verify(auth, "USER")) {
+	public ResponseEntity<List<FollowerDto>> getFollowing(@RequestHeader("Authorization") String auth,@PathVariable String username){
+		if(!TokenUtils.verify(auth, "USER","AGENT")) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}*/
+		}
 		
 		List<FollowerDto> following = profileService.getFollowing(username);
 		return new ResponseEntity<>(following, HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "followers/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<FollowerDto>> getFollowers(@PathVariable String username){
-		/*if(!TokenUtils.verify(auth, "USER")) {
+	public ResponseEntity<List<FollowerDto>> getFollowers(@RequestHeader("Authorization") String auth,@PathVariable String username){
+		if(!TokenUtils.verify(auth, "USER","AGENT")) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}*/
+		}
 
 		List<FollowerDto> followers = profileService.getFollowers(username);
 		return new ResponseEntity<>(followers, HttpStatus.OK);

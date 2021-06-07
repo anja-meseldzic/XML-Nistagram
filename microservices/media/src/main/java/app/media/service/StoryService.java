@@ -13,4 +13,8 @@ public interface StoryService {
     List<StoryInfoDTO> getForProfile(String requestedBy, String profile) throws ProfilePrivateException, ProfileBlockedException;
     
     List<StoryInfoDTO> getAllUserStories(String username);
+    
+    List<StoryInfoDTO> getStoryHighlights(String username);
+    
+    void addToStoryHighlights(StoryInfoDTO dto);
 }

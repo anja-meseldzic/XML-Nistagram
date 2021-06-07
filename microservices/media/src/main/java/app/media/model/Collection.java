@@ -1,10 +1,5 @@
 package app.media.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,39 +8,47 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 @Entity
-public class Favourites {
+public class Collection {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
+	@Column(name = "name", nullable = false)
+	private String name;
+	
 	@Column(name = "username", nullable = false)
 	private String username;
-
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Post post;
 	
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Favourites favourite;
 
-	public Favourites() {
-		super();
-	}
-
-	public Favourites(long id, String username, Post post) {
+	public Collection() {}
+	
+	public Collection(long id, String name, String username, Favourites favourite) {
 		super();
 		this.id = id;
+		this.name = name;
 		this.username = username;
-		this.post = post;
+		this.favourite = favourite;
 	}
-	
+
 	public long getId() {
 		return id;
 	}
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getUsername() {
@@ -56,14 +59,13 @@ public class Favourites {
 		this.username = username;
 	}
 
-	public Post getPost() {
-		return post;
+	public Favourites getFavourite() {
+		return favourite;
 	}
 
-	public void setPost(Post post) {
-		this.post = post;
+	public void setFavourite(Favourites favourite) {
+		this.favourite = favourite;
 	}
-	
 	
 	
 	

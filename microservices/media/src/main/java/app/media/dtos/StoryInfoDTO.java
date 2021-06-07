@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public class StoryInfoDTO {
 
+	private long id;
     private String username;
     private String url;
     private LocalDateTime created;
@@ -12,8 +13,9 @@ public class StoryInfoDTO {
 
     }
 
-    public StoryInfoDTO(String username, String url, LocalDateTime created) {
-        this.username = username;
+    public StoryInfoDTO(long id,String username, String url, LocalDateTime created) {
+        this.id = id;
+    	this.username = username;
         this.url = url;
         this.created = created;
     }
@@ -41,4 +43,14 @@ public class StoryInfoDTO {
     public void setCreated(LocalDateTime created) {
         this.created = created;
     }
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+    
+    
 }

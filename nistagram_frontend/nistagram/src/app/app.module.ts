@@ -23,6 +23,8 @@ import { AuthInterceptorService } from './interceptors/auth-interceptor.service'
 import {MatDialogModule} from '@angular/material/dialog';
 import { FollowerRequestDialogComponent } from './microservices/components/follower-request-dialog/follower-request-dialog.component';
 import { FollowersDialogComponent } from './microservices/components/followers-dialog/followers-dialog.component';
+import { CollectionDialogComponent } from './microservices/components/collection-dialog/collection-dialog.component';
+import { CloseFriendsComponent } from './microservices/components/close-friends/close-friends.component';
 
 
 
@@ -58,7 +60,7 @@ import { FollowersDialogComponent } from './microservices/components/followers-d
     useClass: AuthInterceptorService,
     multi: true
   }],
-  entryComponents:[FollowerRequestDialogComponent, FollowersDialogComponent],
+  entryComponents:[FollowerRequestDialogComponent, FollowersDialogComponent, CollectionDialogComponent, CloseFriendsComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
