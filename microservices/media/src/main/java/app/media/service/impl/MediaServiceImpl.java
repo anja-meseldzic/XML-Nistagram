@@ -1,6 +1,7 @@
 package app.media.service.impl;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -12,6 +13,7 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import app.media.dtos.AlbumDTO;
 import app.media.dtos.AllCommentDTO;
@@ -52,7 +54,12 @@ public class MediaServiceImpl implements MediaService{
 	private ProfileService profileService;
 	
 
-	public final String storageDirectoryPath = "..\\storage\\media-content";
+	// public final String storageDirectoryPath = "..\\storage\\media-content";
+	@Value("${media.storage}")
+	public String storageDirectoryPath;
+
+	@Value("${url.gateway}")
+	public String gatewayUrl;
 
 	@Autowired
     public MediaServiceImpl(MediaRepository mediaRepository, PostRepository postRepository, StoryRepository storyRepository,
@@ -68,10 +75,11 @@ public class MediaServiceImpl implements MediaService{
 	@Override
 	public void createPost(MultipartFile file, PostDTO postDTO, String username) throws IOException {
 		String fileName = saveFile(file, storageDirectoryPath);
-		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-				.path("media/content/")
-				.path(fileName)
-				.toUriString();
+//		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+//				.path("media/content/")
+//				.path(fileName)
+//				.toUriString();
+		String fileDownloadUri = gatewayUrl + "media/content/" + fileName;
 		System.out.println(fileDownloadUri);
 
 		Media media = new Media();
@@ -100,10 +108,12 @@ public class MediaServiceImpl implements MediaService{
 	@Override
 	public void createStory(MultipartFile file, boolean closeFriends, String username) throws IOException {
 		String fileName = saveFile(file, storageDirectoryPath);
-		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-				.path("media/content/")
-				.path(fileName)
-				.toUriString();
+//		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+//				.path("media/content/")
+//				.path(fileName)
+//				.toUriString();
+		String fileDownloadUri = gatewayUrl + "media/content/" + fileName;
+
 		System.out.println(fileDownloadUri);
 
 		Media media = new Media();
@@ -128,10 +138,11 @@ public class MediaServiceImpl implements MediaService{
 		Set<String> fileNames = new HashSet<String>();
 		for(MultipartFile file : files) {
 			String fileName = saveFile(file, storageDirectoryPath);
-			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-					.path("media/content/")
-					.path(fileName)
-					.toUriString();
+//			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+//					.path("media/content/")
+//					.path(fileName)
+//					.toUriString();
+			String fileDownloadUri = gatewayUrl + "media/content/" + fileName;
 			System.out.println(fileDownloadUri);
 			fileNames.add(fileDownloadUri);
 		}
@@ -156,10 +167,11 @@ public class MediaServiceImpl implements MediaService{
 		Set<String> fileNames = new HashSet<String>();
 		for(MultipartFile file : files) {
 			String fileName = saveFile(file, storageDirectoryPath);
-			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-					.path("media/content/")
-					.path(fileName)
-					.toUriString();
+//			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+//					.path("media/content/")
+//					.path(fileName)
+//					.toUriString();
+			String fileDownloadUri = gatewayUrl + "media/content/" + fileName;
 			System.out.println(fileDownloadUri);
 			fileNames.add(fileDownloadUri);
 		}
@@ -198,7 +210,8 @@ public class MediaServiceImpl implements MediaService{
 
 	@Override
 	public UrlResource getContent(String contentName) throws MalformedURLException {
-		return new UrlResource("file:" + storageDirectoryPath + "\\" + contentName);
+//		return new UrlResource("file:" + storageDirectoryPath + "\\" + contentName);
+		return new UrlResource("file:" + storageDirectoryPath + File.separator + contentName);
 	}
 
 	@Override
@@ -238,7 +251,8 @@ public class MediaServiceImpl implements MediaService{
 		if(!Files.exists(storageDirectory)){
 			Files.createDirectories(storageDirectory);
 		}
-		Path destination = Paths.get(storageDirectory.toString() + "\\" + fileName);
+//		Path destination = Paths.get(storageDirectory.toString() + "\\" + fileName);
+		Path destination = Paths.get(storageDirectory.toString() + File.separator + fileName);
 		Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
 		return fileName;
 	}

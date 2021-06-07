@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
 import axios from 'axios';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +25,7 @@ export class LoginComponent implements OnInit {
     }
 
     axios
-      .post('http://localhost:8081/auth', {
+      .post(environment.authBaseUrl + 'auth', {
         username : this.username,
         password : this.password
       },)

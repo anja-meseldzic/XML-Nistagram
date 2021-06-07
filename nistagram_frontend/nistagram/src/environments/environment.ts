@@ -4,8 +4,11 @@
 
 export const environment = {
   production: false,
-  profileBaseUrl: 'http://localhost:8085/',
-  mediaBaseUrl: 'http://localhost:8083/'
+  profileBaseUrl: 'http://localhost:8080/api/profile/',
+  mediaBaseUrl: 'http://localhost:8080/api/media/',
+  authBaseUrl: 'http://localhost:8080/api/auth/',
+  campaignBaseUrl: 'http://localhost:8080/api/campaign/',
+  messageBaseUrl: 'http://localhost:8080/api/message/',
 };
 
 /*
