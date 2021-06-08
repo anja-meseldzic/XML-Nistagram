@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 import { AuthService } from '../../auth-service/auth.service';
-import { CollectionDTO } from '../../DTOs/collection-dto';
 import { CollectionInfoDto } from '../../DTOs/collection-info-dto';
 import { MediaService } from '../../media-service/media.service';
 import { Post } from '../../model/post';
@@ -32,7 +32,6 @@ export class ProfileComponent implements OnInit {
   storyHighlights : Story[] = [];
   collections : CollectionInfoDto[] = [];
   collections1 = [];
-  hiddenBut :Number[] = [];
   
 
   ngOnInit(): void {
@@ -41,7 +40,6 @@ export class ProfileComponent implements OnInit {
                  this.getProfileInfo(username);
       }
     )
-    this.hiddenBut = this.mediaService.getHiddenButtons();
   }
 
   getProfileInfo(username : String) {
@@ -86,6 +84,7 @@ export class ProfileComponent implements OnInit {
   constructSliderObjectsForPosts() {
     for(const post of this.posts) {
       const storyObject = new Array<Object>();
+      post.urls.forEach(url => url = environment.mediaBaseUrl + url);
       for(const url of post.urls) {
         if(url.endsWith('.jpg') || url.endsWith('.png')) {
           storyObject.push( {image: url, thumbImage: url});
@@ -104,6 +103,7 @@ export class ProfileComponent implements OnInit {
       const nameCollections = collections.filter(c => c.name === name)
       const storyObject = new Array<Object>();
       for(const collection of nameCollections) {
+        collection.urls.forEach(url => url = environment.mediaBaseUrl + url);
         for(const url of collection.urls){
           if(url.endsWith('.jpg') || url.endsWith('.png')) {
             storyObject.push( {image: url, thumbImage: url, title: name});
@@ -119,6 +119,7 @@ export class ProfileComponent implements OnInit {
   constructSliderObjectsForFav() {
     for(const fav of this.favourites) {
       const storyObject = new Array<Object>();
+      fav.urls.forEach(url => url = environment.mediaBaseUrl + url);
       for(const url of fav.urls) {
         if(url.endsWith('.jpg') || url.endsWith('.png')) {
           storyObject.push( {image: url, thumbImage: url});
@@ -132,6 +133,7 @@ export class ProfileComponent implements OnInit {
 
   constructSliderObjectsForStories() {
     const storyObject = new Array<Object>();
+    this.stories.forEach(s => s.url = environment.mediaBaseUrl + s.url);
     for(const story of this.stories) {
       if(story.url.endsWith('.jpg') || story.url.endsWith('.png')) {
         storyObject.push( {image: story.url, thumbImage: story.url});
@@ -144,6 +146,7 @@ export class ProfileComponent implements OnInit {
 
   constructSliderObjectsForHighlights() {
     const storyObject = new Array<Object>();
+    this.storyHighlights.forEach(s => s.url = environment.mediaBaseUrl + s.url);
     for(const story of this.storyHighlights) {
       if(story.url.endsWith('.jpg') || story.url.endsWith('.png')) {
         storyObject.push( {image: story.url, thumbImage: story.url});
@@ -155,7 +158,7 @@ export class ProfileComponent implements OnInit {
   }
 
   constructSliderObjectsForAllStories() {
-   
+    this.allStories.forEach(s => s.url = environment.mediaBaseUrl + s.url);
     for(const story of this.allStories) {
       const storyObject = new Array<Object>();
       if(story.url.endsWith('.jpg') || story.url.endsWith('.png')) {
@@ -223,9 +226,6 @@ export class ProfileComponent implements OnInit {
 
   addToHighlights(story : Story){
     this.mediaService.saveToHighlights(story).subscribe(data => {this.snackBar.open(data, "Okay");
-    this.mediaService.getHiddenButtons().push(story.id);
-    this.hiddenBut = this.mediaService.getHiddenButtons();
-
     this.mediaService.getHighlights().subscribe(
       data => { this.storyHighlights = data; this.constructSliderObjectsForHighlights(); },
       error => {this.openSnackBar(error.error.message); this.router.navigate(['./feed']);}
@@ -236,7 +236,15 @@ export class ProfileComponent implements OnInit {
 
   addToCollection(post : Post){
     this.matDialog.open(CollectionDialogComponent, {data : post.id,  width: '30vw',
-      maxWidth: '30vw'});
+      maxWidth: '30vw'}).afterClosed().subscribe(
+        _ => this.mediaService.getFavouritesForUser().subscribe(
+          data => { this.favourites = data; this.constructSliderObjectsForFav(); },
+          error => console.log(error.error.message)
+        )
+      );
   }
 
+  public includes(id : Number) : boolean {
+    return this.storyHighlights.filter(h => h.id === id).length > 0;
+  }
 }

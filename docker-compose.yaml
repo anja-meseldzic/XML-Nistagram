@@ -36,6 +36,8 @@ services:
     environment: 
       DATABASE_DOMAIN : ${DATABASE_DOMAIN}
       DATABASE_PORT : ${DATABASE_PORT}
+      AUTH_SERVICE_DOMAIN: ${AUTH_SERVICE_DOMAIN}
+      AUTH_SERVICE_PORT : ${AUTH_SERVICE_PORT}
     restart: always
     depends_on: 
       - postgres
@@ -53,7 +55,9 @@ services:
       DATABASE_PORT : ${DATABASE_PORT}
       PROFILE_SERVICE_DOMAIN: ${PROFILE_SERVICE_DOMAIN}
       PROFILE_SERVICE_PORT : ${PROFILE_SERVICE_PORT}
-      BASE_GATEWAY_URL : ${BASE_GATEWAY_URL}
+      AUTH_SERVICE_DOMAIN: ${AUTH_SERVICE_DOMAIN}
+      AUTH_SERVICE_PORT : ${AUTH_SERVICE_PORT}
+      MEDIA_STORAGE_PATH : ${MEDIA_STORAGE_PATH}
     restart: always
     volumes:
       - myapp:/app/storage/media-content
@@ -71,7 +75,8 @@ services:
     environment: 
       DATABASE_DOMAIN : ${DATABASE_DOMAIN}
       DATABASE_PORT : ${DATABASE_PORT}
-      MEDIA_STORAGE_PATH : ${MEDIA_STORAGE_PATH}
+      AUTH_SERVICE_DOMAIN: ${AUTH_SERVICE_DOMAIN}
+      AUTH_SERVICE_PORT : ${AUTH_SERVICE_PORT}
     restart: always
     depends_on: 
       - postgres

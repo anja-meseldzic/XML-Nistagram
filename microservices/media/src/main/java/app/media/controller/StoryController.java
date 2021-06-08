@@ -3,6 +3,7 @@ package app.media.controller;
 import app.media.dtos.StoryInfoDTO;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
+import app.media.service.AuthService;
 import app.media.service.StoryService;
 import app.media.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,25 +19,27 @@ import java.util.List;
 public class StoryController {
 
     private StoryService storyService;
+    private AuthService authService;
 
     @Autowired
-    public StoryController(StoryService storyService) {
+    public StoryController(StoryService storyService, AuthService authService) {
         this.storyService = storyService;
+        this.authService = authService;
     }
 
     @GetMapping(value = "feed")
     public ResponseEntity<List<StoryInfoDTO>> getFeed(@RequestHeader("Authorization") String auth) {
-        if(!TokenUtils.verify(auth, "USER") && !TokenUtils.verify(auth, "AGENT"))
+        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        String username = TokenUtils.getUsernameFromToken(auth.substring(7));
+        String username = authService.getUsernameFromToken(TokenUtils.getToken(auth));
         return new ResponseEntity<>(storyService.getFeed(username), HttpStatus.OK);
     }
 
     @GetMapping(value = "profile/{username}")
     public ResponseEntity<List<StoryInfoDTO>> getForProfile(@PathVariable("username") String profile, @RequestHeader("Authorization") String auth) {
         try {
-            if(TokenUtils.verify(auth, "USER") || TokenUtils.verify(auth, "AGENT")) {
-                String username = TokenUtils.getUsernameFromToken(auth.substring(7));
+            if(authService.verify(auth, "USER") || authService.verify(auth, "AGENT")) {
+                String username = authService.getUsernameFromToken(TokenUtils.getToken(auth));
                 return new ResponseEntity<>(storyService.getForProfile(username, profile), HttpStatus.OK);
             }
             else if (auth.equals("Bearer null"))
@@ -51,37 +54,31 @@ public class StoryController {
     }
     @GetMapping(value = "allStories")
     public ResponseEntity<List<StoryInfoDTO>> getAllStories(@RequestHeader("Authorization") String auth) {
-  
-            if(TokenUtils.verify(auth, "USER") || TokenUtils.verify(auth, "AGENT")) {
-                String username = TokenUtils.getUsernameFromToken(auth.substring(7));
-                return new ResponseEntity<>(storyService.getAllUserStories(username), HttpStatus.OK);
-            }
-            else
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-      
+        if(authService.verify(auth, "USER") || authService.verify(auth, "AGENT")) {
+            String username = authService.getUsernameFromToken(TokenUtils.getToken(auth));
+            return new ResponseEntity<>(storyService.getAllUserStories(username), HttpStatus.OK);
+        }
+        else
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
     
     @GetMapping(value = "storyHighlights")
     public ResponseEntity<List<StoryInfoDTO>> getAllHighlights(@RequestHeader("Authorization") String auth) {
-  
-            if(TokenUtils.verify(auth, "USER") || TokenUtils.verify(auth, "AGENT")) {
-                String username = TokenUtils.getUsernameFromToken(auth.substring(7));
-                return new ResponseEntity<>(storyService.getStoryHighlights(username), HttpStatus.OK);
-            }
-            else
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-      
+        if(authService.verify(auth, "USER") || authService.verify(auth, "AGENT")) {
+            String username = authService.getUsernameFromToken(TokenUtils.getToken(auth));
+            return new ResponseEntity<>(storyService.getStoryHighlights(username), HttpStatus.OK);
+        }
+        else
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
     
     @PostMapping(value = "saveToHighlights")
     public ResponseEntity<String> addToHighlights(@RequestBody StoryInfoDTO dto ,@RequestHeader("Authorization") String auth) {
-  
-            if(TokenUtils.verify(auth, "USER") || TokenUtils.verify(auth, "AGENT")) {
-                storyService.addToStoryHighlights(dto);
-                return new ResponseEntity<>("Successfully saved to story highlights", HttpStatus.OK);
-            }
-            else
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-      
+        if(authService.verify(auth, "USER") || authService.verify(auth, "AGENT")) {
+            storyService.addToStoryHighlights(dto);
+            return new ResponseEntity<>("Successfully saved to story highlights", HttpStatus.OK);
+        }
+        else
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 }

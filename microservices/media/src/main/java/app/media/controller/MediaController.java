@@ -4,6 +4,8 @@ package app.media.controller;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.*;
+
+import app.media.service.AuthService;
 import app.media.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
@@ -36,15 +38,16 @@ import app.media.service.MediaService;
 public class MediaController {
 	
 	private MediaService mediaService;
+	private AuthService authService;
 
     @Autowired
-    public MediaController(MediaService mediaService) {
-        this.mediaService = mediaService;
+    public MediaController(MediaService mediaService, AuthService authService) {
+        this.mediaService = mediaService; this.authService = authService;
     }
 
 	@GetMapping(value = "/testAuth")
 	public ResponseEntity<String> testAuth(@RequestHeader("Authorization") String auth) {
-		if(!TokenUtils.verify(auth, "USER"))
+		if(!authService.verify(auth, "USER"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
@@ -52,10 +55,10 @@ public class MediaController {
 	@PostMapping(value = "allReactions")
 	public ResponseEntity<AllReactionsDTO> getReactions(@RequestBody long id,  @RequestHeader("Authorization") String auth)
 	{
-		if(!TokenUtils.verify(auth, "USER","AGENT"))
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
-		String myUsername = TokenUtils.getUsernameFromToken(token);
+		String myUsername = authService.getUsernameFromToken(token);
 		
 		AllReactionsDTO dto;
 		try {
@@ -74,10 +77,10 @@ public class MediaController {
 	@PostMapping(value = "getReactionsNumber")
 	public ResponseEntity<ReactionsNumberDTO> getReactionsNumber(@RequestBody long id,  @RequestHeader("Authorization") String auth)
 	{
-		if(!TokenUtils.verify(auth, "USER","AGENT"))
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
-		String myUsername = TokenUtils.getUsernameFromToken(token);
+		String myUsername = authService.getUsernameFromToken(token);
 		
 		ReactionsNumberDTO dto;
 		try {
@@ -96,10 +99,10 @@ public class MediaController {
 	@PostMapping(value = "reactOnPost")
 	public ResponseEntity<String> reactOnPost(@RequestBody RatingDTO dto, @RequestHeader("Authorization") String auth)
 	{
-		if(!TokenUtils.verify(auth, "USER","AGENT"))
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
-		String username = TokenUtils.getUsernameFromToken(token);
+		String username = authService.getUsernameFromToken(token);
 		
 		try {
 			mediaService.reactOnPost(dto, username);
@@ -112,10 +115,10 @@ public class MediaController {
 	@PostMapping(value = "allComments")
 	public ResponseEntity<List<AllCommentDTO>> getAllComments(@RequestBody long id,  @RequestHeader("Authorization") String auth)
 	{
-		if(!TokenUtils.verify(auth, "USER","AGENT"))
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
-		String myUsername = TokenUtils.getUsernameFromToken(token);
+		String myUsername = authService.getUsernameFromToken(token);
 		List<AllCommentDTO>  comments;
 		try {
 			mediaService.checkProfile(id, myUsername);
@@ -134,10 +137,10 @@ public class MediaController {
 	@PostMapping(value = "postComment")
 	public ResponseEntity<String> postComment(@RequestBody CommentDTO dto, @RequestHeader("Authorization") String auth)
 	{
-		if(!TokenUtils.verify(auth, "USER","AGENT"))
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
-		String username = TokenUtils.getUsernameFromToken(token);
+		String username = authService.getUsernameFromToken(token);
 		
 		try {
 			mediaService.postComment(dto, username);
@@ -149,10 +152,10 @@ public class MediaController {
 
     @PostMapping(value="createAlbum")
     public ResponseEntity<Void> uploadFiles(MultipartHttpServletRequest request, @RequestHeader("Authorization") String auth) throws IOException {
-    	if(!TokenUtils.verify(auth, "USER","AGENT"))
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
-		String username = TokenUtils.getUsernameFromToken(token);
+		String username = authService.getUsernameFromToken(token);
     	
     	ObjectMapper mapper = new ObjectMapper();
     	AlbumDTO albumDTO = mapper.readValue(request.getParameter("album"), AlbumDTO.class);
@@ -174,10 +177,10 @@ public class MediaController {
     }
     @PostMapping(value="createStory",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
    	public ResponseEntity<Void> creatStory(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "story", required = false) String model,  @RequestHeader("Authorization") String auth) throws JsonMappingException, JsonProcessingException{
-    	if(!TokenUtils.verify(auth, "USER","AGENT"))
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
-		String username = TokenUtils.getUsernameFromToken(token);
+		String username = authService.getUsernameFromToken(token);
     	
     	boolean close = model.equals("true") ? true : false;
 		try {
@@ -191,10 +194,10 @@ public class MediaController {
 
     @PostMapping(value="createPost",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Void> createPost(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "post", required = false) String model, @RequestHeader("Authorization") String auth) throws JsonMappingException, JsonProcessingException{
-    	if(!TokenUtils.verify(auth, "USER","AGENT"))
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
-		String username = TokenUtils.getUsernameFromToken(token);
+		String username = authService.getUsernameFromToken(token);
     	
     	ObjectMapper mapper = new ObjectMapper();
     	PostDTO postDTO = mapper.readValue(model, PostDTO.class);

@@ -23,6 +23,7 @@ export class PersonalInfoEditComponent implements OnInit {
   birthDate: string;
   gender = 'Select gender';
   username: string;
+  originalUsername: string;
 
   // tslint:disable-next-line:variable-name
   constructor(private _snackBar: MatSnackBar, private router: Router) { }
@@ -60,6 +61,7 @@ export class PersonalInfoEditComponent implements OnInit {
         this.website = res.data.website;
         this.biography = res.data.biography;
         this.username = res.data.user.username;
+        this.originalUsername = res.data.user.username;
       });
   }
 
@@ -94,7 +96,7 @@ export class PersonalInfoEditComponent implements OnInit {
         gender : this.gender,
         user : {
           id : this.userId,
-          username : this.username,
+          username : this.originalUsername,
           role : 'USER'
         }
       }, {

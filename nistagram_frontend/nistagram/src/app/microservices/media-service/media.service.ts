@@ -26,7 +26,6 @@ export class MediaService {
   private reactOnPostUrl = environment.mediaBaseUrl + "media/reactOnPost";
   private getReactionsNumberUrl = environment.mediaBaseUrl + "media/getReactionsNumber";
   private getReactionsUrl = environment.mediaBaseUrl + "media/allReactions";
-  private hiddenButtons : Number[] =[];
 
   constructor(private _http : HttpClient) {}
 
@@ -140,9 +139,5 @@ export class MediaService {
     return this._http.get<CollectionInfoDto[]>(environment.mediaBaseUrl + 'post/collections',{headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
-  }
-
-  public getHiddenButtons() : Number[]{
-    return this.hiddenButtons;
   }
 }

@@ -27,7 +27,7 @@ public class Story {
 	private boolean closeFriends;
 
 	@Column(name = "expiresInHours", nullable = false)
-	private int expiresInHours;
+	private final int expiresInHours = 24;
 
 	@Column(name = "isHighlighted", nullable = false)
 	private boolean isHighlighted;
@@ -39,13 +39,12 @@ public class Story {
 		super();
 	}
 
-	public Story(long id, LocalDateTime dateCreated, boolean closeFriends, int expiresInHours, boolean isHighlighted,
+	public Story(long id, LocalDateTime dateCreated, boolean closeFriends, boolean isHighlighted,
 			Media media) {
 		super();
 		this.id = id;
 		this.dateCreated = dateCreated;
 		this.closeFriends = closeFriends;
-		this.expiresInHours = expiresInHours;
 		this.isHighlighted = isHighlighted;
 		this.media = media;
 	}
@@ -79,10 +78,6 @@ public class Story {
 		return expiresInHours;
 	}
 
-	public void setExpiresInHours(int expiresInHours) {
-		this.expiresInHours = expiresInHours;
-	}
-
 	public boolean isHighlighted() {
 		return isHighlighted;
 	}
@@ -109,6 +104,4 @@ public class Story {
 		}
 		
 	}
-	
-
 }

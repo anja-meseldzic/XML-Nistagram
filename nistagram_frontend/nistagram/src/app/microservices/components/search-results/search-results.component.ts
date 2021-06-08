@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 import { MediaService } from '../../media-service/media.service';
 import { Post } from '../../model/post';
 import { SearchResult } from '../../model/search-result';
@@ -31,6 +32,7 @@ export class SearchResultsComponent implements OnInit {
 
   constructSliderObjectsForPosts() {
     for(const post of this.posts) {
+      post.urls.forEach(url => url = environment.mediaBaseUrl + url);
       const storyObject = new Array<Object>();
       for(const url of post.urls) {
         if(url.endsWith('.jpg') || url.endsWith('.png')) {

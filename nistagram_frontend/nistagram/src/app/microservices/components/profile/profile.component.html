@@ -97,7 +97,7 @@
                     [arrowKeyMove]="false"
                     #nav>
                 </ng-image-slider>
-                <button mat-raised-button id = "story.id" *ngIf = "hiddenBut.indexOf(story.id) === -1" style = "width: 200px;"(click) = "addToHighlights(story)">Add to highlights</button>
+                <button mat-raised-button id = "story.id" *ngIf = "!includes(story.id)" style = "width: 200px;"(click) = "addToHighlights(story)">Add to highlights</button>
             </div>   
         </div></mat-tab>
     </mat-tab-group>

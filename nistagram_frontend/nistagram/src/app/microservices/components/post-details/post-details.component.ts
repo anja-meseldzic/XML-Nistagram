@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 import { AllCommentDTO } from '../../DTOs/all-comment-dto';
 import { CommentDTO } from '../../DTOs/comment-dto';
 import { RatingDTO } from '../../DTOs/rating-dto';
@@ -98,6 +99,7 @@ export class PostDetailsComponent implements OnInit {
         if(this.post == null) {
           this.router.navigate(['../feed']);
         } else {
+          this.post.urls.forEach(url => url = environment.mediaBaseUrl + url);
           this.constructSliderObjectsForPost();
         }
       },

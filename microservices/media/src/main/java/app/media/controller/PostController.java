@@ -7,6 +7,7 @@ import app.media.dtos.SearchResultDTO;
 import app.media.exception.PostDoesNotExistException;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
+import app.media.service.AuthService;
 import app.media.service.PostService;
 import app.media.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,25 +23,27 @@ import java.util.List;
 public class PostController {
 
     private PostService postService;
+    private AuthService authService;
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostService postService, AuthService authService) {
         this.postService = postService;
+        this.authService = authService;
     }
 
     @GetMapping(value = "feed")
     public ResponseEntity<List<PostInfoDTO>> getFeed(@RequestHeader("Authorization") String auth) {
-        if(!TokenUtils.verify(auth, "USER") && !TokenUtils.verify(auth, "AGENT"))
+        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        String username = TokenUtils.getUsernameFromToken(auth.substring(7));
+        String username = authService.getUsernameFromToken(TokenUtils.getToken(auth));
         return new ResponseEntity<>(postService.getFeed(username), HttpStatus.OK);
     }
 
     @GetMapping(value = "profile/{username}")
     public ResponseEntity<List<PostInfoDTO>> getForProfile(@PathVariable("username") String profile, @RequestHeader("Authorization") String auth) {
         try {
-            if(TokenUtils.verify(auth, "USER") || TokenUtils.verify(auth, "AGENT")) {
-                String username = TokenUtils.getUsernameFromToken(auth.substring(7));
+            if(authService.verify(auth, "USER") || authService.verify(auth, "AGENT")){
+                String username = authService.getUsernameFromToken(TokenUtils.getToken(auth));
                 return new ResponseEntity<>(postService.getForProfile(username, profile), HttpStatus.OK);
             }
             if (auth.equals("Bearer null"))
@@ -55,50 +58,50 @@ public class PostController {
 
     @GetMapping(value = "search/{criterion}")
     public ResponseEntity<List<SearchResultDTO>> search(@PathVariable("criterion") String criterion, @RequestHeader("Authorization") String auth) {
-        if(TokenUtils.verify(auth, "ADMIN"))
+        if(authService.verify(auth, "ADMIN"))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         if (auth.equals("Bearer null"))
             return new ResponseEntity<>(postService.search(null, criterion), HttpStatus.OK);
-        return new ResponseEntity<>(postService.search(TokenUtils.getUsernameFromToken(auth.substring(7)), criterion), HttpStatus.OK);
+        return new ResponseEntity<>(postService.search(authService.getUsernameFromToken(TokenUtils.getToken(auth)), criterion), HttpStatus.OK);
     }
 
     @GetMapping(value = "location/{location}")
     public ResponseEntity<List<PostInfoDTO>> getByLocation(@PathVariable("location") String location, @RequestHeader("Authorization") String auth) {
-        if(TokenUtils.verify(auth, "ADMIN"))
+        if(authService.verify(auth, "ADMIN"))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         if (auth.equals("Bearer null"))
             return new ResponseEntity<>(postService.getAllWithLocation(null, location), HttpStatus.OK);
-        return new ResponseEntity<>(postService.getAllWithLocation(TokenUtils.getUsernameFromToken(auth.substring(7)), location), HttpStatus.OK);
+        return new ResponseEntity<>(postService.getAllWithLocation(authService.getUsernameFromToken(TokenUtils.getToken(auth)), location), HttpStatus.OK);
     }
 
     @GetMapping(value = "hashtag/{hashtag}")
     public ResponseEntity<List<PostInfoDTO>> getByHashtag(@PathVariable("hashtag") String hashtag, @RequestHeader("Authorization") String auth) {
-        if(TokenUtils.verify(auth, "ADMIN"))
+        if(authService.verify(auth, "ADMIN"))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         if (auth.equals("Bearer null"))
             return new ResponseEntity<>(postService.getAllWithHashtag(null, hashtag), HttpStatus.OK);
-        return new ResponseEntity<>(postService.getAllWithHashtag(TokenUtils.getUsernameFromToken(auth.substring(7)), hashtag), HttpStatus.OK);
+        return new ResponseEntity<>(postService.getAllWithHashtag(authService.getUsernameFromToken(TokenUtils.getToken(auth)), hashtag), HttpStatus.OK);
     }
 
     @GetMapping(value = "{id}")
     public ResponseEntity<PostInfoDTO> get(@PathVariable long id, @RequestHeader("Authorization") String auth) {
         try {
-            if(TokenUtils.verify(auth, "ADMIN"))
+            if(authService.verify(auth, "ADMIN"))
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
             if (auth.equals("Bearer null"))
                 return new ResponseEntity<>(postService.get(null, id), HttpStatus.OK);
-            return new ResponseEntity<>(postService.get(TokenUtils.getUsernameFromToken(auth.substring(7)), id), HttpStatus.OK);
+            return new ResponseEntity<>(postService.get(authService.getUsernameFromToken(TokenUtils.getToken(auth)), id), HttpStatus.OK);
         } catch (PostDoesNotExistException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
     @GetMapping(value = "saveFavourite/{postId}")
     public ResponseEntity<String> saveToFavourites(@PathVariable long postId, @RequestHeader("Authorization") String auth) {
-    	if(!TokenUtils.verify(auth, "USER")) {
+    	if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		String token = TokenUtils.getToken(auth);
-		String loggedInUsername = TokenUtils.getUsernameFromToken(token);
+		String loggedInUsername = authService.getUsernameFromToken(token);
 		
 		postService.saveToFavourites(postId, loggedInUsername);
 		return new ResponseEntity<>("ok", HttpStatus.OK);
@@ -106,32 +109,32 @@ public class PostController {
     
     @GetMapping(value = "favourites")
     public ResponseEntity<List<PostInfoDTO>> getFavourites(@RequestHeader("Authorization") String auth) {
-    	if(!TokenUtils.verify(auth, "USER")) {
+    	if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		String token = TokenUtils.getToken(auth);
-		String loggedInUsername = TokenUtils.getUsernameFromToken(token);
+		String loggedInUsername = authService.getUsernameFromToken(token);
 		return new ResponseEntity<List<PostInfoDTO>>(postService.getFavouritesForProfile(loggedInUsername), HttpStatus.OK);
 	}
     
     @PostMapping(value = "addToCollection")
     public ResponseEntity<String> addToCollection(@RequestBody CollectionDTO dto, @RequestHeader("Authorization") String auth) {
-    	if(!TokenUtils.verify(auth, "USER")) {
+    	if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		String token = TokenUtils.getToken(auth);
-		String loggedInUsername = TokenUtils.getUsernameFromToken(token);
+		String loggedInUsername = authService.getUsernameFromToken(token);
 		postService.addFavouritesToCollection(loggedInUsername, dto);
 		return new ResponseEntity<>("You have added post to collection " + dto.getName(), HttpStatus.OK);
 	}
     
     @GetMapping(value = "collections")
     public ResponseEntity<List<CollectionInfoDTO>> getAllCollections(@RequestHeader("Authorization") String auth) {
-    	if(!TokenUtils.verify(auth, "USER")) {
+    	if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		String token = TokenUtils.getToken(auth);
-		String loggedInUsername = TokenUtils.getUsernameFromToken(token);
+		String loggedInUsername = authService.getUsernameFromToken(token);
 		return new ResponseEntity<List<CollectionInfoDTO>>(postService.getCollectionsForProfile(loggedInUsername), HttpStatus.OK);
 	}
 }

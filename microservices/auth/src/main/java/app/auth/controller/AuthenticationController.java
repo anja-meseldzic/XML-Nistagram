@@ -2,13 +2,11 @@ package app.auth.controller;
 
 import app.auth.model.dto.LoginDTO;
 import app.auth.service.AuthenticationService;
+import app.auth.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/auth")
@@ -29,5 +27,15 @@ public class AuthenticationController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(token, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "verify/{token}/{role}")
+    public ResponseEntity<Boolean> verify(@PathVariable("token") String token, @PathVariable("role") String role) {
+        return new ResponseEntity<>(TokenUtils.verify(token, role), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "{token}")
+    public ResponseEntity<String> getUsernameFromToken(@PathVariable("token") String token) {
+        return new ResponseEntity<>(TokenUtils.getUsernameFromToken(token), HttpStatus.OK);
     }
 }

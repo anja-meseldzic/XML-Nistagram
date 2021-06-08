@@ -41,7 +41,7 @@
                   </div>
         
                   <div  style="margin-top: 22px; margin-bottom: 1%; text-align: center;">
-                    <input style="display: none;" type="file" (change)="onFileSelected($event)" accept="image/*, video/*" #fileInput>
+                    <input style="display: none;" type="file" (change)="onFileSelected($event)" accept=".jpg, .png, .mp4" #fileInput>
                     <span class="phone-in-line" style="max-width: 35%;">
                       <button mat-raised-button color="accent" type="button" style="padding: 12px 32px; margin-right: 1%;" (click)="fileInput.click()">
                         <mat-label [hidden]="!selectedFileHide">Pick data</mat-label>

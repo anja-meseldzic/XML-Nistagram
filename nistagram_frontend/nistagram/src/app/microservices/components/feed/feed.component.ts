@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 import { MediaService } from '../../media-service/media.service';
 import { Post } from '../../model/post';
 import { Story } from '../../model/story';
@@ -35,6 +36,7 @@ export class FeedComponent implements OnInit {
       const userStories = stories.filter(story => story.username === username)
       const storyObject = new Array<Object>();
       for(const userStory of userStories) {
+        userStory.url = environment.mediaBaseUrl + userStory.url;
         if(userStory.url.endsWith('.jpg') || userStory.url.endsWith('.png')) {
           storyObject.push( {image: userStory.url, thumbImage: userStory.url, title: username});
         } else {
@@ -49,6 +51,7 @@ export class FeedComponent implements OnInit {
   constructSliderObjectsForPosts() {
     for(const post of this.posts) {
       const storyObject = new Array<Object>();
+      post.urls.forEach(url => url = environment.mediaBaseUrl + url);
       for(const url of post.urls) {
         if(url.endsWith('.jpg') || url.endsWith('.png')) {
           storyObject.push( {image: url, thumbImage: url});
