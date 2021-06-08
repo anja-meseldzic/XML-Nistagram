@@ -15,7 +15,7 @@ export class FeedComponent implements OnInit {
 
   stories : Object[] = [];
   posts : Post[] = [];
-  
+
   constructor(private mediaService : MediaService, private router : Router, private snackBar : MatSnackBar) {}
 
   ngOnInit(): void {
@@ -36,11 +36,10 @@ export class FeedComponent implements OnInit {
       const userStories = stories.filter(story => story.username === username)
       const storyObject = new Array<Object>();
       for(const userStory of userStories) {
-        userStory.url = environment.mediaBaseUrl + userStory.url;
         if(userStory.url.endsWith('.jpg') || userStory.url.endsWith('.png')) {
-          storyObject.push( {image: userStory.url, thumbImage: userStory.url, title: username});
+          storyObject.push( {image: environment.mediaBaseUrl + userStory.url, thumbImage: environment.mediaBaseUrl + userStory.url});
         } else {
-          storyObject.push({video: userStory.url, alt: 'video unavailable', title: username});
+          storyObject.push({video: environment.mediaBaseUrl + userStory.url, alt: 'video unavailable'});
         }
       }
       this.stories.push(storyObject);
@@ -51,12 +50,18 @@ export class FeedComponent implements OnInit {
   constructSliderObjectsForPosts() {
     for(const post of this.posts) {
       const storyObject = new Array<Object>();
-      post.urls.forEach(url => url = environment.mediaBaseUrl + url);
+      // post.urls.forEach(url => {
+      //   url = environment.mediaBaseUrl + url;
+      //   console.log(url)
+      // });
+      // for(let url of post.urls) {
+      //   url = environment.mediaBaseUrl + url;
+      // }
       for(const url of post.urls) {
         if(url.endsWith('.jpg') || url.endsWith('.png')) {
-          storyObject.push( {image: url, thumbImage: url});
+          storyObject.push( {image: environment.mediaBaseUrl + url, thumbImage: environment.mediaBaseUrl + url});
         } else {
-          storyObject.push({video: url, alt: 'video unavailable'});
+          storyObject.push({video: environment.mediaBaseUrl + url, alt: 'video unavailable'});
         }
       }
       post['slider'] = storyObject;

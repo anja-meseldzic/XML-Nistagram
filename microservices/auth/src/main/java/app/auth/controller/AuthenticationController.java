@@ -29,7 +29,7 @@ public class AuthenticationController {
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
-    @PostMapping(value = "verify/{token}/{role}")
+    @PostMapping(value = "{token}/{role}")
     public ResponseEntity<Boolean> verify(@PathVariable("token") String token, @PathVariable("role") String role) {
         return new ResponseEntity<>(TokenUtils.verify(token, role), HttpStatus.OK);
     }

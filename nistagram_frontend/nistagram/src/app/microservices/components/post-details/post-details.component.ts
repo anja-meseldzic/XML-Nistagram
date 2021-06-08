@@ -21,7 +21,7 @@ export class PostDetailsComponent implements OnInit {
   public dislikes : number = 0;
   public comment : string;
   public hidden : boolean = false;
-  
+
   constructor(private mediaService : MediaService, private route : ActivatedRoute, private router : Router, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
@@ -30,16 +30,16 @@ export class PostDetailsComponent implements OnInit {
     this.getComments(Number(id));
     this.getRatingsNumber(Number(id));
   }
-  
+
   reactions(){
     this.router.navigate(['./reactions/' + this.route.snapshot.paramMap.get('id') ]);
   }
 
   getRatingsNumber(id: number) {
     this.mediaService.getReactionsNumber(id).subscribe(
-      (data) => {  
+      (data) => {
         this.likes = data.likes;
-        this.dislikes = data.dislikes;    
+        this.dislikes = data.dislikes;
    },
    error => {
      this.openSnackBar(error.error, "Okay");
@@ -48,7 +48,7 @@ export class PostDetailsComponent implements OnInit {
 
   like(){
     this.mediaService.reactOnPost(new RatingDTO(Number(this.route.snapshot.paramMap.get('id')), true)).subscribe(
-      (data) => {      
+      (data) => {
         this.getRatingsNumber(Number(this.route.snapshot.paramMap.get('id')));
    },
    error => {
@@ -58,8 +58,8 @@ export class PostDetailsComponent implements OnInit {
 
   dislike(){
     this.mediaService.reactOnPost(new RatingDTO(Number(this.route.snapshot.paramMap.get('id')), false)).subscribe(
-      (data) => {     
-        this.getRatingsNumber(Number(this.route.snapshot.paramMap.get('id'))); 
+      (data) => {
+        this.getRatingsNumber(Number(this.route.snapshot.paramMap.get('id')));
    },
    error => {
      this.openSnackBar(error.error, "Okay");
@@ -111,9 +111,9 @@ export class PostDetailsComponent implements OnInit {
     const storyObject = new Array<Object>();
       for(const url of this.post.urls) {
         if(url.endsWith('.jpg') || url.endsWith('.png')) {
-          storyObject.push( {image: url, thumbImage: url});
+          storyObject.push( {image: environment.mediaBaseUrl + url, thumbImage: environment.mediaBaseUrl + url});
         } else {
-          storyObject.push({video: url, alt: 'video unavailable'});
+          storyObject.push({video: environment.mediaBaseUrl + url, alt: 'video unavailable'});
         }
       }
       this.post['slider'] = storyObject;

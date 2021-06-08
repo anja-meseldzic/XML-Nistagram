@@ -32,13 +32,12 @@ export class SearchResultsComponent implements OnInit {
 
   constructSliderObjectsForPosts() {
     for(const post of this.posts) {
-      post.urls.forEach(url => url = environment.mediaBaseUrl + url);
       const storyObject = new Array<Object>();
       for(const url of post.urls) {
         if(url.endsWith('.jpg') || url.endsWith('.png')) {
-          storyObject.push( {image: url, thumbImage: url});
+          storyObject.push( {image: environment.mediaBaseUrl + url, thumbImage: environment.mediaBaseUrl + url});
         } else {
-          storyObject.push({video: url, alt: 'video unavailable'});
+          storyObject.push({video: environment.mediaBaseUrl + url, alt: 'video unavailable'});
         }
       }
       post['slider'] = storyObject;

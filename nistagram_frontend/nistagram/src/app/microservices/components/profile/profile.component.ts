@@ -32,7 +32,7 @@ export class ProfileComponent implements OnInit {
   storyHighlights : Story[] = [];
   collections : CollectionInfoDto[] = [];
   collections1 = [];
-  
+
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(
@@ -84,12 +84,11 @@ export class ProfileComponent implements OnInit {
   constructSliderObjectsForPosts() {
     for(const post of this.posts) {
       const storyObject = new Array<Object>();
-      post.urls.forEach(url => url = environment.mediaBaseUrl + url);
       for(const url of post.urls) {
         if(url.endsWith('.jpg') || url.endsWith('.png')) {
-          storyObject.push( {image: url, thumbImage: url});
+          storyObject.push( {image: environment.mediaBaseUrl + url, thumbImage: environment.mediaBaseUrl + url});
         } else {
-          storyObject.push({video: url, alt: 'video unavailable'});
+          storyObject.push({video: environment.mediaBaseUrl + url, alt: 'video unavailable'});
         }
       }
       post['slider'] = storyObject;
@@ -103,12 +102,11 @@ export class ProfileComponent implements OnInit {
       const nameCollections = collections.filter(c => c.name === name)
       const storyObject = new Array<Object>();
       for(const collection of nameCollections) {
-        collection.urls.forEach(url => url = environment.mediaBaseUrl + url);
         for(const url of collection.urls){
           if(url.endsWith('.jpg') || url.endsWith('.png')) {
-            storyObject.push( {image: url, thumbImage: url, title: name});
+            storyObject.push( {image: environment.mediaBaseUrl + url, thumbImage: environment.mediaBaseUrl + url, title: collection.name});
           } else {
-            storyObject.push({video: url, alt: 'video unavailable', title: name});
+            storyObject.push({video: environment.mediaBaseUrl + url, alt: 'video unavailable', title: collection.name});
           }
         }
       }
@@ -119,12 +117,11 @@ export class ProfileComponent implements OnInit {
   constructSliderObjectsForFav() {
     for(const fav of this.favourites) {
       const storyObject = new Array<Object>();
-      fav.urls.forEach(url => url = environment.mediaBaseUrl + url);
       for(const url of fav.urls) {
         if(url.endsWith('.jpg') || url.endsWith('.png')) {
-          storyObject.push( {image: url, thumbImage: url});
+          storyObject.push( {image: environment.mediaBaseUrl + url, thumbImage: environment.mediaBaseUrl + url});
         } else {
-          storyObject.push({video: url, alt: 'video unavailable'});
+          storyObject.push({video: environment.mediaBaseUrl + url, alt: 'video unavailable'});
         }
       }
       fav['slider'] = storyObject;
@@ -133,12 +130,11 @@ export class ProfileComponent implements OnInit {
 
   constructSliderObjectsForStories() {
     const storyObject = new Array<Object>();
-    this.stories.forEach(s => s.url = environment.mediaBaseUrl + s.url);
     for(const story of this.stories) {
       if(story.url.endsWith('.jpg') || story.url.endsWith('.png')) {
-        storyObject.push( {image: story.url, thumbImage: story.url});
+        storyObject.push( {image: environment.mediaBaseUrl + story.url, thumbImage: environment.mediaBaseUrl + story.url});
       } else {
-        storyObject.push({video: story.url, alt: 'video unavailable'});
+        storyObject.push({video: environment.mediaBaseUrl + story.url, alt: 'video unavailable'});
       }
     }
     this.stories['slider'] = storyObject;
@@ -146,25 +142,23 @@ export class ProfileComponent implements OnInit {
 
   constructSliderObjectsForHighlights() {
     const storyObject = new Array<Object>();
-    this.storyHighlights.forEach(s => s.url = environment.mediaBaseUrl + s.url);
     for(const story of this.storyHighlights) {
       if(story.url.endsWith('.jpg') || story.url.endsWith('.png')) {
-        storyObject.push( {image: story.url, thumbImage: story.url});
+        storyObject.push( {image: environment.mediaBaseUrl + story.url, thumbImage: environment.mediaBaseUrl + story.url});
       } else {
-        storyObject.push({video: story.url, alt: 'video unavailable'});
+        storyObject.push({video: environment.mediaBaseUrl + story.url, alt: 'video unavailable'});
       }
     }
     this.storyHighlights['slider'] = storyObject;
   }
 
   constructSliderObjectsForAllStories() {
-    this.allStories.forEach(s => s.url = environment.mediaBaseUrl + s.url);
     for(const story of this.allStories) {
       const storyObject = new Array<Object>();
       if(story.url.endsWith('.jpg') || story.url.endsWith('.png')) {
-        storyObject.push( {image: story.url, thumbImage: story.url});
+        storyObject.push( {image: environment.mediaBaseUrl + story.url, thumbImage: environment.mediaBaseUrl + story.url});
       } else {
-        storyObject.push({video: story.url, alt: 'video unavailable'});
+        storyObject.push({video: environment.mediaBaseUrl + story.url, alt: 'video unavailable'});
       }
       story['slider'] = storyObject;
     }
@@ -221,7 +215,7 @@ export class ProfileComponent implements OnInit {
       console.log(data);
       this.matDialog.open(CloseFriendsComponent, {data : data,  width: '70vw',
       maxWidth: '70vw'});
-    }); 
+    });
   }
 
   addToHighlights(story : Story){
@@ -231,14 +225,18 @@ export class ProfileComponent implements OnInit {
       error => {this.openSnackBar(error.error.message); this.router.navigate(['./feed']);}
     );
   });
-    
+
   }
 
   addToCollection(post : Post){
     this.matDialog.open(CollectionDialogComponent, {data : post.id,  width: '30vw',
       maxWidth: '30vw'}).afterClosed().subscribe(
         _ => this.mediaService.getFavouritesForUser().subscribe(
-          data => { this.favourites = data; this.constructSliderObjectsForFav(); },
+          data => { this.favourites = data; this.constructSliderObjectsForFav();
+          this.mediaService.getCollections().subscribe(_data => {
+            this.collections = _data;
+            this.constructSliderObjectsForCollections(_data);
+          }) },
           error => console.log(error.error.message)
         )
       );
