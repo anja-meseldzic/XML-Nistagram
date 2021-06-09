@@ -23,7 +23,11 @@ public class RegularUserController {
 
     @PostMapping
     public ResponseEntity<Void> register(@RequestBody RegularUser user) {
-        service.register(user);
+        try {
+            service.register(user);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

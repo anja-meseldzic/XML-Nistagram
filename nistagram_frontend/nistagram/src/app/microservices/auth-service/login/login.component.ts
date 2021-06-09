@@ -32,6 +32,9 @@ export class LoginComponent implements OnInit {
       .then(res => {
         localStorage.setItem('jwt', res.data);
         this.router.navigate(['./feed']);
+      })
+      .catch(e => {
+        this.openSnackBar('Incorrect username or password', 'Okay');
       });
   }
 

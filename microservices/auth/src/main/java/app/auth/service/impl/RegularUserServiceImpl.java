@@ -6,9 +6,18 @@ import app.auth.model.RegularUser;
 import app.auth.model.dto.UserInfoDTO;
 import app.auth.repository.RegularUserRepository;
 import app.auth.service.RegularUserService;
+import app.auth.util.PasswordUtil;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -25,7 +34,12 @@ public class RegularUserServiceImpl implements RegularUserService {
 
     @Override
     public void register(RegularUser user) {
-        repository.save(user);
+        user.getUser().setPassword(PasswordUtil.hashPBKDF2(user.getUser().getPassword()));
+        try {
+            repository.save(user);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Username must be unique");
+        }
         profileClient.createFromUser(user.getUser().getUsername());
     }
 

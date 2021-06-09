@@ -48,7 +48,7 @@ export class RegistrationComponent implements OnInit {
 
     axios
       // .post('http://localhost:8081/regulars', {
-      .post('http://localhost:8080/api/auth/regulars', {
+      .post(environment.authBaseUrl + 'regulars', {
         name : this.name,
         surname : this.lastName,
         email : this.email,
@@ -63,7 +63,8 @@ export class RegistrationComponent implements OnInit {
           role : 'USER'
         }
       })
-      .then(res => this.openSnackBar('Success', 'Okay'));
+      .then(res => this.openSnackBar('Success', 'Okay'))
+      .catch(e => this.openSnackBar('Username is already taken', 'Okay'));
   }
 
   cancel(): void {
