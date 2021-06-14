@@ -9,6 +9,8 @@ import { ProfileComponent } from './microservices/components/profile/profile.com
 import { SearchResultsComponent } from './microservices/components/search-results/search-results.component';
 import {UnauthorizedPageComponent} from './microservices/auth-service/unauthorized-page/unauthorized-page.component';
 import { RouteGuardService } from './microservices/guards/route-guard.service';
+import { LikedDataComponent } from './microservices/components/liked-data/liked-data.component';
+import { DislikedDataComponent } from './microservices/components/disliked-data/disliked-data.component';
 
 const routes: Routes = [
   {path: 'registration', component: RegistrationComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
@@ -19,6 +21,8 @@ const routes: Routes = [
   {path: 'post', component: SearchResultsComponent},
   {path: 'profile/:username', component: ProfileComponent},
   {path: 'unauthorized', component: UnauthorizedPageComponent},
+  {path: 'likedData', component: LikedDataComponent},
+  {path: 'dislikedData', component: DislikedDataComponent},
   {path: '', loadChildren: () => import('./microservices/microservices.module').then(mod => mod.MicroservicesModule)}
 ];
 

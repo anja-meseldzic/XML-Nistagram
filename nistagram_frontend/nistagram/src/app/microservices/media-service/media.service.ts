@@ -77,6 +77,14 @@ export class MediaService {
     }});
   }
 
+  public getDislikedContent() : Observable<Post[]> {
+    return this._http.get<Post[]>(environment.mediaBaseUrl + 'post/dislikedContent');
+  }
+
+  public getLikedContent() : Observable<Post[]> {
+    return this._http.get<Post[]>(environment.mediaBaseUrl + 'post/likedContent');
+  }
+
   public getPostsForFeed() : Observable<Post[]> {
     return this._http.get<Post[]>(environment.mediaBaseUrl + 'post/feed');
   }

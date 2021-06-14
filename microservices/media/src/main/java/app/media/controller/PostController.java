@@ -30,7 +30,23 @@ public class PostController {
         this.postService = postService;
         this.authService = authService;
     }
-
+    
+    @GetMapping(value = "dislikedContent")
+    public ResponseEntity<List<PostInfoDTO>> getDislikedContent(@RequestHeader("Authorization") String auth) {
+        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        String username = authService.getUsernameFromToken(TokenUtils.getToken(auth));
+        return new ResponseEntity<>(postService.getDislikedContent(username), HttpStatus.OK);
+    }
+    
+    @GetMapping(value = "likedContent")
+    public ResponseEntity<List<PostInfoDTO>> getLikedContent(@RequestHeader("Authorization") String auth) {
+        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        String username = authService.getUsernameFromToken(TokenUtils.getToken(auth));
+        return new ResponseEntity<>(postService.getLikedContent(username), HttpStatus.OK);
+    }
+    
     @GetMapping(value = "feed")
     public ResponseEntity<List<PostInfoDTO>> getFeed(@RequestHeader("Authorization") String auth) {
         if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))

@@ -33,4 +33,8 @@ public interface PostService {
 	void addFavouritesToCollection(String loggedInUsername, CollectionDTO dto);
 
 	List<CollectionInfoDTO> getCollectionsForProfile(String loggedInUsername);
+
+	List<PostInfoDTO> getLikedContent(String username);
+
+	List<PostInfoDTO> getDislikedContent(String username);
 }
