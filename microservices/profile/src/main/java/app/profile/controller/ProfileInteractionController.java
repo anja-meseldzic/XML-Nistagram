@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Collection;
+
 @Controller
 @RequestMapping("/interaction")
 public class ProfileInteractionController {
@@ -49,5 +51,15 @@ public class ProfileInteractionController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/muted/{username}")
+    public ResponseEntity<Collection<String>> getMuted(@PathVariable String username) {
+        return new ResponseEntity<>(service.getMutedProfiles(username), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/blocked/{username}")
+    public ResponseEntity<Collection<String>> getBlocked(@PathVariable String username) {
+        return new ResponseEntity<>(service.getBlockedProfiles(username), HttpStatus.OK);
     }
 }

@@ -8,6 +8,9 @@ import app.profile.service.ProfileInteractionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 @Service
 public class ProfileInteractionServiceImpl implements ProfileInteractionService {
     private final FollowRepository followRepository;
@@ -65,5 +68,19 @@ public class ProfileInteractionServiceImpl implements ProfileInteractionService 
         else
             interaction.setMuted(false);
         followRepository.save(interaction);
+    }
+
+    @Override
+    public Collection<String> getMutedProfiles(String username) {
+        return followRepository.findByFollowedBy_RegularUserUsernameAndMutedIsTrue(username).stream()
+                .map(f -> f.getProfile().getRegularUserUsername())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<String> getBlockedProfiles(String username) {
+        return followRepository.findByFollowedBy_RegularUserUsernameAndBlockedIsTrue(username).stream()
+                .map(f -> f.getProfile().getRegularUserUsername())
+                .collect(Collectors.toList());
     }
 }
