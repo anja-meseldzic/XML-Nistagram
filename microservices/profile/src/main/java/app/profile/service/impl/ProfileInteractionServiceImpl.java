@@ -37,7 +37,7 @@ public class ProfileInteractionServiceImpl implements ProfileInteractionService 
         Profile pMutedBy = profileRepository.findByRegularUserUsername(mutedBy);
         Follow interaction = followRepository.findFirstByProfileAndFollowedBy(pMuted, pMutedBy);
         if(interaction == null)
-            interaction = new Follow(pMuted, pMutedBy, false, true, false);
+            throw new IllegalArgumentException("Profiles must be following one another before muting");
         else
             interaction.setMuted(true);
         followRepository.save(interaction);
@@ -48,7 +48,7 @@ public class ProfileInteractionServiceImpl implements ProfileInteractionService 
         Profile pBlocked = profileRepository.findByRegularUserUsername(blocked);
         Profile pBlockedBy = profileRepository.findByRegularUserUsername(blockedBy);
         Follow interaction = followRepository.findFirstByProfileAndFollowedBy(pBlocked, pBlockedBy);
-        if(interaction == null)
+        if(interaction == null || !interaction.isBlocked())
             throw new IllegalArgumentException("No blocked profiles with given usernames");
         else
             interaction.setBlocked(false);
@@ -60,7 +60,7 @@ public class ProfileInteractionServiceImpl implements ProfileInteractionService 
         Profile pMuted = profileRepository.findByRegularUserUsername(muted);
         Profile pMutedBy = profileRepository.findByRegularUserUsername(mutedBy);
         Follow interaction = followRepository.findFirstByProfileAndFollowedBy(pMuted, pMutedBy);
-        if(interaction == null)
+        if(interaction == null || !interaction.isMuted())
             throw new IllegalArgumentException("No muted profiles with given usernames");
         else
             interaction.setMuted(false);
