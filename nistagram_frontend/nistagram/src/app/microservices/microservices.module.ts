@@ -31,10 +31,11 @@ import { FollowerRequestDialogComponent } from './components/follower-request-di
 import { FollowersDialogComponent } from './components/followers-dialog/followers-dialog.component'; 
 import { ReactionsListComponent } from './reactions-list/reactions-list.component';
 import { CloseFriendsComponent } from './components/close-friends/close-friends.component';
-import { CollectionDialogComponent } from './components/collection-dialog/collection-dialog.component'; 
+import { CollectionDialogComponent } from './components/collection-dialog/collection-dialog.component';
+import { ProfileConfigComponent } from './profile-config/profile-config.component'; 
 
 @NgModule({
-  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent],
+  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, ProfileConfigComponent],
   imports: [
     CommonModule,
     MicroservicesRoutingModule,

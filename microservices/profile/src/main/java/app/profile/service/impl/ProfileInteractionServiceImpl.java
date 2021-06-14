@@ -25,7 +25,7 @@ public class ProfileInteractionServiceImpl implements ProfileInteractionService 
         Profile pBlockedBy = profileRepository.findByRegularUserUsername(blockedBy);
         Follow interaction = followRepository.findFirstByProfileAndFollowedBy(pBlocked, pBlockedBy);
         if(interaction == null)
-            interaction = new Follow(pBlocked, pBlockedBy, false, false, true, false);
+            interaction = new Follow(pBlocked, pBlockedBy, false, false, true);
         else
             interaction.setBlocked(true);
         followRepository.save(interaction);
@@ -37,7 +37,7 @@ public class ProfileInteractionServiceImpl implements ProfileInteractionService 
         Profile pMutedBy = profileRepository.findByRegularUserUsername(mutedBy);
         Follow interaction = followRepository.findFirstByProfileAndFollowedBy(pMuted, pMutedBy);
         if(interaction == null)
-            interaction = new Follow(pMuted, pMutedBy, false, true, false, false);
+            interaction = new Follow(pMuted, pMutedBy, false, true, false);
         else
             interaction.setMuted(true);
         followRepository.save(interaction);

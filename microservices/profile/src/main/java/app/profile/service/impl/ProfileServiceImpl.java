@@ -59,7 +59,6 @@ public class ProfileServiceImpl implements ProfileService {
 			follow.setBlocked(false);
 			follow.setCloseFriend(false);
 			follow.setMuted(false);
-			follow.setFollow(true);
 
 			followRepository.save(follow);
 		} else {
@@ -90,7 +89,7 @@ public class ProfileServiceImpl implements ProfileService {
 				break;
 			}
 		}
-		followRepository.delete(delete); // bolje follow na false da se ne obrise ako je muteovan npr
+		followRepository.delete(delete);
 
 		return getFollowers(username).size();
 	}
@@ -144,7 +143,6 @@ public class ProfileServiceImpl implements ProfileService {
 		follow.setBlocked(false);
 		follow.setCloseFriend(false);
 		follow.setMuted(false);
-		follow.setFollow(true);
 
 		followRepository.save(follow);
 
