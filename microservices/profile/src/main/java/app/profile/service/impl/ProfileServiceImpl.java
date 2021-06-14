@@ -42,6 +42,11 @@ public class ProfileServiceImpl implements ProfileService {
 	}
 
 	@Override
+	public void update(Profile profile) {
+		profileRepository.save(profile);
+	}
+
+	@Override
 	public int followProfile(String username, String loggedInUsername) {
 		Profile profile = profileRepository.findByRegularUserUsername(username);
 		Profile followedBy = profileRepository.findByRegularUserUsername(loggedInUsername);

@@ -5,11 +5,14 @@ import java.util.Set;
 
 import app.profile.dtos.ProfileInfoDTO;
 import app.profile.exception.ProfileNotFoundException;
+import app.profile.model.Profile;
 import app.profile.model.dto.FollowRequestDto;
 import app.profile.model.dto.FollowerDto;
 
 
 public interface ProfileService {
+	void update(Profile profile);
+
 	int followProfile(String username, String loggedInUsername);
 
 	int unfollowProfile(String username, String loggedInUsername);

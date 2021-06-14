@@ -17,21 +17,28 @@ public class Follow {
     private boolean muted;
     @Column(name = "blocked", nullable = false)
     private boolean blocked;
+    @Column(name = "follow", nullable = false)
+    private boolean follow;
 
     public Follow() {
 
     }
 
-    public Follow(Profile profile, Profile followedBy, boolean closeFriend, boolean muted, boolean blocked) {
+    public Follow(Profile profile, Profile followedBy, boolean closeFriend, boolean muted, boolean blocked, boolean follow) {
         this.profile = profile;
         this.followedBy = followedBy;
         this.closeFriend = closeFriend;
         this.muted = muted;
         this.blocked = blocked;
+        this.follow = follow;
     }
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Profile getProfile() {
@@ -72,5 +79,13 @@ public class Follow {
 
     public void setBlocked(boolean blocked) {
         this.blocked = blocked;
+    }
+
+    public boolean isFollow() {
+        return follow;
+    }
+
+    public void setFollow(boolean follow) {
+        this.follow = follow;
     }
 }
