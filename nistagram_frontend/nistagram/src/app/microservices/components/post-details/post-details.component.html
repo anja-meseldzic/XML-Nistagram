@@ -38,10 +38,10 @@
         <div class="example-full-width"  style="display: inline;">
             <button mat-raised-button style="float:right; width: 150px; color: rgb(7, 8, 10);" (click)="postComment()">Post comment</button>
         </div>
-        
       </form>
       <div class="example-full-width"  style="display: inline;">
         <button mat-raised-button *ngIf = "!hidden" style="float: left; width: 150px; color: rgb(7, 8, 10);" (click) = "favourites(post.id)">Add to favourites</button>
+        <button mat-raised-button style="margin-top: 2px; float:right; width: 150px; color: rgb(7, 8, 10);" (click)="reportPost()">Report</button>  
       </div>
     </div>
     

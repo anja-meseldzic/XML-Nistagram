@@ -7,6 +7,7 @@ import { AllReactionsDTO } from '../DTOs/all-reactions-dto';
 import { CollectionDTO } from '../DTOs/collection-dto';
 import { CollectionInfoDto } from '../DTOs/collection-info-dto';
 import { CommentDTO } from '../DTOs/comment-dto';
+import { InappropriateDTO } from '../DTOs/inappropriate-dto';
 import { RatingDTO } from '../DTOs/rating-dto';
 import { ReactionsNumberDTO } from '../DTOs/reactions-number-dto';
 import { Post } from '../model/post';
@@ -26,6 +27,7 @@ export class MediaService {
   private reactOnPostUrl = environment.mediaBaseUrl + "media/reactOnPost";
   private getReactionsNumberUrl = environment.mediaBaseUrl + "media/getReactionsNumber";
   private getReactionsUrl = environment.mediaBaseUrl + "media/allReactions";
+  private inappropriateContentUrl = environment.mediaBaseUrl + "media/reportContent";
 
   constructor(private _http : HttpClient) {}
 
@@ -55,6 +57,12 @@ export class MediaService {
 
   postComment(data : CommentDTO) {
     return this._http.post(this.postCommentUrl,data, {responseType: 'text',headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+
+  reportContent(data : InappropriateDTO) {
+    return this._http.post(this.inappropriateContentUrl, data, {responseType: 'text',headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }

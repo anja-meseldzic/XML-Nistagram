@@ -3,11 +3,11 @@ package app.media.service;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
-import java.util.Set;
 import app.media.dtos.AlbumDTO;
 import app.media.dtos.AllCommentDTO;
 import app.media.dtos.AllReactionsDTO;
 import app.media.dtos.CommentDTO;
+import app.media.dtos.InappropriateDTO;
 import app.media.dtos.PostDTO;
 import app.media.dtos.RatingDTO;
 import app.media.dtos.ReactionsNumberDTO;
@@ -43,4 +43,6 @@ public interface MediaService {
 	AllReactionsDTO getAllReactions(long postId) throws PostDoesNotExistException;
 
 	void checkProfile(long postId, String myUsername) throws PostDoesNotExistException, ProfilePrivateException, ProfileBlockedException;
+
+	String reportContent(String myUsername, InappropriateDTO content);
 }
