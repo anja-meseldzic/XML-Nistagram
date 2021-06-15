@@ -109,4 +109,23 @@ export class ProfileService {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }
+
+
+
+  // mute & block
+  public changeBlocked(blocked: string, blockedBy: string): Observable<any> {
+    return this._http.get(environment.profileBaseUrl + 'interaction/block-unblock/' + blocked + '/' + blockedBy);
+  }
+
+  public changeMuted(muted: string, mutedBy: string): Observable<any> {
+    return this._http.get(environment.profileBaseUrl + 'interaction/mute-unmute/' + muted + '/' + mutedBy);
+  }
+
+  public getBlocked(username: string): Observable<string[]> {
+    return this._http.get<string[]>(environment.profileBaseUrl + 'interaction/blocked/' + username);
+  }
+
+  public getMuted(username: string): Observable<string[]> {
+    return this._http.get<string[]>(environment.profileBaseUrl + 'interaction/muted/' + username);
+  }
 }

@@ -5,10 +5,8 @@ import app.profile.model.Follow;
 import java.util.Collection;
 
 public interface ProfileInteractionService {
-    void blockProfile(String blocked, String blockedBy);
-    void muteProfile(String muted, String mutedBy);
-    void unblockProfile(String blocked, String blockedBy);
-    void unmuteProfile(String muted, String mutedBy);
+    void updateMute(String muted, String mutedBy);
+    void updateBlock(String blocked, String blockedBy);
     Collection<String> getMutedProfiles(String username);
     Collection<String> getBlockedProfiles(String username);
 }

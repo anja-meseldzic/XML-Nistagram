@@ -23,50 +23,26 @@ public class ProfileInteractionServiceImpl implements ProfileInteractionService 
     }
 
     @Override
-    public void blockProfile(String blocked, String blockedBy) {
-        Profile pBlocked = profileRepository.findByRegularUserUsername(blocked);
-        Profile pBlockedBy = profileRepository.findByRegularUserUsername(blockedBy);
-        Follow interaction = followRepository.findFirstByProfileAndFollowedBy(pBlocked, pBlockedBy);
-        if(interaction == null)
-            interaction = new Follow(pBlocked, pBlockedBy, false, false, true);
-        else
-            interaction.setBlocked(true);
-        followRepository.save(interaction);
-    }
-
-    @Override
-    public void muteProfile(String muted, String mutedBy) {
+    public void updateMute(String muted, String mutedBy) {
         Profile pMuted = profileRepository.findByRegularUserUsername(muted);
         Profile pMutedBy = profileRepository.findByRegularUserUsername(mutedBy);
         Follow interaction = followRepository.findFirstByProfileAndFollowedBy(pMuted, pMutedBy);
         if(interaction == null)
             throw new IllegalArgumentException("Profiles must be following one another before muting");
         else
-            interaction.setMuted(true);
+            interaction.setMuted(!interaction.isMuted());
         followRepository.save(interaction);
     }
 
     @Override
-    public void unblockProfile(String blocked, String blockedBy) {
+    public void updateBlock(String blocked, String blockedBy) {
         Profile pBlocked = profileRepository.findByRegularUserUsername(blocked);
         Profile pBlockedBy = profileRepository.findByRegularUserUsername(blockedBy);
         Follow interaction = followRepository.findFirstByProfileAndFollowedBy(pBlocked, pBlockedBy);
-        if(interaction == null || !interaction.isBlocked())
-            throw new IllegalArgumentException("No blocked profiles with given usernames");
+        if(interaction == null)
+            interaction = new Follow(pBlocked, pBlockedBy, false, false, true);
         else
-            interaction.setBlocked(false);
-        followRepository.save(interaction);
-    }
-
-    @Override
-    public void unmuteProfile(String muted, String mutedBy) {
-        Profile pMuted = profileRepository.findByRegularUserUsername(muted);
-        Profile pMutedBy = profileRepository.findByRegularUserUsername(mutedBy);
-        Follow interaction = followRepository.findFirstByProfileAndFollowedBy(pMuted, pMutedBy);
-        if(interaction == null || !interaction.isMuted())
-            throw new IllegalArgumentException("No muted profiles with given usernames");
-        else
-            interaction.setMuted(false);
+            interaction.setBlocked(!interaction.isBlocked());
         followRepository.save(interaction);
     }
 
