@@ -19,7 +19,7 @@ const routes: Routes = [
   {path: 'feed', component: FeedComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
   {path: 'post/:id', component: PostDetailsComponent},
   {path: 'post', component: SearchResultsComponent},
-  {path: 'profile/:username', component: ProfileComponent},
+  {path: 'profile/:username', component: ProfileComponent },
   {path: 'unauthorized', component: UnauthorizedPageComponent},
   {path: '', loadChildren: () => import('./microservices/microservices.module').then(mod => mod.MicroservicesModule)}
 ];

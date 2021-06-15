@@ -58,9 +58,9 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let username of followers">
+            <tr *ngFor="let username of following">
               <td>{{username}}</td>
-              <td><button class="btn btn-secondary">Mute</button></td>
+              <td><button class="btn btn-secondary">{{muted.includes(username) ? 'Unmute' : 'Mute'}}</button></td>
             </tr>
             </tbody>
           </table>
