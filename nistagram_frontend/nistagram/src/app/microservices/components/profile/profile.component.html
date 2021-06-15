@@ -21,6 +21,9 @@
             <button *ngIf="this.authService.isLoggedIn() && !profile.owned && !profile.following" mat-raised-button color="primary" style="margin-left: 10px;" (click) = "follow(profile.privateProfile, profile.username)">Follow</button>
             <button *ngIf="this.authService.isLoggedIn() && !profile.owned && profile.following" mat-raised-button color="primary" style="margin-left: 10px;" (click) = "unfollow(profile.username)">Unfollow</button>
         </p>
+        <p>
+            <button *ngIf="this.authService.isLoggedIn() && profile.owned" mat-stroked-button style="margin-left: 10px;" (click)="ratings()">Ratings</button>
+        </p>
         <p style="color: gray;" *ngIf="profile.fullName != null">Name: {{profile.fullName}}</p>
         <p style="color: gray;" *ngIf="profile.birthDate != null">Birth date: {{profile.birthDate | date: 'dd. MM. yyyy.'}}</p>
         <p style="color: gray;" *ngIf="profile.gender != null">Gender: {{profile.gender}}</p>

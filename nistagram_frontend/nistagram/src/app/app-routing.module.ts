@@ -11,6 +11,8 @@ import {UnauthorizedPageComponent} from './microservices/auth-service/unauthoriz
 import { RouteGuardService } from './microservices/guards/route-guard.service';
 import { VerifyAccountComponent } from './microservices/components/verify-account/verify-account.component';
 import { VerificationRequestsComponent } from './microservices/components/verification-requests/verification-requests.component';
+import { LikedDataComponent } from './microservices/components/liked-data/liked-data.component';
+import { DislikedDataComponent } from './microservices/components/disliked-data/disliked-data.component';
 
 const routes: Routes = [
   {path: 'registration', component: RegistrationComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
@@ -23,6 +25,8 @@ const routes: Routes = [
   {path: 'unauthorized', component: UnauthorizedPageComponent},
   {path: 'verify-profile', component: VerifyAccountComponent},
   {path: 'verification-requests', component: VerificationRequestsComponent},
+  {path: 'likedData', component: LikedDataComponent},
+  {path: 'dislikedData', component: DislikedDataComponent},
   {path: '', loadChildren: () => import('./microservices/microservices.module').then(mod => mod.MicroservicesModule)}
 ];
 

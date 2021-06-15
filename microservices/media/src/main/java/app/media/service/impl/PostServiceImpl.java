@@ -10,6 +10,8 @@ import app.media.exception.ProfilePrivateException;
 import app.media.model.Collection;
 import app.media.model.Favourites;
 import app.media.model.Post;
+import app.media.model.Rating;
+import app.media.model.RatingType;
 import app.media.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,6 +45,54 @@ public class PostServiceImpl implements PostService {
 
 	}
 
+	@Override
+	public List<PostInfoDTO> getDislikedContent(String username) {
+		List<PostInfoDTO> result = new ArrayList<>();
+		
+		List<String> targetedProfiles = profileService.getAll();
+		List<String> blockedProfiles = profileService.getBlocked(username);
+		targetedProfiles.removeAll(blockedProfiles);
+		
+		List<Post> targetedPostsWithoutBlockedProfiles = postRepository.findAll().stream()
+				.filter(p -> targetedProfiles.contains(p.getMedia().getUsername())).collect(Collectors.toList());
+		Collectors.toList();
+		
+		for(Post post : targetedPostsWithoutBlockedProfiles) {
+			for(Rating rating : post.getRatings())
+			{
+				if(rating.getUsername().equals(username) && rating.getRatingType() == RatingType.DISLIKE) {
+					result.add(toPostInfoDTO(post));
+				}
+			}
+		}
+		result.sort((r1, r2) -> r1.getCreated().isBefore(r2.getCreated()) ? 1 : -1);
+		return result;
+	}
+	
+	@Override
+	public List<PostInfoDTO> getLikedContent(String username) {
+		List<PostInfoDTO> result = new ArrayList<>();
+		
+		List<String> targetedProfiles = profileService.getAll();
+		List<String> blockedProfiles = profileService.getBlocked(username);
+		targetedProfiles.removeAll(blockedProfiles);
+		
+		List<Post> targetedPostsWithoutBlockedProfiles = postRepository.findAll().stream()
+				.filter(p -> targetedProfiles.contains(p.getMedia().getUsername())).collect(Collectors.toList());
+		Collectors.toList();
+		
+		for(Post post : targetedPostsWithoutBlockedProfiles) {
+			for(Rating rating : post.getRatings())
+			{
+				if(rating.getUsername().equals(username) && rating.getRatingType() == RatingType.LIKE) {
+					result.add(toPostInfoDTO(post));
+				}
+			}
+		}
+		result.sort((r1, r2) -> r1.getCreated().isBefore(r2.getCreated()) ? 1 : -1);
+		return result;
+	}
+	
 	@Override
 	public List<PostInfoDTO> getFeed(String username) {
 		System.out.println("USERNAME FROM TOKEN: " + username);

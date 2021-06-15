@@ -32,11 +32,15 @@ import { FollowersDialogComponent } from './components/followers-dialog/follower
 import { ReactionsListComponent } from './reactions-list/reactions-list.component';
 import { CloseFriendsComponent } from './components/close-friends/close-friends.component';
 import { CollectionDialogComponent } from './components/collection-dialog/collection-dialog.component';
+import { RatingsDialogComponent } from './components/ratings-dialog/ratings-dialog.component';
+import { LikedDataComponent } from './components/liked-data/liked-data.component';
+import { DislikedDataComponent } from './components/disliked-data/disliked-data.component';
+import { ReportDialogComponent } from './components/report-dialog/report-dialog.component'; 
 import { VerifyAccountComponent } from './components/verify-account/verify-account.component';
 import { VerificationRequestsComponent } from './components/verification-requests/verification-requests.component'; 
 
 @NgModule({
-  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, VerifyAccountComponent, VerificationRequestsComponent],
+  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, VerifyAccountComponent, VerificationRequestsComponent,RatingsDialogComponent,LikedDataComponent,DislikedDataComponent,ReportDialogComponent],
   imports: [
     CommonModule,
     MicroservicesRoutingModule,

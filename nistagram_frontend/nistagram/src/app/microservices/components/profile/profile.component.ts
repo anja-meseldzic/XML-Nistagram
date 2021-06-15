@@ -14,6 +14,7 @@ import { CloseFriendsComponent } from '../close-friends/close-friends.component'
 import { CollectionDialogComponent } from '../collection-dialog/collection-dialog.component';
 import { FollowerRequestDialogComponent } from '../follower-request-dialog/follower-request-dialog.component';
 import { FollowersDialogComponent } from '../followers-dialog/followers-dialog.component';
+import { RatingsDialogComponent } from '../ratings-dialog/ratings-dialog.component';
 
 @Component({
   selector: 'app-profile',
@@ -216,6 +217,11 @@ export class ProfileComponent implements OnInit {
       this.matDialog.open(CloseFriendsComponent, {data : data,  width: '70vw',
       maxWidth: '70vw'});
     });
+  }
+
+  ratings(){
+    this.matDialog.open(RatingsDialogComponent, { width: '30vw',
+      maxWidth: '30vw'});
   }
 
   addToHighlights(story : Story){
