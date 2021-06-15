@@ -10,7 +10,7 @@
         </ng-image-slider>
     </div>
     <div style="float: left; width: max-content; height: max-content; margin-bottom: 30px;" >
-        <p style="font-size: large;">{{profile.username}}</p>
+        <p style="font-size: 30px;">{{profile.username}}<img style="margin-left: 10px; width: 25px; height: 25px;" *ngIf = "profile.verified" src = "../../../../assets/correct.png"/></p>
         <p style="font-size: large;">
             <button mat-flat-button (click) = "getFollowers()" [disabled]= "profile.privateProfile && !profile.following && !profile.owned">{{profile.followerCount}} followers </button>
             <button mat-flat-button (click) = "getFollowing()"[disabled]= "profile.privateProfile && !profile.following  && !profile.owned">{{profile.followingCount}} following </button>

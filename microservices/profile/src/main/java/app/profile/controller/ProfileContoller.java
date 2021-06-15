@@ -3,8 +3,11 @@ package app.profile.controller;
 import app.profile.dtos.ProfileInfoDTO;
 import app.profile.exception.ProfileNotFoundException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+
+import javax.websocket.server.PathParam;
 
 import app.profile.service.AuthService;
 import app.profile.util.TokenUtils;
@@ -18,13 +21,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import app.profile.model.dto.FollowRequestDto;
 import app.profile.model.dto.FollowerDto;
-
+import app.profile.model.dto.ProfileVerificationRequestDTO;
 import app.profile.service.ProfileService;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping(value = "profile")
@@ -209,4 +218,49 @@ public class ProfileContoller {
 		return new ResponseEntity<>(message, HttpStatus.OK);
 	}
 	
+	@PostMapping(value="verify-profile",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<String> verifyProfile(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "request", required = false) String request, @RequestHeader("Authorization") String auth) throws JsonMappingException, JsonProcessingException{
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		String token = TokenUtils.getToken(auth);
+		String username = authService.getUsernameFromToken(token);
+    	
+    	ObjectMapper mapper = new ObjectMapper();
+    	ProfileVerificationRequestDTO requestDTO = mapper.readValue(request, ProfileVerificationRequestDTO.class);
+    	String message = "";
+		try {
+			message = profileService.saveRequest(data, requestDTO, username);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		}
+		return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+	
+	@GetMapping(value = "verification-requests")
+	public ResponseEntity<List<ProfileVerificationRequestDTO>> getVerificationRequests(@RequestHeader("Authorization") String auth) {
+		if(!authService.verify(auth, "ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	
+		List<ProfileVerificationRequestDTO> verificationRequests = profileService.getVerificationRequests();
+		return new ResponseEntity<>(verificationRequests, HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "verify/{id}")
+	public ResponseEntity<List<ProfileVerificationRequestDTO>> acceptVerification(@RequestHeader("Authorization") String auth,@PathVariable long id) {
+		if(!authService.verify(auth, "ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	
+		List<ProfileVerificationRequestDTO> verificationRequests = profileService.verify(id);
+		return new ResponseEntity<>(verificationRequests, HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "delete-ver-request/{id}")
+	public ResponseEntity<List<ProfileVerificationRequestDTO>> deleteVerificationRequest(@RequestHeader("Authorization") String auth,@PathVariable long id) {
+		if(!authService.verify(auth, "ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	
+		List<ProfileVerificationRequestDTO> verificationRequests = profileService.deleteVerification(id);
+		return new ResponseEntity<>(verificationRequests, HttpStatus.OK);
+	}
 }

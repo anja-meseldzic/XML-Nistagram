@@ -24,7 +24,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(private route : ActivatedRoute, private router : Router, private profileService : ProfileService, private mediaService : MediaService, private matDialog : MatDialog, private snackBar : MatSnackBar, public authService : AuthService) { }
 
-  profile : ProfileInfo = new ProfileInfo(0, '', '', '', new Date(1998, 11, 29), '', '', '', 0, 0, false, false, false);
+  profile : ProfileInfo = new ProfileInfo(0, '', '', '', new Date(1998, 11, 29), '', '', '', 0, 0, false, false, false,false);
   posts : Post[] = [];
   favourites : Post[] = [];
   stories : Story[] = [];

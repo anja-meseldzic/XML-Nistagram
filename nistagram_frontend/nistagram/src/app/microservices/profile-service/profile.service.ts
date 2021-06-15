@@ -2,8 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { VerificationRequestsComponent } from '../components/verification-requests/verification-requests.component';
 import { FollowRequestDto } from '../DTOs/follow-request-dto';
 import { FollowerDto } from '../DTOs/follower-dto';
+import { ProfileVerificationRequest } from '../DTOs/profile-verification-request';
 import { ProfileInfo } from '../model/profile-info';
 
 @Injectable({
@@ -70,6 +72,30 @@ export class ProfileService {
   }
   public getCloseFriends() : Observable<String[]> {
     return this._http.get<String[]>(environment.profileBaseUrl + "profile/getCloseFriends", {headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+  public sendProfileVerifactionRequest(fd : FormData){
+      return this._http.post(environment.profileBaseUrl + "profile/verify-profile",fd, {responseType: 'text',headers : {
+        Authorization: 'Bearer ' + localStorage.getItem('jwt')
+      }});
+    
+  }
+
+  public getVerificationRequests() : Observable<ProfileVerificationRequest[]> {
+    return this._http.get<ProfileVerificationRequest[]>(environment.profileBaseUrl + "profile/verification-requests", {headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+
+  public acceptVerificationRequest(id : Number) : Observable<ProfileVerificationRequest[]> {
+    return this._http.get<ProfileVerificationRequest[]>(environment.profileBaseUrl + "profile/verify/"+ id, {headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+
+  public deleteVerificationRequest(id : Number) : Observable<ProfileVerificationRequest[]> {
+    return this._http.get<ProfileVerificationRequest[]>(environment.profileBaseUrl + "profile/delete-ver-request/"+ id, {headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }

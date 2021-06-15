@@ -1,0 +1,47 @@
+<div style="height:105%; display: flex; justify-content: center;background-image: url(assets/insta\.jpg); background-position: center; background-repeat: no-repeat; background-size: cover; ">
+    <mat-card class="mat-elevation-z8" style="margin-top: 4%; margin-bottom: 5%; width: 60%; height: 80%; display: flex; justify-content: center; align-items: center; height: max-content; padding-top: 20px; opacity: 80%;">
+            <form #feedform="ngForm" style="width: 80%;" (ngSubmit)="submit()" novalidate>
+
+                <h2 style="text-align: center;">
+                   Verify your profile
+                </h2>
+
+                <div style="margin-bottom: 5%;"> 
+                    <mat-form-field style="width:100%;">
+                        <mat-label>First name</mat-label>
+                        <input matInput   placeholder="Add your last name" id="name" #name2 = "ngModel" name="c2"[(ngModel)] = "name" style="height: 40%;"/>
+                    </mat-form-field>
+                  </div>
+                  <div style="margin-bottom: 5%;">
+                    <mat-form-field style="width:100%;">
+                        <mat-label>Last name</mat-label>
+                        <input matInput   placeholder="Add your last name" id="surname" #name2 = "ngModel" name="c2"[(ngModel)] = "lastname" style="height: 40%;"/>
+                    </mat-form-field>
+                </div>
+                <div style="margin-bottom: 5%;">
+                    <mat-form-field>
+                        <mat-label>Category</mat-label>
+                            <mat-select [(ngModel)]="selectedValue" name="categ">
+                              <mat-option *ngFor="let cat of categories" [value]="cat.value">
+                                {{cat.value}}
+                              </mat-option>
+                            </mat-select>
+                    </mat-form-field>
+                </div>
+                
+                  <div  style="margin-top: 22px; margin-bottom: 1%; text-align: center;">
+                    <input style="display: none;" type="file" (change)="onFileSelected($event)" accept=".jpg, .png" #fileInput>
+                    <span class="phone-in-line" style="max-width: 35%;">
+                      <button mat-raised-button color="accent" type="button" style="padding: 12px 32px; margin-right: 1%;" (click)="fileInput.click()">
+                        <mat-label [hidden]="!selectedFileHide">Insert personal id </mat-label>
+                        <mat-label [hidden]="selectedFileHide">{{fileName}}</mat-label>
+                      </button>
+                    </span>
+                    <span class="phone-in-line" style="max-width: 35%;">
+                      <button mat-raised-button color="primary" style="padding: 12px 32px; margin-left: 12%;" [disabled] ="" type="submit" >Send verification request</button>
+                    </span>
+                </div>
+            </form>
+            
+    </mat-card>
+</div> 

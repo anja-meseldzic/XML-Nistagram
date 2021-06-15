@@ -9,6 +9,8 @@ import { ProfileComponent } from './microservices/components/profile/profile.com
 import { SearchResultsComponent } from './microservices/components/search-results/search-results.component';
 import {UnauthorizedPageComponent} from './microservices/auth-service/unauthorized-page/unauthorized-page.component';
 import { RouteGuardService } from './microservices/guards/route-guard.service';
+import { VerifyAccountComponent } from './microservices/components/verify-account/verify-account.component';
+import { VerificationRequestsComponent } from './microservices/components/verification-requests/verification-requests.component';
 
 const routes: Routes = [
   {path: 'registration', component: RegistrationComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
@@ -19,6 +21,8 @@ const routes: Routes = [
   {path: 'post', component: SearchResultsComponent},
   {path: 'profile/:username', component: ProfileComponent},
   {path: 'unauthorized', component: UnauthorizedPageComponent},
+  {path: 'verify-profile', component: VerifyAccountComponent},
+  {path: 'verification-requests', component: VerificationRequestsComponent},
   {path: '', loadChildren: () => import('./microservices/microservices.module').then(mod => mod.MicroservicesModule)}
 ];
 

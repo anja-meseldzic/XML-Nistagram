@@ -22,6 +22,8 @@
     <span style="flex: 1 1 auto;" *ngIf="this.authService.isLoggedIn()">
       <button style="float: right; margin-right: 20px;" mat-stroked-button (click)="this.authService.logOut()">Log out</button>
       <button mat-raised-button color="accent" style="float: right; margin-right: 20px;" (click)="goToProfile()" *ngIf="this.authService.getRole() != 'ADMIN'">Your profile</button>
+      <button mat-raised-button color="primary" style="float: right; margin-right: 20px;" (click)="verifyProfile()" *ngIf="this.authService.getRole() != 'ADMIN'">Verify profile</button>
+      <button mat-raised-button color="primary" style="float: right; margin-right: 20px;" (click)="verificationRequests()" *ngIf="this.authService.getRole() == 'ADMIN'">Verification requests</button>
     </span>
   </mat-toolbar>
 <router-outlet></router-outlet>

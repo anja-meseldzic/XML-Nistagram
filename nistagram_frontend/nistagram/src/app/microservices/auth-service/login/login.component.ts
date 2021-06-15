@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import axios from 'axios';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {environment} from '../../../../environments/environment';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,7 @@ export class LoginComponent implements OnInit {
   username = '';
   password = '';
 
-  constructor(private router: Router, private snackBar: MatSnackBar) { }
+  constructor(private router: Router, private snackBar: MatSnackBar, private authService : AuthService) { }
 
   ngOnInit(): void {
   }
@@ -31,7 +32,12 @@ export class LoginComponent implements OnInit {
       },)
       .then(res => {
         localStorage.setItem('jwt', res.data);
-        this.router.navigate(['./feed']);
+        if(this.authService.getRole() != "ADMIN"){
+          this.router.navigate(['./feed']);
+        }else{
+          this.router.navigate(['../verification-requests']);
+        }
+        
       })
       .catch(e => {
         this.openSnackBar('Incorrect username or password', 'Okay');
