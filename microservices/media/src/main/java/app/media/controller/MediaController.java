@@ -25,6 +25,7 @@ import app.media.dtos.AlbumDTO;
 import app.media.dtos.AllCommentDTO;
 import app.media.dtos.AllReactionsDTO;
 import app.media.dtos.CommentDTO;
+import app.media.dtos.InappropriateDTO;
 import app.media.dtos.PostDTO;
 import app.media.dtos.RatingDTO;
 import app.media.dtos.ReactionsNumberDTO;
@@ -223,4 +224,27 @@ public class MediaController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
+	
+	@PostMapping(value = "reportContent")
+	public ResponseEntity<String> reportInappropriateContent(@RequestBody InappropriateDTO content,  @RequestHeader("Authorization") String auth)
+	{
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		String token = TokenUtils.getToken(auth);
+		String myUsername = authService.getUsernameFromToken(token);
+		
+		try {
+			mediaService.checkProfile(content.getIdOfContent(), myUsername);		
+		} catch (PostDoesNotExistException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		} catch (ProfilePrivateException e) {
+			 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profile is private");
+		} catch (ProfileBlockedException e) {
+			 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You blocked this profile");
+		}
+		String message = mediaService.reportContent(myUsername, content);
+		
+		return new ResponseEntity<>(message, HttpStatus.OK);
+	}
+	
 }

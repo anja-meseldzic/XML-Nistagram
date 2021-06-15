@@ -19,6 +19,7 @@ import app.media.dtos.AlbumDTO;
 import app.media.dtos.AllCommentDTO;
 import app.media.dtos.AllReactionsDTO;
 import app.media.dtos.CommentDTO;
+import app.media.dtos.InappropriateDTO;
 import app.media.dtos.PostDTO;
 import app.media.dtos.RatingDTO;
 import app.media.dtos.ReactionsNumberDTO;
@@ -26,12 +27,14 @@ import app.media.exception.PostDoesNotExistException;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
 import app.media.model.Comment;
+import app.media.model.InapropriateContent;
 import app.media.model.Media;
 import app.media.model.Post;
 import app.media.model.Rating;
 import app.media.model.RatingType;
 import app.media.model.Story;
 import app.media.repository.CommentRepository;
+import app.media.repository.InapropriateContentRepository;
 import app.media.repository.MediaRepository;
 import app.media.repository.PostRepository;
 import app.media.repository.RatingRepository;
@@ -41,7 +44,6 @@ import app.media.service.ProfileService;
 
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Service
 public class MediaServiceImpl implements MediaService{
@@ -52,19 +54,22 @@ public class MediaServiceImpl implements MediaService{
 	private CommentRepository commentRepository;
 	private RatingRepository ratingRepository;
 	private ProfileService profileService;
+	private InapropriateContentRepository inapropriateContentRepository;
 
 	@Value("${media.storage}")
 	private String storageDirectoryPath;
 
 	@Autowired
     public MediaServiceImpl(MediaRepository mediaRepository, PostRepository postRepository, StoryRepository storyRepository,
-    		CommentRepository commentRepository, RatingRepository ratingRepository, ProfileService profileService) {
+    		CommentRepository commentRepository, RatingRepository ratingRepository, ProfileService profileService, 
+    		InapropriateContentRepository inapropriateContentRepository) {
         this.mediaRepository = mediaRepository;
         this.postRepository = postRepository;
         this.storyRepository = storyRepository;
         this.commentRepository = commentRepository;
         this.ratingRepository = ratingRepository;
         this.profileService = profileService;
+        this.inapropriateContentRepository = inapropriateContentRepository;
     }
 
 	@Override
@@ -326,5 +331,25 @@ public class MediaServiceImpl implements MediaService{
 	            throw new ProfileBlockedException();
 	
 	        
+	}
+
+	@Override
+	public String reportContent(String myUsername, InappropriateDTO content) {
+		Post post = postRepository.findOneById(content.getIdOfContent());
+		
+		for(InapropriateContent con : inapropriateContentRepository.findAll()) {
+			if(con.getUsername().equals(myUsername) && con.getMedia().getId() == post.getMedia().getId()) {
+				return "You cannot report the same content twice.";
+			}
+		}
+		
+		InapropriateContent newContent = new InapropriateContent();
+		newContent.setReviewed(false);
+		newContent.setReason(content.getReason());
+		newContent.setMedia(post.getMedia());
+		newContent.setUsername(myUsername);
+		
+		inapropriateContentRepository.save(newContent);
+		return "You successfully reported this post.";
 	}
 }

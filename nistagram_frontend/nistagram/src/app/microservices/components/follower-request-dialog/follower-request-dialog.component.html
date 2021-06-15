@@ -9,7 +9,11 @@
       
         <ng-container matColumnDef="action1">
           <th mat-header-cell *matHeaderCellDef> Accept request </th>
-          <td mat-cell *matCellDef="let element"><button mat-raised-button name = "accept" ngDefaultControl (click) = "follow(element.username2)" [(ngModel)]="element.id" color="primary">Accept request</button></td>
+          <td mat-cell *matCellDef="let element">
+            <button mat-raised-button name = "accept" ngDefaultControl (click) = "follow(element.username2)" [(ngModel)]="element.id" color="primary">
+              Accept request
+            </button>
+          </td>
           
         </ng-container>
 

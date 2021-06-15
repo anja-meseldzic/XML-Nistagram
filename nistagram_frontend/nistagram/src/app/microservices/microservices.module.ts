@@ -20,22 +20,28 @@ import { FeedComponent } from './components/feed/feed.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { NgImageSliderModule } from 'ng-image-slider';
 import { PostDetailsComponent } from './components/post-details/post-details.component';
-import {MatTabsModule} from '@angular/material/tabs'; 
+import {MatTabsModule} from '@angular/material/tabs';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { SearchResultsComponent } from './components/search-results/search-results.component';
 import { CreateStoryComponent } from './create-story/create-story.component';
 import { CreateAlbumComponent } from './create-album/create-album.component';
 import { MatListModule } from '@angular/material/list';
-import { UnauthorizedPageComponent } from './auth-service/unauthorized-page/unauthorized-page.component'; 
+import { UnauthorizedPageComponent } from './auth-service/unauthorized-page/unauthorized-page.component';
 import { FollowerRequestDialogComponent } from './components/follower-request-dialog/follower-request-dialog.component';
-import { FollowersDialogComponent } from './components/followers-dialog/followers-dialog.component'; 
+import { FollowersDialogComponent } from './components/followers-dialog/followers-dialog.component';
 import { ReactionsListComponent } from './reactions-list/reactions-list.component';
 import { CloseFriendsComponent } from './components/close-friends/close-friends.component';
 import { CollectionDialogComponent } from './components/collection-dialog/collection-dialog.component';
-import { ProfileConfigComponent } from './profile-config/profile-config.component'; 
+import { RatingsDialogComponent } from './components/ratings-dialog/ratings-dialog.component';
+import { LikedDataComponent } from './components/liked-data/liked-data.component';
+import { DislikedDataComponent } from './components/disliked-data/disliked-data.component';
+import { ReportDialogComponent } from './components/report-dialog/report-dialog.component';
+import { VerifyAccountComponent } from './components/verify-account/verify-account.component';
+import { VerificationRequestsComponent } from './components/verification-requests/verification-requests.component';
+import { ProfileConfigComponent } from './profile-config/profile-config.component';
 
 @NgModule({
-  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, ProfileConfigComponent],
+  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, ProfileConfigComponent, VerifyAccountComponent, VerificationRequestsComponent, RatingsDialogComponent, LikedDataComponent, DislikedDataComponent, ReportDialogComponent],
   imports: [
     CommonModule,
     MicroservicesRoutingModule,

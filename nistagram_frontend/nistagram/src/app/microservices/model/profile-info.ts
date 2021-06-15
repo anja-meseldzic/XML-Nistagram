@@ -12,6 +12,7 @@ export class ProfileInfo {
         public followingCount : Number,
         public owned : boolean,
         public privateProfile : boolean,
-        public following : boolean
+        public following : boolean,
+        public verified : boolean
     ){}
 }

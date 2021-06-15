@@ -7,6 +7,9 @@ import { CommentDTO } from '../../DTOs/comment-dto';
 import { RatingDTO } from '../../DTOs/rating-dto';
 import { MediaService } from '../../media-service/media.service';
 import { Post } from '../../model/post';
+import { ReportDialogComponent } from '../report-dialog/report-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+
 
 @Component({
   selector: 'app-post-details',
@@ -22,7 +25,7 @@ export class PostDetailsComponent implements OnInit {
   public comment : string;
   public hidden : boolean = false;
 
-  constructor(private mediaService : MediaService, private route : ActivatedRoute, private router : Router, private _snackBar: MatSnackBar) { }
+  constructor(private mediaService : MediaService, private route : ActivatedRoute, private router : Router, private _snackBar: MatSnackBar, private matDialog : MatDialog) { }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -127,5 +130,10 @@ export class PostDetailsComponent implements OnInit {
     this.mediaService.saveToFavourites(id).subscribe(data => console.log(data));
     this._snackBar.open("You have successfully saved post to favourites.", "Okay");
     this.hidden = true;
+  }
+
+  reportPost(){
+    this.matDialog.open(ReportDialogComponent, {data : Number(this.route.snapshot.paramMap.get('id')),  width: '30vw',
+      maxWidth: '30vw'})
   }
 }

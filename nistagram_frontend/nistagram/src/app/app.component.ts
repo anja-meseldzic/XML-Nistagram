@@ -50,4 +50,11 @@ export class AppComponent {
   public goToProfile() {
     this.router.navigate(['../profile/' + this.authService.getUsername()])
   }
+  public verifyProfile() {
+    this.router.navigate(['../verify-profile']);
+  }
+
+  public verificationRequests(){
+    this.router.navigate(['../verification-requests']);
+  }
 }

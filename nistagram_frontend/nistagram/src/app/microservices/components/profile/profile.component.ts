@@ -14,6 +14,7 @@ import { CloseFriendsComponent } from '../close-friends/close-friends.component'
 import { CollectionDialogComponent } from '../collection-dialog/collection-dialog.component';
 import { FollowerRequestDialogComponent } from '../follower-request-dialog/follower-request-dialog.component';
 import { FollowersDialogComponent } from '../followers-dialog/followers-dialog.component';
+import { RatingsDialogComponent } from '../ratings-dialog/ratings-dialog.component';
 
 @Component({
   selector: 'app-profile',
@@ -24,7 +25,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(private route : ActivatedRoute, private router : Router, private profileService : ProfileService, private mediaService : MediaService, private matDialog : MatDialog, private snackBar : MatSnackBar, public authService : AuthService) { }
 
-  profile : ProfileInfo = new ProfileInfo(0, '', '', '', new Date(1998, 11, 29), '', '', '', 0, 0, false, false, false);
+  profile : ProfileInfo = new ProfileInfo(0, '', '', '', new Date(1998, 11, 29), '', '', '', 0, 0, false, false, false,false);
   posts : Post[] = [];
   favourites : Post[] = [];
   stories : Story[] = [];
@@ -186,6 +187,10 @@ export class ProfileComponent implements OnInit {
     this.router.navigate(['/personal-edit']);
   }
 
+  settings(): void {
+    this.router.navigate(['/profile-config']);
+  }
+
   followRequests(){
     this.profileService.getFollowRequests(this.profile.username).subscribe(data =>{
       this.matDialog.open(FollowerRequestDialogComponent, {data : data});
@@ -216,6 +221,11 @@ export class ProfileComponent implements OnInit {
       this.matDialog.open(CloseFriendsComponent, {data : data,  width: '70vw',
       maxWidth: '70vw'});
     });
+  }
+
+  ratings(){
+    this.matDialog.open(RatingsDialogComponent, { width: '30vw',
+      maxWidth: '30vw'});
   }
 
   addToHighlights(story : Story){

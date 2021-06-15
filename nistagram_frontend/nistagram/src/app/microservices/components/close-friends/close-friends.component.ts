@@ -16,7 +16,7 @@ export class CloseFriendsComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data : FollowerDto[], private route : ActivatedRoute, private router : Router, private profileService : ProfileService, private mediaService : MediaService, private matDialog : MatDialog, private _snackBar: MatSnackBar ) { }
 
-  profile : ProfileInfo = new ProfileInfo(0, '', '', '', new Date(1998, 11, 29), '', '', '', 0, 0, false, false, false);
+  profile : ProfileInfo = new ProfileInfo(0, '', '', '', new Date(1998, 11, 29), '', '', '', 0, 0, false, false, false,false);
   displayedColumns: string[] = ['username', 'addClose'];
   displayedColumns2: string[] = ['username2', 'removeClose'];
   dataSource = this.data;

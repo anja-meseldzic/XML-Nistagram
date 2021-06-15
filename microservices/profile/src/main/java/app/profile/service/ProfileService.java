@@ -1,17 +1,22 @@
 package app.profile.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import app.profile.dtos.ProfileInfoDTO;
 import app.profile.exception.ProfileNotFoundException;
 import app.profile.model.Profile;
 import app.profile.model.dto.FollowRequestDto;
 import app.profile.model.dto.FollowerDto;
+import app.profile.model.dto.ProfileVerificationRequestDTO;
 
 
 public interface ProfileService {
 	void update(Profile profile);
+	Profile get(String username);
 
 	int followProfile(String username, String loggedInUsername);
 
@@ -48,4 +53,12 @@ public interface ProfileService {
 	String addCloseFriend(String myUsername, String usernameOfFriend);
 
 	String removeCloseFriend(String myUsername, String usernameOfFriend);
+
+	String saveRequest(MultipartFile data, ProfileVerificationRequestDTO requestDTO, String username) throws IOException;
+
+	List<ProfileVerificationRequestDTO> getVerificationRequests();
+
+	List<ProfileVerificationRequestDTO> verify(long id);
+
+	List<ProfileVerificationRequestDTO> deleteVerification(long id);
 }

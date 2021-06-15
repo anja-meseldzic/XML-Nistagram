@@ -23,7 +23,7 @@ export class ProfileConfigComponent implements OnInit {
     const jwtDec = jwtDecode(jwt);
 
     // @ts-ignore
-    this.profileService.getFollowing(jwtDec.username).subscribe(data => this.following = data);
+    this.profileService.getFollowing(jwtDec.username).subscribe(data => this.following = data.map(d => d.username));
   }
 
   edit(): void {
