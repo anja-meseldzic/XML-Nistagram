@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {ProfileService} from '../profile-service/profile.service';
 import jwtDecode from 'jwt-decode';
 import {Router} from '@angular/router';
+import {AuthService} from '../auth-service/auth.service';
+import {Profile} from '../model/profile';
 
 @Component({
   selector: 'app-profile-config',
@@ -14,19 +16,31 @@ export class ProfileConfigComponent implements OnInit {
   tagPermission = 'allow';
   following = [];
   muted = ['pera'];
-  username: string;
+  profile: Profile;
 
-  constructor(private profileService: ProfileService, private router: Router) { }
+  constructor(private authService: AuthService, private profileService: ProfileService, private router: Router) { }
 
   ngOnInit(): void {
-    const jwt = localStorage.getItem('jwt');
-    const jwtDec = jwtDecode(jwt);
+    const username = this.authService.getUsername();
 
     // @ts-ignore
-    this.profileService.getFollowing(jwtDec.username).subscribe(data => this.following = data.map(d => d.username));
+    this.profileService.getFollowing(username).subscribe(data => this.following = data.map(d => d.username));
+    this.profileService.getProfile(username).subscribe(data => {
+      this.profile = data;
+      this.privacy = data.privateProfile ? 'private' : 'public';
+      this.msgPermission = data.allowMessages ? 'allow' : 'deny';
+      this.tagPermission = data.allowTagging ? 'allow' : 'deny';
+    });
   }
 
   edit(): void {
-    console.log('edit');
+    this.profile.privateProfile = this.privacy === 'private';
+    this.profile.allowTagging = this.tagPermission === 'allow';
+    this.profile.allowMessages = this.msgPermission === 'allow';
+    this.profileService.editProfileSettings(this.profile).subscribe();
+  }
+
+  cancel(): void {
+    this.router.navigate(['profile/' + this.authService.getUsername()]);
   }
 }

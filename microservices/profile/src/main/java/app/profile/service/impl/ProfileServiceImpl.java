@@ -73,7 +73,7 @@ public class ProfileServiceImpl implements ProfileService {
 	public Profile get(String username) {
 		Profile p = profileRepository.findByRegularUserUsername(username);
 		if (p == null)
-			throw new IllegalIdentifierException("Profile with username " + username + " not found");
+			throw new IllegalArgumentException("Profile with username " + username + " not found");
 		return p;
 	}
 

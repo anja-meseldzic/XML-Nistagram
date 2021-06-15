@@ -18,7 +18,7 @@ import { DislikedDataComponent } from './microservices/components/disliked-data/
 const routes: Routes = [
   {path: 'registration', component: RegistrationComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
   {path: 'personal-edit', component: PersonalInfoEditComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
-  {path: 'profile-config', component: ProfileConfigComponent},
+  {path: 'profile-config', component: ProfileConfigComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
   {path: 'login', component: LoginComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
   {path: 'feed', component: FeedComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
   {path: 'post/:id', component: PostDetailsComponent},

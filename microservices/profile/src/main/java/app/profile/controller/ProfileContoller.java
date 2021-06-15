@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.websocket.server.PathParam;
 
+import app.profile.model.Profile;
 import app.profile.service.AuthService;
 import app.profile.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,17 @@ public class ProfileContoller {
 		this.profileService = profileService;
 		this.authService = authService;
 	}
-	
+
+	@PostMapping(value = "update")
+	public ResponseEntity<Void> update(@RequestHeader("Authorization") String auth, @RequestBody Profile profile) {
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		this.profileService.update(profile);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
 	@GetMapping(value = "follow/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> followProfile(@RequestHeader("Authorization") String auth ,@PathVariable String username){
 		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
@@ -138,7 +149,19 @@ public class ProfileContoller {
 		}
 	}
 
+	@GetMapping(value = "one/{username}")
+	public ResponseEntity<Profile> get(@RequestHeader("Authorization") String auth, @PathVariable String username) {
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
 
+		try {
+			Profile profile = profileService.get(username);
+			return new ResponseEntity<>(profile, HttpStatus.OK);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
 
 	//don't put in api gateway
 	@GetMapping(value = "ms")

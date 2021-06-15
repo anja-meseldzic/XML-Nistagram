@@ -125,6 +125,10 @@ export class PersonalInfoEditComponent implements OnInit {
     return regExp.test(toTest);
   }
 
+  cancel(): void {
+    this.router.navigate(['profile/' + this.username]);
+  }
+
   openSnackBar(message: string, action: string): void {
     this._snackBar.open(message, action, {
       duration: 5000,

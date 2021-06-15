@@ -7,6 +7,8 @@ import { FollowRequestDto } from '../DTOs/follow-request-dto';
 import { FollowerDto } from '../DTOs/follower-dto';
 import { ProfileVerificationRequest } from '../DTOs/profile-verification-request';
 import { ProfileInfo } from '../model/profile-info';
+import {Profile} from '../model/profile';
+import axios from 'axios';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +19,14 @@ export class ProfileService {
 
   public getProfileInfo(username : String) : Observable<ProfileInfo> {
     return this._http.get<ProfileInfo>(environment.profileBaseUrl + 'profile/' + username);
+  }
+
+  public getProfile(username: string): Observable<Profile> {
+    return this._http.get<Profile>(environment.profileBaseUrl + 'profile/one/' + username);
+  }
+
+  public editProfileSettings(profile: Profile): Observable<any> {
+    return this._http.post(environment.profileBaseUrl + 'profile/update', profile);
   }
 
   public followProfile(username : string){
@@ -79,7 +89,7 @@ export class ProfileService {
       return this._http.post(environment.profileBaseUrl + "profile/verify-profile",fd, {responseType: 'text',headers : {
         Authorization: 'Bearer ' + localStorage.getItem('jwt')
       }});
-    
+
   }
 
   public getVerificationRequests() : Observable<ProfileVerificationRequest[]> {
