@@ -16,6 +16,7 @@ export class ProfileConfigComponent implements OnInit {
   tagPermission = 'allow';
   following = [];
   muted = [];
+  blocked = [];
   profile: Profile;
 
   constructor(private authService: AuthService, private profileService: ProfileService, private router: Router) { }
@@ -31,11 +32,8 @@ export class ProfileConfigComponent implements OnInit {
       this.msgPermission = data.allowMessages ? 'allow' : 'deny';
       this.tagPermission = data.allowTagging ? 'allow' : 'deny';
     });
-    // @ts-ignore
-    this.profileService.getMuted(username).subscribe(data => {
-      this.muted = data;
-      console.log(this.muted);
-    });
+    this.profileService.getMuted(username).subscribe(data => this.muted = data);
+    this.profileService.getBlocked(username).subscribe(data => this.blocked = data);
   }
 
   edit(): void {
@@ -54,6 +52,11 @@ export class ProfileConfigComponent implements OnInit {
     else {
       this.muted = [...this.muted, username];
     }
+  }
+
+  unblock(username: string): void {
+    this.profileService.changeBlocked(username, this.authService.getUsername())
+      .subscribe(res => this.blocked = this.blocked.filter(u => u !== username));
   }
 
   cancel(): void {

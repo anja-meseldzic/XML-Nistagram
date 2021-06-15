@@ -179,6 +179,12 @@ export class ProfileComponent implements OnInit {
     this.profileService.unfollowProfile(profileUsername).subscribe(data => this.profile.followerCount = Number(data));
   }
 
+  block(username: string): void {
+    const myUsername = this.authService.getUsername();
+    this.profileService.changeBlocked(username, myUsername)
+      .subscribe(data => this.router.navigate(['profile/' + myUsername]));
+  }
+
   public seeDetails(id : String) {
     this.router.navigate(['../post/' + id]);
   }
