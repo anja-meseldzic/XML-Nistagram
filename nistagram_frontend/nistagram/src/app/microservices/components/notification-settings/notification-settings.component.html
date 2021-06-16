@@ -1,0 +1,57 @@
+<h2 style="text-align: center; margin-top: 20px; margin-bottom: 20px;">Manage general notifications</h2>
+<div>
+    <span style="width: 80%; margin-left: 10%;">
+        Notifications on new follow/follow request   
+        <button mat-stroked-button color="primary" *ngIf="!settingsPerProfile.notifyOnFollw" (click)="toggleFollow()" style="margin-left: 10px;">Notify</button>
+        <button mat-stroked-button color="warn" *ngIf="settingsPerProfile.notifyOnFollw" (click)="toggleFollow()" style="margin-left: 10px;">Don't notify</button>             
+    </span>
+</div>
+<div style="margin-top: 10px;">
+    <span style="width: 80%; margin-left: 10%;">
+        Notifications on accepted follow request   
+        <button mat-stroked-button color="primary" *ngIf="!settingsPerProfile.notifyOnAcceptedFollowRequest" (click)="toggleAccepted()" style="margin-left: 10px;">Notify</button>
+        <button mat-stroked-button color="warn" *ngIf="settingsPerProfile.notifyOnAcceptedFollowRequest" (click)="toggleAccepted()" style="margin-left: 10px;">Don't notify</button>             
+    </span>
+</div>
+<h2 style="text-align: center; margin-top: 20px; margin-bottom: 20px;">Manage notifications for each profile you follow</h2>
+<table class="mat-elevation-z8" mat-table [dataSource]="settingsPerFollow" style="width: 80%; margin-left: 10%;">
+    <ng-container matColumnDef="Profile">
+      <th mat-header-cell *matHeaderCellDef> PROFILE </th>
+      <td mat-cell *matCellDef="let element"> {{ element.profile }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Message">
+      <th mat-header-cell *matHeaderCellDef> NOTIFY ON MESSAGE </th>
+      <td mat-cell *matCellDef="let element"> 
+        <button mat-stroked-button color="primary" *ngIf="!element.notifyOnMessage" (click)="toggleMessage(element)">Notify</button>
+        <button mat-stroked-button color="warn" *ngIf="element.notifyOnMessage" (click)="toggleMessage(element)">Don't notify</button>                                          
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Post">
+        <th mat-header-cell *matHeaderCellDef> NOTIFY ON POST </th>
+        <td mat-cell *matCellDef="let element"> 
+          <button mat-stroked-button color="primary" *ngIf="!element.notifyOnPost" (click)="togglePost(element)">Notify</button>
+          <button mat-stroked-button color="warn" *ngIf="element.notifyOnPost" (click)="togglePost(element)">Don't notify</button>                                          
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Story">
+        <th mat-header-cell *matHeaderCellDef> NOTIFY ON STORY </th>
+        <td mat-cell *matCellDef="let element"> 
+          <button mat-stroked-button color="primary" *ngIf="!element.notifyOnStory" (click)="toggleStory(element)">Notify</button>
+          <button mat-stroked-button color="warn" *ngIf="element.notifyOnStory" (click)="toggleStory(element)">Don't notify</button>                                          
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Comment">
+        <th mat-header-cell *matHeaderCellDef> NOTIFY ON COMMENT </th>
+        <td mat-cell *matCellDef="let element"> 
+          <button mat-stroked-button color="primary" *ngIf="!element.notifyOnComment" (click)="toggleComment(element)">Notify</button>
+          <button mat-stroked-button color="warn" *ngIf="element.notifyOnComment" (click)="toggleComment(element)">Don't notify</button>                                          
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

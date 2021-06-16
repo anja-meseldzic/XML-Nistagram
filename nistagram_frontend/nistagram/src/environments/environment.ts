@@ -15,6 +15,7 @@ export const environment = {
   authBaseUrl: 'http://localhost:8081/',
   campaignBaseUrl: 'http://localhost:8082/',
   messageBaseUrl: 'http://localhost:8084/',
+  notificationBaseUrl: 'http://localhost:8086/'
 };
 
 /*
