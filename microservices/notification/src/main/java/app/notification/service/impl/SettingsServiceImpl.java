@@ -9,7 +9,6 @@ import app.notification.service.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,9 +36,9 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public void createSettingsPerFollow(long followId) {
+    public void createSettingsPerFollow(long followId, String profile) {
         if(!settingsPerFollowRepository.findByFollowId(followId).isPresent())
-            settingsPerFollowRepository.save(new NotificationSettingsPerFollow(followId));
+            settingsPerFollowRepository.save(new NotificationSettingsPerFollow(followId, profile));
     }
 
     @Override
@@ -74,16 +73,14 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public List<NotificationSettingsPerFollow> getByProfile(String profile, String requestedBy) {
-        if(!hasAuthorityToGet(profile, requestedBy)) return null;
+    public List<NotificationSettingsPerFollow> getByProfile(String profile) {
         return settingsPerFollowRepository.findAll().stream()
                 .filter(s -> followService.getProfileByFollow(s.getFollowId()).equals(profile))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public NotificationSettingsPerProfile get(String profile, String requestedBy) {
-        if(!hasAuthorityToGet(profile, requestedBy)) return null;
+    public NotificationSettingsPerProfile get(String profile) {
         return settingsPerProfileRepository.findByProfile(profile).orElse(null);
     }
 
@@ -93,10 +90,6 @@ public class SettingsServiceImpl implements SettingsService {
 
     public boolean hasAuthorityToUpdate(NotificationSettingsPerFollow settings, String requestedBy) {
         String profile = followService.getProfileByFollow(settings.getFollowId());
-        return profile != null && profile.equals(requestedBy);
-    }
-
-    public boolean hasAuthorityToGet(String profile, String requestedBy) {
         return profile != null && profile.equals(requestedBy);
     }
 }

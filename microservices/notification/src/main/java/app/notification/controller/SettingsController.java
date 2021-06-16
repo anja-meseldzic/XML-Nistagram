@@ -8,6 +8,8 @@ import app.notification.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "settings")
 public class SettingsController {
@@ -19,6 +21,24 @@ public class SettingsController {
     public SettingsController(SettingsService settingsService, AuthService authService) {
         this.settingsService = settingsService;
         this.authService = authService;
+    }
+
+    @GetMapping(value = "profile")
+    public NotificationSettingsPerProfile getForProfile(@RequestHeader("Authorization") String auth) {
+        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
+            return null;
+        String token = TokenUtils.getToken(auth);
+        String username = authService.getUsernameFromToken(token);
+        return settingsService.get(username);
+    }
+
+    @GetMapping(value = "follow")
+    public List<NotificationSettingsPerFollow> getForFollow(@RequestHeader("Authorization") String auth) {
+        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
+            return null;
+        String token = TokenUtils.getToken(auth);
+        String username = authService.getUsernameFromToken(token);
+        return settingsService.getByProfile(username);
     }
 
     @PutMapping(value = "profile")
@@ -44,9 +64,9 @@ public class SettingsController {
         settingsService.createSettingsPerProfile(username);
     }
 
-    @PostMapping(value = "follow/{followId}")
-    public void create(@PathVariable("followId") long followId) {
-        settingsService.createSettingsPerFollow(followId);
+    @PostMapping(value = "follow/{followId}/{profile}")
+    public void create(@PathVariable("followId") long followId, @PathVariable("profile") String profile) {
+        settingsService.createSettingsPerFollow(followId, profile);
     }
 
     @DeleteMapping(value = "follow/{followId}")

@@ -9,7 +9,7 @@ public interface SettingsService {
 
     void createSettingsPerProfile(String profile);
 
-    void createSettingsPerFollow(long followId);
+    void createSettingsPerFollow(long followId, String profile);
 
     void deleteSettingsPerFollow(long followId);
 
@@ -17,7 +17,7 @@ public interface SettingsService {
 
     void update(NotificationSettingsPerFollow settings, String requestedBy);
 
-    List<NotificationSettingsPerFollow> getByProfile(String profile, String requestedBy);
+    List<NotificationSettingsPerFollow> getByProfile(String profile);
 
-    NotificationSettingsPerProfile get(String profile, String requestedBy);
+    NotificationSettingsPerProfile get(String profile);
 }

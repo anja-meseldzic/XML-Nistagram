@@ -93,7 +93,7 @@ public class ProfileServiceImpl implements ProfileService {
 			follow.setMuted(false);
 
 			follow = followRepository.save(follow);
-			notificationService.createSettings(follow.getId());
+			notificationService.createSettings(follow.getId(), follow.getProfile().getRegularUserUsername());
 		} else {
 			FollowRequest request = new FollowRequest();
 			request.setProfile(profile);
@@ -179,7 +179,7 @@ public class ProfileServiceImpl implements ProfileService {
 		follow.setMuted(false);
 
 		follow = followRepository.save(follow);
-		notificationService.createSettings(follow.getId());
+		notificationService.createSettings(follow.getId(), follow.getProfile().getRegularUserUsername());
 
 		return deleteRequest(username, loggedInUsername);
 	}
@@ -218,8 +218,8 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public void createFromUser(String username) {
 		Profile profile = new Profile(username);
-		profile = profileRepository.save(profile);
-		notificationService.createSettings(profile.getRegularUserUsername());
+		profileRepository.save(profile);
+		notificationService.createSettings(username);
 	}
 
 	@Override
