@@ -1,12 +1,22 @@
 package app.notification.model;
 
+import javax.persistence.*;
+
+@Entity
 public class NotificationSettingsPerFollow {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(name = "followId")
     private long followId;
+    @Column(name = "notifyOnMessage")
     private boolean notifyOnMessage;
+    @Column(name = "notifyOnPost")
     private boolean notifyOnPost;
+    @Column(name = "notifyOnStory")
     private boolean notifyOnStory;
+    @Column(name = "notifyOnComment")
     private boolean notifyOnComment;
 
     public NotificationSettingsPerFollow(long followId, boolean notifyOnMessage, boolean notifyOnPost, boolean notifyOnStory, boolean notifyOnComment) {
@@ -15,6 +25,10 @@ public class NotificationSettingsPerFollow {
         this.notifyOnPost = notifyOnPost;
         this.notifyOnStory = notifyOnStory;
         this.notifyOnComment = notifyOnComment;
+    }
+
+    public NotificationSettingsPerFollow() {
+
     }
 
     public void setNotifyOnMessage(boolean notifyOnMessage) {
