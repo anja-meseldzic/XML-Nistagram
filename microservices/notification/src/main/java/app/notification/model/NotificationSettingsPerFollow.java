@@ -31,6 +31,14 @@ public class NotificationSettingsPerFollow {
 
     }
 
+    public NotificationSettingsPerFollow(long followId) {
+        this.followId = followId;
+        this.notifyOnMessage = true;
+        this.notifyOnPost = false;
+        this.notifyOnStory = false;
+        this.notifyOnComment = true;
+    }
+
     public void setNotifyOnMessage(boolean notifyOnMessage) {
         this.notifyOnMessage = notifyOnMessage;
     }

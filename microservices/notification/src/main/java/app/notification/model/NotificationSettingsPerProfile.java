@@ -25,6 +25,12 @@ public class NotificationSettingsPerProfile {
 
     }
 
+    public NotificationSettingsPerProfile(String profile) {
+        this.profile = profile;
+        this.notifyOnFollw = true;
+        this.notifyOnAcceptedFollowRequest = true;
+    }
+
     public long getId() {
         return id;
     }
