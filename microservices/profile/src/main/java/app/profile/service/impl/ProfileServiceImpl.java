@@ -128,7 +128,7 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<FollowerDto> getFollowers(String username) {
 		List<FollowerDto> followers = new ArrayList<FollowerDto>();
-		for (Follow f : followRepository.findAll()) {
+		for (Follow f : followRepository.findAll().stream().filter(f -> !f.isBlocked()).collect(Collectors.toList())) {
 			if (f.getProfile().getRegularUserUsername().equals(username)) {
 				followers.add(new FollowerDto(f.getFollowedBy().getRegularUserUsername()));
 			}
@@ -139,7 +139,7 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<FollowerDto> getFollowing(String username) {
 		List<FollowerDto> following = new ArrayList<FollowerDto>();
-		for (Follow f : followRepository.findAll()) {
+		for (Follow f : followRepository.findAll().stream().filter(f -> !f.isBlocked()).collect(Collectors.toList())) {
 			if (f.getFollowedBy().getRegularUserUsername().equals(username)) {
 				following.add(new FollowerDto(f.getProfile().getRegularUserUsername()));
 			}
@@ -252,7 +252,7 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<String> getFollowerss(String profile) {
 		List<String> following = new ArrayList<String>();
-		for (Follow f : followRepository.findAll()) {
+		for (Follow f : followRepository.findAll().stream().filter(f-> !f.isBlocked()).collect(Collectors.toList())) {
 			if (f.getProfile().getRegularUserUsername().equals(profile)) {
 				following.add(f.getFollowedBy().getRegularUserUsername());
 			}
@@ -263,7 +263,7 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<String> getFollowingg(String username) {
 		List<String> following = new ArrayList<String>();
-		for (Follow f : followRepository.findAll()) {
+		for (Follow f : followRepository.findAll().stream().filter(f-> !f.isBlocked()).collect(Collectors.toList())) {
 			if (f.getFollowedBy().getRegularUserUsername().equals(username)) {
 				following.add(f.getProfile().getRegularUserUsername());
 			}
@@ -302,11 +302,11 @@ public class ProfileServiceImpl implements ProfileService {
 	}
 
 	private int getFollowerCount(Profile profile) {
-		return followRepository.findByProfile(profile).size();
+		return followRepository.findByProfile(profile).stream().filter(f-> !f.isBlocked()).collect(Collectors.toList()).size();
 	}
 
 	private int getFollowingCount(Profile profile) {
-		return followRepository.findByFollowedBy(profile).size();
+		return followRepository.findByFollowedBy(profile).stream().filter(f-> !f.isBlocked()).collect(Collectors.toList()).size();
 	}
 
 	private boolean isFollowing(Profile profile, String follower) {
@@ -370,6 +370,7 @@ public class ProfileServiceImpl implements ProfileService {
 		request.setProfile(profile);
 		request.setName(requestDTO.getName());
 		request.setSurname(requestDTO.getSurname());
+		request.setDeleted(false);
 
 		String category = requestDTO.getCategory();
 		if (category.equalsIgnoreCase("Influencer")) {
@@ -420,7 +421,7 @@ public class ProfileServiceImpl implements ProfileService {
 
 	@Override
 	public List<ProfileVerificationRequestDTO> getVerificationRequests() {
-		List<VerificationRequest> allRequests = verificationRequestRepo.findAll().stream().filter(r -> !r.isApproved())
+		List<VerificationRequest> allRequests = verificationRequestRepo.findAll().stream().filter(r -> !r.isApproved() && !r.isDeleted())
 				.collect(Collectors.toList());
 		List<ProfileVerificationRequestDTO> result = new ArrayList<ProfileVerificationRequestDTO>();
 		for (VerificationRequest vr : allRequests) {
@@ -450,7 +451,8 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<ProfileVerificationRequestDTO> deleteVerification(long id) {
 		VerificationRequest request = verificationRequestRepo.findById(id).get();
-		verificationRequestRepo.delete(request);
+		request.setDeleted(true);
+		verificationRequestRepo.save(request);
 		
 		return getVerificationRequests();
 	}

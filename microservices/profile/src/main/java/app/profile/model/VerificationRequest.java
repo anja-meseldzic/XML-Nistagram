@@ -35,12 +35,15 @@ public class VerificationRequest {
 	@Column(name = "approved", nullable = false)
 	private boolean approved;
 	
+	@Column(name = "deleted")
+	private boolean deleted;
+	
 	public VerificationRequest() {
 		super();
 	}
 
 	public VerificationRequest(long id,String name, String surname, Profile profile, VerificationCategory category, String filePath,
-			boolean approved) {
+			boolean approved, boolean deleted) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -49,6 +52,7 @@ public class VerificationRequest {
 		this.category = category;
 		this.filePath = filePath;
 		this.approved = approved;
+		this.deleted = deleted;
 	}
 
 	public long getId() {
@@ -106,6 +110,15 @@ public class VerificationRequest {
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+	
 	
 	
 	
