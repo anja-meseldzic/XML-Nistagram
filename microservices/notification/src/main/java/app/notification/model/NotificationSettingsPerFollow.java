@@ -59,6 +59,8 @@ public class NotificationSettingsPerFollow {
         return id;
     }
 
+    public void setId(long id) { this.id = id; }
+
     public long getFollowId() {
         return followId;
     }
