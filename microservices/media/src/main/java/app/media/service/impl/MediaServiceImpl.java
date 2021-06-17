@@ -10,19 +10,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import app.media.dtos.*;
+import app.media.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 
-import app.media.dtos.AlbumDTO;
-import app.media.dtos.AllCommentDTO;
-import app.media.dtos.AllReactionsDTO;
-import app.media.dtos.CommentDTO;
-import app.media.dtos.InappropriateDTO;
-import app.media.dtos.PostDTO;
-import app.media.dtos.RatingDTO;
-import app.media.dtos.ReactionsNumberDTO;
 import app.media.exception.PostDoesNotExistException;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
@@ -55,6 +50,7 @@ public class MediaServiceImpl implements MediaService{
 	private RatingRepository ratingRepository;
 	private ProfileService profileService;
 	private InapropriateContentRepository inapropriateContentRepository;
+	private NotificationService notificationService;
 
 	@Value("${media.storage}")
 	private String storageDirectoryPath;
@@ -62,7 +58,7 @@ public class MediaServiceImpl implements MediaService{
 	@Autowired
     public MediaServiceImpl(MediaRepository mediaRepository, PostRepository postRepository, StoryRepository storyRepository,
     		CommentRepository commentRepository, RatingRepository ratingRepository, ProfileService profileService, 
-    		InapropriateContentRepository inapropriateContentRepository) {
+    		InapropriateContentRepository inapropriateContentRepository, NotificationService notificationService) {
         this.mediaRepository = mediaRepository;
         this.postRepository = postRepository;
         this.storyRepository = storyRepository;
@@ -70,6 +66,7 @@ public class MediaServiceImpl implements MediaService{
         this.ratingRepository = ratingRepository;
         this.profileService = profileService;
         this.inapropriateContentRepository = inapropriateContentRepository;
+        this.notificationService = notificationService;
     }
 
 	@Override
@@ -93,6 +90,11 @@ public class MediaServiceImpl implements MediaService{
 		post.setTags(tags);
 		post.setMedia(media);
 		postRepository.save(post);
+
+		List<String> followers = profileService.getFollowers(media.getUsername());
+		for(String follower : followers) {
+			sendNotification(NotificationType.POST, follower, media.getUsername(), Long.toString(post.getId()));
+		}
 	}
 	
 	@Override
@@ -122,6 +124,15 @@ public class MediaServiceImpl implements MediaService{
 		story.setHighlighted(false);
 		story.setMedia(media);
 		storyRepository.save(story);
+
+		List<String> followers;
+		if(story.isCloseFriends())
+			followers = profileService.getCloseFriends(media.getUsername());
+		else
+			followers = profileService.getFollowers(media.getUsername());
+		for(String follower : followers) {
+			sendNotification(NotificationType.STORY, follower, media.getUsername(), media.getUsername());
+		}
 	}
 
 	@Override
@@ -147,6 +158,11 @@ public class MediaServiceImpl implements MediaService{
 		post.setTags(tags);
 		post.setMedia(media);
 		postRepository.save(post);
+
+		List<String> followers = profileService.getFollowers(media.getUsername());
+		for(String follower : followers) {
+			sendNotification(NotificationType.POST, follower, media.getUsername(), Long.toString(post.getId()));
+		}
 	}
 
 	@Override
@@ -171,6 +187,15 @@ public class MediaServiceImpl implements MediaService{
 		story.setHighlighted(false);
 		story.setMedia(media);
 		storyRepository.save(story);
+
+		List<String> followers;
+		if(story.isCloseFriends())
+			followers = profileService.getCloseFriends(media.getUsername());
+		else
+			followers = profileService.getFollowers(media.getUsername());
+		for(String follower : followers) {
+			sendNotification(NotificationType.STORY, follower, media.getUsername(), media.getUsername());
+		}
 	}
 
 	@Override
@@ -187,7 +212,8 @@ public class MediaServiceImpl implements MediaService{
 		Post oldPost= post.get();
 		oldPost.getComments().add(comment);
 		postRepository.save(oldPost);
-		
+
+		sendNotification(NotificationType.COMMENT, oldPost.getMedia().getUsername(), comment.getUsername(), Long.toString(oldPost.getId()));
 	}
 
 	@Override
@@ -268,6 +294,8 @@ public class MediaServiceImpl implements MediaService{
 		ratingRepository.save(rating);
 		post.getRatings().add(rating);
 		postRepository.save(post);
+
+		sendNotification(NotificationType.RATING, post.getMedia().getUsername(), rating.getUsername(), Long.toString(post.getId()));
 	}
 
 	@Override
@@ -351,5 +379,10 @@ public class MediaServiceImpl implements MediaService{
 		
 		inapropriateContentRepository.save(newContent);
 		return "You successfully reported this post.";
+	}
+
+	private void sendNotification(NotificationType type, String receiver, String initiator, String resource) {
+		NewNotificationDTO dto = new NewNotificationDTO(type, receiver, initiator, resource);
+		notificationService.create(dto);
 	}
 }

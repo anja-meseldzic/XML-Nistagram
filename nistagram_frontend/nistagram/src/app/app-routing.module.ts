@@ -14,6 +14,8 @@ import { VerifyAccountComponent } from './microservices/components/verify-accoun
 import { VerificationRequestsComponent } from './microservices/components/verification-requests/verification-requests.component';
 import { LikedDataComponent } from './microservices/components/liked-data/liked-data.component';
 import { DislikedDataComponent } from './microservices/components/disliked-data/disliked-data.component';
+import { NotificationSettingsComponent } from './microservices/components/notification-settings/notification-settings.component';
+import { NotificationsComponent } from './microservices/components/notifications/notifications.component';
 
 const routes: Routes = [
   {path: 'registration', component: RegistrationComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
@@ -29,6 +31,8 @@ const routes: Routes = [
   {path: 'verification-requests', component: VerificationRequestsComponent},
   {path: 'likedData', component: LikedDataComponent},
   {path: 'dislikedData', component: DislikedDataComponent},
+  {path: 'settings/notifications', component: NotificationSettingsComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
+  {path: 'notifications', component: NotificationsComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
   {path: '', loadChildren: () => import('./microservices/microservices.module').then(mod => mod.MicroservicesModule)}
 ];
 

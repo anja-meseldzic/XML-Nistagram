@@ -6,13 +6,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import app.profile.dtos.NewNotificationDTO;
+import app.profile.dtos.NotificationType;
 import app.profile.dtos.ProfileInfoDTO;
 import app.profile.dtos.UserInfoDTO;
 import app.profile.exception.ProfileNotFoundException;
@@ -23,7 +24,7 @@ import app.profile.service.AuthService;
 import java.util.Set;
 import java.util.UUID;
 
-import org.hibernate.boot.model.naming.IllegalIdentifierException;
+import app.profile.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,7 @@ public class ProfileServiceImpl implements ProfileService {
 	private FollowRequestRepository followRequestRepo;
 	private AuthService authService;
 	private VerificationRequestRepository verificationRequestRepo;
+	private NotificationService notificationService;
 	
 	@Value("${profile.storage}")
 	private String storageDirectoryPath;
@@ -56,12 +58,13 @@ public class ProfileServiceImpl implements ProfileService {
 	@Autowired
 	public ProfileServiceImpl(ProfileRepository profileRepository, FollowRepository followRepository,
 			AuthService authService, FollowRequestRepository followRequestRepo,
-			VerificationRequestRepository verificationRequestRepo) {
+			VerificationRequestRepository verificationRequestRepo, NotificationService notificationService) {
 		this.profileRepository = profileRepository;
 		this.followRepository = followRepository;
 		this.authService = authService;
 		this.followRequestRepo = followRequestRepo;
 		this.verificationRequestRepo = verificationRequestRepo;
+		this.notificationService = notificationService;
 	}
 
 	@Override
@@ -91,7 +94,11 @@ public class ProfileServiceImpl implements ProfileService {
 			follow.setCloseFriend(false);
 			follow.setMuted(false);
 
-			followRepository.save(follow);
+			follow = followRepository.save(follow);
+			sendNotification(NotificationType.NEW_FOLLOW, follow.getProfile().getRegularUserUsername(),
+					follow.getFollowedBy().getRegularUserUsername(),
+					follow.getFollowedBy().getRegularUserUsername());
+			notificationService.createSettings(follow.getId(), follow.getProfile().getRegularUserUsername());
 		} else {
 			FollowRequest request = new FollowRequest();
 			request.setProfile(profile);
@@ -104,7 +111,10 @@ public class ProfileServiceImpl implements ProfileService {
 				}
 			}
 			if (!exists) {
-				followRequestRepo.save(request);
+				request = followRequestRepo.save(request);
+				sendNotification(NotificationType.NEW_FOLLOW_REQUEST, request.getProfile().getRegularUserUsername(),
+						request.getFollowedBy().getRegularUserUsername(),
+						request.getFollowedBy().getRegularUserUsername());
 			}
 		}
 		return getFollowers(username).size();
@@ -121,6 +131,7 @@ public class ProfileServiceImpl implements ProfileService {
 			}
 		}
 		followRepository.delete(delete);
+		notificationService.deleteSettings(delete.getId());
 
 		return getFollowers(username).size();
 	}
@@ -175,7 +186,11 @@ public class ProfileServiceImpl implements ProfileService {
 		follow.setCloseFriend(false);
 		follow.setMuted(false);
 
-		followRepository.save(follow);
+		follow = followRepository.save(follow);
+		sendNotification(NotificationType.FOLLOW_REQUEST_ACCEPTED, follow.getFollowedBy().getRegularUserUsername(),
+				follow.getProfile().getRegularUserUsername(),
+				follow.getProfile().getRegularUserUsername());
+		notificationService.createSettings(follow.getId(), follow.getProfile().getRegularUserUsername());
 
 		return deleteRequest(username, loggedInUsername);
 	}
@@ -215,6 +230,7 @@ public class ProfileServiceImpl implements ProfileService {
 	public void createFromUser(String username) {
 		Profile profile = new Profile(username);
 		profileRepository.save(profile);
+		notificationService.createSettings(username);
 	}
 
 	@Override
@@ -455,5 +471,10 @@ public class ProfileServiceImpl implements ProfileService {
 		verificationRequestRepo.save(request);
 		
 		return getVerificationRequests();
+	}
+
+	private void sendNotification(NotificationType type, String receiver, String initiator, String resource) {
+		NewNotificationDTO dto = new NewNotificationDTO(type, receiver, initiator, resource);
+		notificationService.create(dto);
 	}
 }
