@@ -13,6 +13,27 @@
         <button mat-stroked-button color="warn" *ngIf="settingsPerProfile.notifyOnAcceptedFollowRequest" (click)="toggleAccepted()" style="margin-left: 10px;">Don't notify</button>             
     </span>
 </div>
+<div style="margin-top: 10px;">
+  <span style="width: 80%; margin-left: 10%;">
+      Notifications when a profile you don't follow sends you a message
+      <button mat-stroked-button color="primary" *ngIf="!settingsPerProfile.notifyOnNonFollowedMessage" (click)="toggleMessageGeneral()" style="margin-left: 10px;">Notify</button>
+      <button mat-stroked-button color="warn" *ngIf="settingsPerProfile.notifyOnNonFollowedMessage" (click)="toggleMessageGeneral()" style="margin-left: 10px;">Don't notify</button>             
+  </span>
+</div>
+<div style="margin-top: 10px;">
+  <span style="width: 80%; margin-left: 10%;">
+      Notifications when a profile you don't follow comments on your post
+      <button mat-stroked-button color="primary" *ngIf="!settingsPerProfile.notifyOnNonFollowedComment" (click)="toggleCommentGeneral()" style="margin-left: 10px;">Notify</button>
+      <button mat-stroked-button color="warn" *ngIf="settingsPerProfile.notifyOnNonFollowedComment" (click)="toggleCommentGeneral()" style="margin-left: 10px;">Don't notify</button>             
+  </span>
+</div>
+<div style="margin-top: 10px;">
+  <span style="width: 80%; margin-left: 10%;">
+      Notifications when a profile you don't follow rates your post
+      <button mat-stroked-button color="primary" *ngIf="!settingsPerProfile.notifyOnNonFollowedRating" (click)="toggleRatingGeneral()" style="margin-left: 10px;">Notify</button>
+      <button mat-stroked-button color="warn" *ngIf="settingsPerProfile.notifyOnNonFollowedRating" (click)="toggleRatingGeneral()" style="margin-left: 10px;">Don't notify</button>             
+  </span>
+</div>
 <h2 style="text-align: center; margin-top: 20px; margin-bottom: 20px;">Manage notifications for each profile you follow</h2>
 <table class="mat-elevation-z8" mat-table [dataSource]="settingsPerFollow" style="width: 80%; margin-left: 10%;">
     <ng-container matColumnDef="Profile">
@@ -50,6 +71,14 @@
           <button mat-stroked-button color="primary" *ngIf="!element.notifyOnComment" (click)="toggleComment(element)">Notify</button>
           <button mat-stroked-button color="warn" *ngIf="element.notifyOnComment" (click)="toggleComment(element)">Don't notify</button>                                          
         </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Rating">
+      <th mat-header-cell *matHeaderCellDef> NOTIFY ON RATING </th>
+      <td mat-cell *matCellDef="let element"> 
+        <button mat-stroked-button color="primary" *ngIf="!element.notifyOnRating" (click)="toggleRating(element)">Notify</button>
+        <button mat-stroked-button color="warn" *ngIf="element.notifyOnRating" (click)="toggleRating(element)">Don't notify</button>                                          
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

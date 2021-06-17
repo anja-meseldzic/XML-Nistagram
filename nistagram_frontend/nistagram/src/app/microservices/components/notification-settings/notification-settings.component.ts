@@ -15,13 +15,13 @@ export class NotificationSettingsComponent implements OnInit {
   public settingsPerProfile : SettingsPerProfile = null;
   public settingsPerFollow : SettingsPerFollow[] = [];
 
-  displayedColumns = ["Profile", "Message", "Post", "Story", "Comment"];
+  displayedColumns = ["Profile", "Message", "Post", "Story", "Comment", "Rating"];
 
   ngOnInit(): void {
     this.notificationService.getForProfile().subscribe(
       data => { this.settingsPerProfile = data;
                 this.notificationService.getForFollow().subscribe(
-                  data2 => this.settingsPerFollow = data2
+                  data2 => { this.settingsPerFollow = data2; this.order() }
                 ) }
     )
   }
@@ -46,6 +46,11 @@ export class NotificationSettingsComponent implements OnInit {
     this.update(settings)
   }
 
+  toggleRating(settings : SettingsPerFollow) {
+    settings.notifyOnRating = !settings.notifyOnRating
+    this.update(settings)
+  }
+
   toggleFollow() {
     this.settingsPerProfile.notifyOnFollw = !this.settingsPerProfile.notifyOnFollw
     this.updateGeneral(this.settingsPerProfile)
@@ -56,10 +61,25 @@ export class NotificationSettingsComponent implements OnInit {
     this.updateGeneral(this.settingsPerProfile)
   }
 
+  toggleMessageGeneral() {
+    this.settingsPerProfile.notifyOnNonFollowedMessage = !this.settingsPerProfile.notifyOnNonFollowedMessage
+    this.updateGeneral(this.settingsPerProfile)
+  }
+
+  toggleCommentGeneral() {
+    this.settingsPerProfile.notifyOnNonFollowedComment = !this.settingsPerProfile.notifyOnNonFollowedComment
+    this.updateGeneral(this.settingsPerProfile)
+  }
+
+  toggleRatingGeneral() {
+    this.settingsPerProfile.notifyOnNonFollowedRating = !this.settingsPerProfile.notifyOnNonFollowedRating
+    this.updateGeneral(this.settingsPerProfile)
+  }
+
   update(settings : SettingsPerFollow) {
     this.notificationService.updatePerFollow(settings).subscribe(
       _ => this.notificationService.getForFollow().subscribe(
-        data => this.settingsPerFollow = data
+        data => {this.settingsPerFollow = data; this.order() }
       )
     )
   }
@@ -70,6 +90,10 @@ export class NotificationSettingsComponent implements OnInit {
         data => this.settingsPerProfile = data
       )
     )
+  }
+
+  order() {
+    this.settingsPerFollow.sort((s1, s2) => s1.profile.localeCompare(s2.profile))
   }
 
 }

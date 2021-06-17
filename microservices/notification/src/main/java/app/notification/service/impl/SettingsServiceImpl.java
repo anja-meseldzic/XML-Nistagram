@@ -56,6 +56,7 @@ public class SettingsServiceImpl implements SettingsService {
                 .findByProfile((settings.getProfile()));
         if(original.isPresent()) {
             settings.setId(original.get().getId());
+            settings.setProfile(original.get().getProfile());
             settingsPerProfileRepository.save(settings);
         }
     }
@@ -68,6 +69,7 @@ public class SettingsServiceImpl implements SettingsService {
                 .findByFollowId(settings.getFollowId());
         if(original.isPresent()) {
             settings.setId(original.get().getId());
+            settings.setProfile(original.get().getProfile());
             settingsPerFollowRepository.save(settings);
         }
     }

@@ -20,14 +20,17 @@ public class NotificationSettingsPerFollow {
     private boolean notifyOnStory;
     @Column(name = "notifyOnComment")
     private boolean notifyOnComment;
+    @Column(name = "notifyOnRating")
+    private boolean notifyOnRating;
 
-    public NotificationSettingsPerFollow(long followId, String profile, boolean notifyOnMessage, boolean notifyOnPost, boolean notifyOnStory, boolean notifyOnComment) {
+    public NotificationSettingsPerFollow(long followId, String profile, boolean notifyOnMessage, boolean notifyOnPost, boolean notifyOnStory, boolean notifyOnComment, boolean notifyOnRating) {
         this.followId = followId;
         this.profile = profile;
         this.notifyOnMessage = notifyOnMessage;
         this.notifyOnPost = notifyOnPost;
         this.notifyOnStory = notifyOnStory;
         this.notifyOnComment = notifyOnComment;
+        this.notifyOnRating = notifyOnRating;
     }
 
     public NotificationSettingsPerFollow() {
@@ -41,6 +44,7 @@ public class NotificationSettingsPerFollow {
         this.notifyOnPost = false;
         this.notifyOnStory = false;
         this.notifyOnComment = true;
+        this.notifyOnRating = true;
     }
 
     public void setNotifyOnMessage(boolean notifyOnMessage) {
@@ -91,5 +95,9 @@ public class NotificationSettingsPerFollow {
 
     public void setProfile(String profile) {
         this.profile = profile;
+    }
+
+    public boolean isNotifyOnRating() {
+        return notifyOnRating;
     }
 }

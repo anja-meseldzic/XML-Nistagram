@@ -14,12 +14,12 @@ public class NotificationSettingsPerProfile {
     private boolean notifyOnFollw;
     @Column(name = "notifyOnAcceptedFollowRequest")
     private boolean notifyOnAcceptedFollowRequest;
-
-    public NotificationSettingsPerProfile(String profile, boolean notifyOnFollw, boolean notifyOnAcceptedFollowRequest) {
-        this.profile = profile;
-        this.notifyOnFollw = notifyOnFollw;
-        this.notifyOnAcceptedFollowRequest = notifyOnAcceptedFollowRequest;
-    }
+    @Column(name = "notifyOnNonFollowedMessage")
+    private boolean notifyOnNonFollowedMessage;
+    @Column(name = "notifyOnNonFollowedComment")
+    private boolean notifyOnNonFollowedComment;
+    @Column(name = "notifyOnNonFollowedRating")
+    private boolean notifyOnNonFollowedRating;
 
     public NotificationSettingsPerProfile() {
 
@@ -29,6 +29,9 @@ public class NotificationSettingsPerProfile {
         this.profile = profile;
         this.notifyOnFollw = true;
         this.notifyOnAcceptedFollowRequest = true;
+        this.notifyOnNonFollowedMessage = true;
+        this.notifyOnNonFollowedComment = true;
+        this.notifyOnNonFollowedRating = true;
     }
 
     public long getId() {
@@ -41,11 +44,25 @@ public class NotificationSettingsPerProfile {
         return profile;
     }
 
+    public void setProfile(String profile) { this.profile = profile; }
+
     public boolean isNotifyOnFollw() {
         return notifyOnFollw;
     }
 
     public boolean isNotifyOnAcceptedFollowRequest() {
         return notifyOnAcceptedFollowRequest;
+    }
+
+    public boolean isNotifyOnNonFollowedMessage() {
+        return notifyOnNonFollowedMessage;
+    }
+
+    public boolean isNotifyOnNonFollowedComment() {
+        return notifyOnNonFollowedComment;
+    }
+
+    public boolean isNotifyOnNonFollowedRating() {
+        return notifyOnNonFollowedRating;
     }
 }

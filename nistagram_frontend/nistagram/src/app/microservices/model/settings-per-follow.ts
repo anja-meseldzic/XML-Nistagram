@@ -6,6 +6,7 @@ export class SettingsPerFollow {
         public notifyOnMessage : boolean,
         public notifyOnPost : boolean,
         public notifyOnStory : boolean,
-        public notifyOnComment : boolean
+        public notifyOnComment : boolean,
+        public notifyOnRating : boolean
     ) {}
 }
