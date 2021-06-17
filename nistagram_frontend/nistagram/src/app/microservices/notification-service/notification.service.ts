@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Notification } from '../model/notification';
 import { SettingsPerFollow } from '../model/settings-per-follow';
 import { SettingsPerProfile } from '../model/settings-per-profile';
 
@@ -26,5 +27,9 @@ export class NotificationService {
 
   public updatePerProfile(settings : SettingsPerProfile) : Observable<any> {
     return this.http.put(environment.notificationBaseUrl + 'settings/profile', settings);
+  }
+
+  public getAll() : Observable<Notification[]> {
+    return this.http.get<Notification[]>(environment.notificationBaseUrl + 'notification');
   }
 }
