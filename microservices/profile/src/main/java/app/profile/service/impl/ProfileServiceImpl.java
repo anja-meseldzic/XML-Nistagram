@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import app.profile.dtos.NewNotificationDTO;
+import app.profile.dtos.NotificationType;
 import app.profile.dtos.ProfileInfoDTO;
 import app.profile.dtos.UserInfoDTO;
 import app.profile.exception.ProfileNotFoundException;
@@ -93,6 +95,9 @@ public class ProfileServiceImpl implements ProfileService {
 			follow.setMuted(false);
 
 			follow = followRepository.save(follow);
+			sendNotification(NotificationType.NEW_FOLLOW, follow.getProfile().getRegularUserUsername(),
+					follow.getFollowedBy().getRegularUserUsername(),
+					follow.getFollowedBy().getRegularUserUsername());
 			notificationService.createSettings(follow.getId(), follow.getProfile().getRegularUserUsername());
 		} else {
 			FollowRequest request = new FollowRequest();
@@ -106,7 +111,10 @@ public class ProfileServiceImpl implements ProfileService {
 				}
 			}
 			if (!exists) {
-				followRequestRepo.save(request);
+				request = followRequestRepo.save(request);
+				sendNotification(NotificationType.NEW_FOLLOW_REQUEST, request.getProfile().getRegularUserUsername(),
+						request.getFollowedBy().getRegularUserUsername(),
+						request.getFollowedBy().getRegularUserUsername());
 			}
 		}
 		return getFollowers(username).size();
@@ -179,6 +187,9 @@ public class ProfileServiceImpl implements ProfileService {
 		follow.setMuted(false);
 
 		follow = followRepository.save(follow);
+		sendNotification(NotificationType.FOLLOW_REQUEST_ACCEPTED, follow.getFollowedBy().getRegularUserUsername(),
+				follow.getProfile().getRegularUserUsername(),
+				follow.getProfile().getRegularUserUsername());
 		notificationService.createSettings(follow.getId(), follow.getProfile().getRegularUserUsername());
 
 		return deleteRequest(username, loggedInUsername);
@@ -458,5 +469,10 @@ public class ProfileServiceImpl implements ProfileService {
 		verificationRequestRepo.delete(request);
 		
 		return getVerificationRequests();
+	}
+
+	private void sendNotification(NotificationType type, String receiver, String initiator, String resource) {
+		NewNotificationDTO dto = new NewNotificationDTO(type, receiver, initiator, resource);
+		notificationService.create(dto);
 	}
 }

@@ -100,4 +100,5 @@ public class NotificationSettingsPerFollow {
     public boolean isNotifyOnRating() {
         return notifyOnRating;
     }
+
 }
