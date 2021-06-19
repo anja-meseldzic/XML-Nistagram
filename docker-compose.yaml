@@ -58,6 +58,8 @@ services:
       PROFILE_SERVICE_PORT : ${PROFILE_SERVICE_PORT}
       AUTH_SERVICE_DOMAIN: ${AUTH_SERVICE_DOMAIN}
       AUTH_SERVICE_PORT : ${AUTH_SERVICE_PORT}
+      NOTIFICATION_SERVICE_DOMAIN: ${NOTIFICATION_SERVICE_DOMAIN}
+      NOTIFICATION_SERVICE_PORT : ${NOTIFICATION_SERVICE_PORT}
       MEDIA_STORAGE_PATH : ${MEDIA_STORAGE_PATH}
     restart: always
     volumes:
@@ -84,6 +86,25 @@ services:
     networks:
       - backend
 
+  notification-service:
+    image: notification-service
+    container_name: notification-service
+    build:
+      context: ./microservices/notification
+      dockerfile: Dockerfile
+    environment: 
+      DATABASE_DOMAIN : ${DATABASE_DOMAIN}
+      DATABASE_PORT : ${DATABASE_PORT}
+      AUTH_SERVICE_DOMAIN: ${AUTH_SERVICE_DOMAIN}
+      AUTH_SERVICE_PORT : ${AUTH_SERVICE_PORT}
+      PROFILE_SERVICE_DOMAIN: ${PROFILE_SERVICE_DOMAIN}
+      PROFILE_SERVICE_PORT : ${PROFILE_SERVICE_PORT}
+    restart: always
+    depends_on: 
+      - postgres
+    networks:
+      - backend      
+
   profile-service:
     image: profile-service
     container_name: profile-service
@@ -95,6 +116,11 @@ services:
       DATABASE_PORT : ${DATABASE_PORT}
       AUTH_SERVICE_DOMAIN: ${AUTH_SERVICE_DOMAIN}
       AUTH_SERVICE_PORT : ${AUTH_SERVICE_PORT}
+      NOTIFICATION_SERVICE_DOMAIN: ${NOTIFICATION_SERVICE_DOMAIN}
+      NOTIFICATION_SERVICE_PORT : ${NOTIFICATION_SERVICE_PORT}
+      PROFILE_STORAGE_PATH : ${PROFILE_STORAGE_PATH}
+    volumes:
+      - myapp2:/app/storage/media-content
     restart: always
     depends_on: 
       - postgres
@@ -123,3 +149,4 @@ networks:
 
 volumes:
   myapp:
+  myapp2:

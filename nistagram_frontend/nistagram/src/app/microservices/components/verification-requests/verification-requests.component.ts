@@ -18,7 +18,7 @@ export class VerificationRequestsComponent implements OnInit {
   ngOnInit(): void {
     this.profileService.getVerificationRequests().subscribe(data => {
       for(var r of data){
-        r.url = environment.mediaBaseUrl + r.url;
+        r.url = environment.profileBaseUrl + r.url;
         console.log(r.url);
       }
       this.dataSource = data;})
