@@ -1,9 +1,11 @@
 package app.profile.service;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.core.io.UrlResource;
 import org.springframework.web.multipart.MultipartFile;
 
 import app.profile.dtos.ProfileInfoDTO;
@@ -61,4 +63,6 @@ public interface ProfileService {
 	List<ProfileVerificationRequestDTO> verify(long id);
 
 	List<ProfileVerificationRequestDTO> deleteVerification(long id);
+	
+	UrlResource getContent(String fileName) throws MalformedURLException;
 }

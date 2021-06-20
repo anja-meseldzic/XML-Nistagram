@@ -13,8 +13,10 @@ import app.profile.model.Profile;
 import app.profile.service.AuthService;
 import app.profile.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -287,5 +290,19 @@ public class ProfileContoller {
 	
 		List<ProfileVerificationRequestDTO> verificationRequests = profileService.deleteVerification(id);
 		return new ResponseEntity<>(verificationRequests, HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "content/{contentName:.+}")
+	public @ResponseBody ResponseEntity<UrlResource> getContent(@PathVariable(name = "contentName") String fileName) {
+		try {
+			UrlResource resource = profileService.getContent(fileName);
+			return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+					.contentType(MediaTypeFactory
+							.getMediaType(resource)
+							.orElse(MediaType.APPLICATION_OCTET_STREAM))
+							.body(this.profileService.getContent(fileName));
+		} catch (IOException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
 	}
 }

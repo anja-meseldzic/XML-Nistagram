@@ -2,6 +2,7 @@ package app.profile.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,6 +28,7 @@ import java.util.UUID;
 import app.profile.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -374,7 +376,7 @@ public class ProfileServiceImpl implements ProfileService {
 			throws IOException {
 
 		String fileName = saveFile(data, storageDirectoryPath);
-		String fileDownloadUri = "media/content/" + fileName;
+		String fileDownloadUri = "profile/content/" + fileName;
 		System.out.println(fileDownloadUri);
 
 		Profile profile = profileRepository.findByRegularUserUsername(username);
@@ -476,5 +478,10 @@ public class ProfileServiceImpl implements ProfileService {
 	private void sendNotification(NotificationType type, String receiver, String initiator, String resource) {
 		NewNotificationDTO dto = new NewNotificationDTO(type, receiver, initiator, resource);
 		notificationService.create(dto);
+	}
+
+	@Override
+	public UrlResource getContent(String contentName) throws MalformedURLException {
+		return new UrlResource("file:" + storageDirectoryPath + File.separator + contentName);
 	}
 }
