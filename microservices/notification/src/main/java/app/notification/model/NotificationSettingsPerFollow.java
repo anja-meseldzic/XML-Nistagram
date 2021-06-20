@@ -6,7 +6,8 @@ import javax.persistence.*;
 public class NotificationSettingsPerFollow {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_settings_per_follow_generator")
+    @SequenceGenerator(name="notification_settings_per_follow_generator", sequenceName = "notification_settings_per_follow_seq", allocationSize=50, initialValue = 100)
     private long id;
     @Column(name = "followId")
     private long followId;

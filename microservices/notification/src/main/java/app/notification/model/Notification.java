@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
 @Entity
 public class Notification {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_generator")
+    @SequenceGenerator(name="notification_generator", sequenceName = "notification_seq", allocationSize=50, initialValue = 100)
     private long id;
     @Column(name = "type")
     private NotificationType type;
