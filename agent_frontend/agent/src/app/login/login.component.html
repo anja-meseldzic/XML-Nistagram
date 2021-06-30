@@ -1,0 +1,16 @@
+<h1 style="text-align: center">Log in</h1>
+<div style="display: flex; justify-content:center">
+
+  <div class="m-4" style="background-color: ghostwhite; width: 30%; padding: 20px; border-radius: 3%">
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" placeholder="username" [(ngModel)]="username"/>
+    </div>
+
+    <div class="input-group mb-3">
+      <input type="password" class="form-control" placeholder="password" [(ngModel)]="password"/>
+    </div>
+    <button class="btn btn-success m-1" (click)="login()">Log in</button>
+    <button class="btn btn-danger" (click)="cancel()">Cancel</button>
+  </div>
+</div>
+
