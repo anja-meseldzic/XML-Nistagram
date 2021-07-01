@@ -99,4 +99,11 @@ export class ProductsComponent implements OnInit {
     this.id = product.id;
   }
 
+  buy(id: any): void {
+    axios
+      .get(environment.url + 'purchase/buy/' + this.authService.getUsername() + '/' + id)
+      .then(_ => this.fetchData())
+      .catch(_ => alert('No more available product'))
+  }
+
 }

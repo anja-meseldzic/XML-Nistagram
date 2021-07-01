@@ -36,9 +36,10 @@ export class AuthServiceService {
 
   getUsername(): string {
     if (!this.isLoggedIn()) { return ''; }
-    const token = localStorage.getItem('jwt');
+    const token = sessionStorage.getItem('jwt');
+    let tokenPayload;
     if (typeof token === "string") {
-      const tokenPayload = jwtDecode(token);
+      tokenPayload = jwtDecode(token);
     }
     // @ts-ignore
     return tokenPayload.username;

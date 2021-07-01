@@ -1,6 +1,5 @@
 package app.agent.model;
 
-import app.agent.model.dtos.ProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,4 +29,10 @@ public class Product {
     private int quantity;
 
     private boolean active;
+
+    public void decrementQuantity() {
+        if(quantity - 1 < 0)
+            throw new IllegalStateException("No more product available");
+        --quantity;
+    }
 }
