@@ -41,6 +41,12 @@ public class ProductController {
         return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        productService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> create(@RequestParam(name = "imageFile", required = false)MultipartFile data, @RequestParam(name = "post", required = false) String model) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();

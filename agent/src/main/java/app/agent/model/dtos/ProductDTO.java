@@ -22,6 +22,7 @@ public class ProductDTO {
         product.setName(name);
         product.setPrice(price);
         product.setQuantity(quantity);
+        product.setActive(true);
         return product;
     }
 }

@@ -66,6 +66,16 @@ export class ProductsComponent implements OnInit {
     this.price = 0;
   }
 
+  delete(id: any) {
+    axios
+      .delete(environment.url + 'merch/' + id)
+      .then(_ => {
+        alert('success');
+        this.fetchData()
+      })
+      .catch(_ => alert('error'))
+  }
+
   fetchData = () => {
     axios
       .get(environment.url + 'merch', {

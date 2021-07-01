@@ -28,4 +28,6 @@ public class Product {
     private String imagePath;
 
     private int quantity;
+
+    private boolean active;
 }

@@ -35,11 +35,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Collection<Product> getAll() {
-        return productRepository.findAll();
+        return productRepository.findAllByActiveTrue();
     }
 
     @Override
-    public void update(Product product) {
+    public void delete(Long id) {
+        Product product = productRepository.getOne(id);
+        product.setActive(false);
         productRepository.save(product);
     }
 

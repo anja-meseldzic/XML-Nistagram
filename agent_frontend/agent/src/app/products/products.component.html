@@ -12,7 +12,7 @@
               *ngIf="this.authService.getRole() === 'ADMIN'" (click)="update(product.id)"
               data-toggle="modal" data-target="#productModalCenter"
       >Edit</button>
-      <button class="btn btn-outline-danger" style="width: 50%" *ngIf="this.authService.getRole() === 'ADMIN'">Delete</button>
+      <button class="btn btn-outline-danger" style="width: 50%" (click)="delete(product.id)" *ngIf="this.authService.getRole() === 'ADMIN'">Delete</button>
     </div>
   </div>
 </div>

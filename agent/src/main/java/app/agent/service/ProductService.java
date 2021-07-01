@@ -12,7 +12,7 @@ import java.util.Collection;
 public interface ProductService {
     Collection<Product> getAll();
 
-    void update(Product product);
+    void delete(Long id);
 
     void create(MultipartFile file, ProductDTO productDTO) throws IOException;
 
