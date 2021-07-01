@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Product} from "../models/product";
 import axios from "axios";
 import {environment} from "../../environments/environment";
+import {AuthServiceService} from "../auth-service/auth-service.service";
 
 @Component({
   selector: 'app-products',
@@ -19,7 +20,7 @@ export class ProductsComponent implements OnInit {
   selectedFile: any = null;
 
 
-  constructor() { }
+  constructor(public authService: AuthServiceService) { }
 
   ngOnInit(): void {
     this.fetchData();

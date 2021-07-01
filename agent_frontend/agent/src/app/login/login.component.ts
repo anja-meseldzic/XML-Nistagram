@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void {
-    const jwt = this.userService.login(this.username, this.password);
+    this.userService.login(this.username, this.password);
   }
 
   cancel(): void {

@@ -1,4 +1,4 @@
-<button class="btn btn-success m-3" data-toggle="modal" data-target="#productModalCenter">New Product</button>
+<button class="btn btn-success m-3" data-toggle="modal" data-target="#productModalCenter" *ngIf="this.authService.getRole() === 'ADMIN'">New Product</button>
 <div class="card-columns">
   <div class="card" *ngFor="let product of products" style="height: 600px">
     <img class="card-img-top" src={{product.imagePath}} style="height: 65%; width: 100%" alt="Card image cap">
@@ -7,7 +7,9 @@
       <p class="card-text">Price: ${{product.price}}<br/>Available: {{product.quantity}}</p>
     </div>
     <div class="card-footer">
-      <button class="btn btn-success" style="width: 100%">Buy</button>
+      <button class="btn btn-success" style="width: 100%" *ngIf="this.authService.getRole() === 'USER'">Buy</button>
+      <button class="btn btn-outline-secondary" style="width: 50%" *ngIf="this.authService.getRole() === 'ADMIN'">Edit</button>
+      <button class="btn btn-outline-danger" style="width: 50%" *ngIf="this.authService.getRole() === 'ADMIN'">Delete</button>
     </div>
   </div>
 </div>

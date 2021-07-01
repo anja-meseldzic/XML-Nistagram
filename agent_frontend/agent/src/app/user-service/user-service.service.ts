@@ -5,6 +5,7 @@ import {User} from "../models/user";
 import {Observable} from "rxjs";
 import axios from "axios";
 import {AuthServiceService} from "../auth-service/auth-service.service";
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class UserServiceService {
   registerUserUrl = environment.url + "users/"
   loginUrl = environment.url + 'users/login'
 
-  constructor(private http : HttpClient, private authService: AuthServiceService) { }
+  constructor(private http : HttpClient, private authService: AuthServiceService, private router: Router) { }
 
   register(user: User): Observable<any> {
     return this.http.post(this.registerUserUrl, user);
@@ -27,7 +28,10 @@ export class UserServiceService {
         username,
         password
       })
-      .then(res => this.authService.saveToken(res.data))
+      .then(res => {
+        this.authService.saveToken(res.data);
+        this.router.navigate(['products'])
+      })
       .catch(_ => alert('Wrong username or password'))
     return jwt;
 
