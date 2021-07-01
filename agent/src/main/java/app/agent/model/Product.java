@@ -1,5 +1,6 @@
 package app.agent.model;
 
+import app.agent.model.dtos.ProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

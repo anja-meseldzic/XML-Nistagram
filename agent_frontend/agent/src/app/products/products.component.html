@@ -1,6 +1,7 @@
+<button class="btn btn-success m-3" data-toggle="modal" data-target="#productModalCenter">New Product</button>
 <div class="card-columns">
   <div class="card" *ngFor="let product of products" style="height: 600px">
-    <img class="card-img-top" src="assets/merch.jpg" style="height: 65%; width: 100%" alt="Card image cap">
+    <img class="card-img-top" src={{product.imagePath}} style="height: 65%; width: 100%" alt="Card image cap">
     <div class="card-body">
       <h5 class="card-title">{{product.name}}</h5>
       <p class="card-text">Price: ${{product.price}}<br/>Available: {{product.quantity}}</p>
@@ -10,3 +11,44 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="productModalCenter" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Product info</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <small>Name</small>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" [(ngModel)]="name"/>
+        </div>
+
+        <small>Price $</small>
+        <div class="input-group mb-3">
+          <input type="number" class="form-control" placeholder="price" min="0" [(ngModel)]="price"/>
+        </div>
+
+        <small>Available</small>
+        <div class="input-group mb-3">
+          <input type="number" class="form-control" placeholder="price" min="0" [(ngModel)]="quantity"/>
+        </div>
+
+        <small>Image</small>
+        <div class="input-group mb-3">
+          <input type="file" class="form-control" accept=".jpg, .png" (change)="onFileSelected($event)"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="fetchData()">Close</button>
+        <button type="button" class="btn btn-primary" (click)="submit()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
