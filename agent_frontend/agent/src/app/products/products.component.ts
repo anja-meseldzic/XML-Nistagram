@@ -31,6 +31,7 @@ export class ProductsComponent implements OnInit {
     if(this.selectedFile != null) {
       fd.append('imageFile', this.selectedFile, this.selectedFile.name);
       fd.append('post', JSON.stringify({
+        id: this.id,
         name: this.name,
         price: this.price,
         quantity: this.quantity
@@ -39,8 +40,14 @@ export class ProductsComponent implements OnInit {
 
     axios
       .post(environment.url + 'merch', fd)
-      .then(_ => alert('Success'))
-      .catch(_ => alert('Error'));
+      .then(_ => {
+        alert('Success');
+        this.id = null;
+      })
+      .catch(_ => {
+        alert('All fields are required')
+      });
+
   }
 
   onFileSelected(event: any): void {
@@ -48,7 +55,15 @@ export class ProductsComponent implements OnInit {
   }
 
   cancel() {
+    this.id = null;
     this.fetchData()
+  }
+
+  restart() {
+    this.id = null;
+    this.name = '';
+    this.quantity = 0;
+    this.price = 0;
   }
 
   fetchData = () => {
@@ -63,6 +78,15 @@ export class ProductsComponent implements OnInit {
         // @ts-ignore
         this.products.forEach(p => p.imagePath = environment.url + p.imagePath)
       })
+  }
+
+  update = (id: any) => {
+    // @ts-ignore
+    let product = this.products.filter(p => p.id === id)[0];
+    this.name = product.name;
+    this.price = product.price;
+    this.quantity = product.quantity;
+    this.id = product.id;
   }
 
 }

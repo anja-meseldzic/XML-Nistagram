@@ -12,6 +12,8 @@ import java.util.Collection;
 public interface ProductService {
     Collection<Product> getAll();
 
+    void update(Product product);
+
     void create(MultipartFile file, ProductDTO productDTO) throws IOException;
 
     UrlResource getContent(String contentName) throws MalformedURLException;

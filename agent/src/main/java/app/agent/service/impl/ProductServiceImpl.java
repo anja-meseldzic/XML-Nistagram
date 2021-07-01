@@ -39,6 +39,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public void update(Product product) {
+        productRepository.save(product);
+    }
+
+    @Override
     public void create(MultipartFile file, ProductDTO productDTO) throws IOException {
         String filename = saveFile(file, storageDirectory);
         String fileDownloadUri = "merch/content/" + filename;

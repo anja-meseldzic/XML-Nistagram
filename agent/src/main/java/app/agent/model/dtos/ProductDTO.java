@@ -11,12 +11,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductDTO {
+    private Long id;
     private String name;
     private double price;
     private int quantity;
 
     public Product getProduct() {
         Product product = new Product();
+        product.setId(id);
         product.setName(name);
         product.setPrice(price);
         product.setQuantity(quantity);
