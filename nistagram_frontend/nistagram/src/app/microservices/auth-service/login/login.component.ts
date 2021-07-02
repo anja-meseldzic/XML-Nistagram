@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
         
       })
       .catch(e => {
-        this.openSnackBar('Incorrect username or password', 'Okay');
+        this.openSnackBar('Incorrect username/password or inactive profile', 'Okay');
       });
   }
 

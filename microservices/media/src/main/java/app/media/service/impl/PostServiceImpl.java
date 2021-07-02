@@ -101,9 +101,11 @@ public class PostServiceImpl implements PostService {
 		List<String> targetedProfiles = profileService.getFollowing(username);
 		List<String> mutedProfiles = profileService.getMuted(username);
 		List<String> blockedProfiles = profileService.getBlocked(username);
-
+		List<String> inactiveProfiles = profileService.getAllInactiveProfiles();
+		
 		targetedProfiles.removeAll(mutedProfiles);
 		targetedProfiles.removeAll(blockedProfiles);
+		targetedProfiles.removeAll(inactiveProfiles);
 
 		List<Post> targetedPosts = postRepository.findAll().stream()
 				.filter(p -> targetedProfiles.contains(p.getMedia().getUsername())).collect(Collectors.toList());
@@ -211,7 +213,7 @@ public class PostServiceImpl implements PostService {
 
 	private Set<String> getAllProfiles(String requestedBy) {
 		if (requestedBy != null) {
-			return profileService.getAll().stream().filter(p -> !profileService.getBlocked(requestedBy).contains(p))
+			return profileService.getAll().stream().filter(p -> !profileService.getBlocked(requestedBy).contains(p) && !profileService.getAllInactiveProfiles().contains(p))
 					.collect(Collectors.toSet());
 		}
 		return profileService.getAll().stream().collect(Collectors.toSet());

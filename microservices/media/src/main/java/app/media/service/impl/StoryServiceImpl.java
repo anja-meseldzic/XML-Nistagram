@@ -33,9 +33,11 @@ public class StoryServiceImpl implements StoryService {
 		List<String> targetedProfiles = profileService.getFollowing(username);
 		List<String> mutedProfiles = profileService.getMuted(username);
 		List<String> blockedProfiles = profileService.getBlocked(username);
-
+		List<String> inactiveProfiles = profileService.getAllInactiveProfiles();
+		
 		targetedProfiles.removeAll(mutedProfiles);
 		targetedProfiles.removeAll(blockedProfiles);
+		targetedProfiles.removeAll(inactiveProfiles);
 
 		List<Story> targetedStories = storyRepository.findAll().stream()
 				.filter(s -> targetedProfiles.contains(s.getMedia().getUsername())).collect(Collectors.toList());

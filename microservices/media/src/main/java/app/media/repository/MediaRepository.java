@@ -5,7 +5,9 @@ import org.springframework.stereotype.Repository;
 
 import app.media.model.Media;
 
+
 @Repository
 public interface MediaRepository extends JpaRepository<Media, Long> {
 
+	Media findOneById(long id);
 }

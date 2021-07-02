@@ -2,7 +2,6 @@ package app.media.controller;
 
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.*;
 
 import app.media.service.AuthService;
@@ -26,6 +25,7 @@ import app.media.dtos.AllCommentDTO;
 import app.media.dtos.AllReactionsDTO;
 import app.media.dtos.CommentDTO;
 import app.media.dtos.InappropriateDTO;
+import app.media.dtos.InappropriateListDTO;
 import app.media.dtos.PostDTO;
 import app.media.dtos.RatingDTO;
 import app.media.dtos.ReactionsNumberDTO;
@@ -56,7 +56,7 @@ public class MediaController {
 	@PostMapping(value = "allReactions")
 	public ResponseEntity<AllReactionsDTO> getReactions(@RequestBody long id,  @RequestHeader("Authorization") String auth)
 	{
-		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")  && !authService.verify(auth, "ADMIN"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String myUsername = authService.getUsernameFromToken(token);
@@ -78,7 +78,7 @@ public class MediaController {
 	@PostMapping(value = "getReactionsNumber")
 	public ResponseEntity<ReactionsNumberDTO> getReactionsNumber(@RequestBody long id,  @RequestHeader("Authorization") String auth)
 	{
-		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")  && !authService.verify(auth, "ADMIN"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String myUsername = authService.getUsernameFromToken(token);
@@ -116,7 +116,7 @@ public class MediaController {
 	@PostMapping(value = "allComments")
 	public ResponseEntity<List<AllCommentDTO>> getAllComments(@RequestBody long id,  @RequestHeader("Authorization") String auth)
 	{
-		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT") && !authService.verify(auth, "ADMIN"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
 		String myUsername = authService.getUsernameFromToken(token);
@@ -247,4 +247,39 @@ public class MediaController {
 		return new ResponseEntity<>(message, HttpStatus.OK);
 	}
 	
+	@GetMapping(value = "getInappropriateContent")
+	public ResponseEntity<List<InappropriateListDTO>> getInappropriateContent(@RequestHeader("Authorization") String auth) {
+		if(!authService.verify(auth, "ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	
+		List<InappropriateListDTO> inappropriateList = mediaService.getInappropriateList();
+		return new ResponseEntity<>(inappropriateList, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "shutDownProfile")
+	public ResponseEntity<String> shutDownProfile(@RequestBody InappropriateListDTO content,  @RequestHeader("Authorization") String auth)
+	{
+		if(!authService.verify(auth, "ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		mediaService.shutProfileDown(content);
+		return new ResponseEntity<>("ok", HttpStatus.OK);
+	
+	}
+	@PostMapping(value = "approveContent")
+	public ResponseEntity<String> approveInappropriateContent(@RequestBody InappropriateListDTO content,  @RequestHeader("Authorization") String auth)
+	{
+		if(!authService.verify(auth, "ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		mediaService.approveInappropriateContent(content);
+		return new ResponseEntity<>("ok", HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "deleteContent")
+	public ResponseEntity<String> deleteInappropriateContent(@RequestBody InappropriateListDTO content,  @RequestHeader("Authorization") String auth)
+	{
+		if(!authService.verify(auth, "ADMIN"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		mediaService.deleteInappropriateContent(content);
+		return new ResponseEntity<>("ok", HttpStatus.OK);
+	}
 }

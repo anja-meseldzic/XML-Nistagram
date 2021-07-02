@@ -41,9 +41,10 @@ import { VerificationRequestsComponent } from './components/verification-request
 import { ProfileConfigComponent } from './profile-config/profile-config.component';
 import { NotificationSettingsComponent } from './components/notification-settings/notification-settings.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
+import { InappropriateContentComponent } from './components/inappropriate-content/inappropriate-content.component';
 
 @NgModule({
-  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, ProfileConfigComponent, VerifyAccountComponent, VerificationRequestsComponent, RatingsDialogComponent, LikedDataComponent, DislikedDataComponent, ReportDialogComponent, NotificationSettingsComponent, NotificationsComponent],
+  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, ProfileConfigComponent, VerifyAccountComponent, VerificationRequestsComponent, RatingsDialogComponent, LikedDataComponent, DislikedDataComponent, ReportDialogComponent, NotificationSettingsComponent, NotificationsComponent, InappropriateContentComponent],
   imports: [
     CommonModule,
     MicroservicesRoutingModule,

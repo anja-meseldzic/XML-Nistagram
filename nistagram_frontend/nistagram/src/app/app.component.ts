@@ -57,4 +57,8 @@ export class AppComponent {
   public verificationRequests(){
     this.router.navigate(['../verification-requests']);
   }
+
+  public inappropriateContent(){
+    this.router.navigate(['../inappropriate-content']);
+  }
 }

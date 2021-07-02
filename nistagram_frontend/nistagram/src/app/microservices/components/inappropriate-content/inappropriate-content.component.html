@@ -1,0 +1,57 @@
+<p style="margin-top: 50px; text-align: center; font-size: medium;">Inappropriate content</p>
+<div style=" display: flex; justify-content:center;  margin-top: 3%; ">
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="reason">
+      <th mat-header-cell *matHeaderCellDef>Reason</th>
+      <td mat-cell *matCellDef="let element"> {{element.reason}} </td>
+    </ng-container>
+  
+
+    <ng-container matColumnDef="username">
+      <th mat-header-cell *matHeaderCellDef>Username of reporter </th>
+      <td mat-cell *matCellDef="let element"> {{element.usernameOfReporter}} </td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="post">
+        <th mat-header-cell *matHeaderCellDef> Post </th>
+        <td mat-cell *matCellDef="let element">
+            <button mat-raised-button (click) = "viewPost(element)" color="primary" style="margin-right: 5px;">
+                View post    
+            </button>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="shutProfile">
+        <th mat-header-cell *matHeaderCellDef> Shut profile </th>
+        <td mat-cell *matCellDef="let element">
+            <button mat-raised-button (click) = "shutProfile(element)" color="warn">
+                Shut profile   
+            </button>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="deletePost">
+        <th mat-header-cell *matHeaderCellDef> Delete </th>
+        <td mat-cell *matCellDef="let element">
+            <button mat-raised-button (click) = "deletePost(element)" color="warn">
+                Delete post   
+            </button>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="ignoreComplaint">
+        <th mat-header-cell *matHeaderCellDef> Ignore</th>
+        <td mat-cell *matCellDef="let element">
+            <button mat-raised-button (click) = "ignoreComplaint(element)" color="warn">
+                Ignore complaint   
+            </button>
+        </td>
+    </ng-container>
+    
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

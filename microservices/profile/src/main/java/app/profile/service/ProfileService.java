@@ -65,4 +65,10 @@ public interface ProfileService {
 	List<ProfileVerificationRequestDTO> deleteVerification(long id);
 	
 	UrlResource getContent(String fileName) throws MalformedURLException;
+	
+	boolean isProfileActive(String username);
+	
+	void deactivateProfile(String username);
+	
+	List<String> getAllInactiveProfiles();
 }

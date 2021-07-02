@@ -22,4 +22,8 @@ public interface ProfileService {
     List<String> getCloseFriends(@PathVariable("profile") String profile);
     @GetMapping("profile/ms/public/{profile}")
     boolean isPublic(@PathVariable("profile") String profile);
+    @GetMapping("profile/ms/deactivate/{username}")
+    void deactivateProfile(@PathVariable("username") String username);
+    @GetMapping("profile/ms/getAllInactiveProfiles")
+    List<String> getAllInactiveProfiles();
 }

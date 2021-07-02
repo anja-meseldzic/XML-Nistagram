@@ -8,6 +8,7 @@ import { CollectionDTO } from '../DTOs/collection-dto';
 import { CollectionInfoDto } from '../DTOs/collection-info-dto';
 import { CommentDTO } from '../DTOs/comment-dto';
 import { InappropriateDTO } from '../DTOs/inappropriate-dto';
+import { InappropriateListDTO } from '../DTOs/inappropriate-list-dto';
 import { RatingDTO } from '../DTOs/rating-dto';
 import { ReactionsNumberDTO } from '../DTOs/reactions-number-dto';
 import { Post } from '../model/post';
@@ -28,6 +29,9 @@ export class MediaService {
   private getReactionsNumberUrl = environment.mediaBaseUrl + "media/getReactionsNumber";
   private getReactionsUrl = environment.mediaBaseUrl + "media/allReactions";
   private inappropriateContentUrl = environment.mediaBaseUrl + "media/reportContent";
+  private shutDownProfileUrl = environment.mediaBaseUrl + "media/shutDownProfile";
+  private deleteUnappropriateContentUrl = environment.mediaBaseUrl + "media/deleteContent";
+  private approveInappropriateContentUrl = environment.mediaBaseUrl + "media/approveContent";
 
   constructor(private _http : HttpClient) {}
 
@@ -153,6 +157,29 @@ export class MediaService {
 
   public getCollections(): Observable<CollectionInfoDto[]>{
     return this._http.get<CollectionInfoDto[]>(environment.mediaBaseUrl + 'post/collections',{headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+
+  public getInappropriateContent() : Observable<InappropriateListDTO[]> {
+    return this._http.get<InappropriateListDTO[]>(environment.mediaBaseUrl + "media/getInappropriateContent", {headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+
+  public shutDownProfile(data : InappropriateListDTO) {
+    return this._http.post(this.shutDownProfileUrl, data, {responseType: 'text',headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+
+  public deleteInappropriateContent(data : InappropriateListDTO) {
+    return this._http.post(this.deleteUnappropriateContentUrl, data, {responseType: 'text',headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+  public approveInappropriateContent(data : InappropriateListDTO) {
+    return this._http.post(this.approveInappropriateContentUrl, data, {responseType: 'text',headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }

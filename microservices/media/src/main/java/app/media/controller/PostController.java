@@ -102,8 +102,8 @@ public class PostController {
     @GetMapping(value = "{id}")
     public ResponseEntity<PostInfoDTO> get(@PathVariable long id, @RequestHeader("Authorization") String auth) {
         try {
-            if(authService.verify(auth, "ADMIN"))
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+          //  if(authService.verify(auth, "ADMIN"))
+          //      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
             if (auth.equals("Bearer null"))
                 return new ResponseEntity<>(postService.get(null, id), HttpStatus.OK);
             return new ResponseEntity<>(postService.get(authService.getUsernameFromToken(TokenUtils.getToken(auth)), id), HttpStatus.OK);

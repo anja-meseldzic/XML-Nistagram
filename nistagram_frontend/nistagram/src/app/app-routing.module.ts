@@ -16,6 +16,7 @@ import { LikedDataComponent } from './microservices/components/liked-data/liked-
 import { DislikedDataComponent } from './microservices/components/disliked-data/disliked-data.component';
 import { NotificationSettingsComponent } from './microservices/components/notification-settings/notification-settings.component';
 import { NotificationsComponent } from './microservices/components/notifications/notifications.component';
+import { InappropriateContentComponent } from './microservices/components/inappropriate-content/inappropriate-content.component';
 
 const routes: Routes = [
   {path: 'registration', component: RegistrationComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
@@ -29,6 +30,7 @@ const routes: Routes = [
   {path: 'unauthorized', component: UnauthorizedPageComponent},
   {path: 'verify-profile', component: VerifyAccountComponent},
   {path: 'verification-requests', component: VerificationRequestsComponent},
+  {path: 'inappropriate-content', component: InappropriateContentComponent},
   {path: 'likedData', component: LikedDataComponent},
   {path: 'dislikedData', component: DislikedDataComponent},
   {path: 'settings/notifications', component: NotificationSettingsComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},

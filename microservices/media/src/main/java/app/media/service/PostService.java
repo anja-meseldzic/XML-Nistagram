@@ -8,7 +8,6 @@ import app.media.exception.PostDoesNotExistException;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
 import app.media.model.Favourites;
-import app.media.model.Post;
 
 import java.util.List;
 

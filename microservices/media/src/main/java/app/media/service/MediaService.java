@@ -8,6 +8,7 @@ import app.media.dtos.AllCommentDTO;
 import app.media.dtos.AllReactionsDTO;
 import app.media.dtos.CommentDTO;
 import app.media.dtos.InappropriateDTO;
+import app.media.dtos.InappropriateListDTO;
 import app.media.dtos.PostDTO;
 import app.media.dtos.RatingDTO;
 import app.media.dtos.ReactionsNumberDTO;
@@ -45,4 +46,12 @@ public interface MediaService {
 	void checkProfile(long postId, String myUsername) throws PostDoesNotExistException, ProfilePrivateException, ProfileBlockedException;
 
 	String reportContent(String myUsername, InappropriateDTO content);
+
+	List<InappropriateListDTO> getInappropriateList();
+
+	void shutProfileDown(InappropriateListDTO content);
+
+	void approveInappropriateContent(InappropriateListDTO content);
+
+	void deleteInappropriateContent(InappropriateListDTO content);
 }

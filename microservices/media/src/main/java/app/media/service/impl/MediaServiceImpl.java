@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import app.media.dtos.*;
 import app.media.service.NotificationService;
@@ -22,13 +23,16 @@ import app.media.exception.PostDoesNotExistException;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
 import app.media.model.Comment;
+import app.media.model.Favourites;
 import app.media.model.InapropriateContent;
 import app.media.model.Media;
 import app.media.model.Post;
 import app.media.model.Rating;
 import app.media.model.RatingType;
 import app.media.model.Story;
+import app.media.repository.CollectionRepository;
 import app.media.repository.CommentRepository;
+import app.media.repository.FavouritesRepository;
 import app.media.repository.InapropriateContentRepository;
 import app.media.repository.MediaRepository;
 import app.media.repository.PostRepository;
@@ -51,6 +55,8 @@ public class MediaServiceImpl implements MediaService{
 	private ProfileService profileService;
 	private InapropriateContentRepository inapropriateContentRepository;
 	private NotificationService notificationService;
+	private CollectionRepository collectionRepository;
+	private FavouritesRepository favouritesRepository;
 
 	@Value("${media.storage}")
 	private String storageDirectoryPath;
@@ -58,7 +64,8 @@ public class MediaServiceImpl implements MediaService{
 	@Autowired
     public MediaServiceImpl(MediaRepository mediaRepository, PostRepository postRepository, StoryRepository storyRepository,
     		CommentRepository commentRepository, RatingRepository ratingRepository, ProfileService profileService, 
-    		InapropriateContentRepository inapropriateContentRepository, NotificationService notificationService) {
+    		InapropriateContentRepository inapropriateContentRepository, NotificationService notificationService,
+    		CollectionRepository collectionRepository, FavouritesRepository favouritesRepository) {
         this.mediaRepository = mediaRepository;
         this.postRepository = postRepository;
         this.storyRepository = storyRepository;
@@ -67,6 +74,9 @@ public class MediaServiceImpl implements MediaService{
         this.profileService = profileService;
         this.inapropriateContentRepository = inapropriateContentRepository;
         this.notificationService = notificationService;
+        this.collectionRepository = collectionRepository;
+        this.favouritesRepository = favouritesRepository;
+        
     }
 
 	@Override
@@ -384,5 +394,69 @@ public class MediaServiceImpl implements MediaService{
 	private void sendNotification(NotificationType type, String receiver, String initiator, String resource) {
 		NewNotificationDTO dto = new NewNotificationDTO(type, receiver, initiator, resource);
 		notificationService.create(dto);
+	}
+
+	@Override
+	public List<InappropriateListDTO> getInappropriateList() {
+		List <InapropriateContent> inappropriateContents = inapropriateContentRepository.findAll().stream().filter(r -> !r.isReviewed()).collect(Collectors.toList());
+		List<InappropriateListDTO> result = new ArrayList<InappropriateListDTO>();
+		for(InapropriateContent ic : inappropriateContents) {
+			InappropriateListDTO dto = new InappropriateListDTO();
+			dto.setId(ic.getId());
+			dto.setMediaId(ic.getMedia().getId());
+			dto.setReason(ic.getReason());
+			dto.setUsernameOfReporter(ic.getUsername());
+			
+			for(Post post : postRepository.findAll()) {
+				if(post.getMedia().getId() == ic.getMedia().getId()) {
+					dto.setPostId(post.getId());
+					break;
+				}
+			}
+			result.add(dto);
+		}
+		return result;
+	}
+
+	@Override
+	public void shutProfileDown(InappropriateListDTO content) {
+		String username = mediaRepository.findOneById(content.getMediaId()).getUsername();
+		profileService.deactivateProfile(username);
+		
+		InapropriateContent inappropriateContent = inapropriateContentRepository.findOneById(content.getId());
+		inappropriateContent.setReviewed(true);
+		inapropriateContentRepository.save(inappropriateContent);
+		
+	}
+
+	@Override
+	public void approveInappropriateContent(InappropriateListDTO content) {
+		InapropriateContent inappropriateContent = inapropriateContentRepository.findOneById(content.getId());
+		inappropriateContent.setReviewed(true);
+		inapropriateContentRepository.save(inappropriateContent);
+		
+	}
+
+	@Override
+	public void deleteInappropriateContent(InappropriateListDTO content) {
+		InapropriateContent inappropriateContent = inapropriateContentRepository.findOneById(content.getId());
+		inappropriateContent.setReviewed(true);
+		inapropriateContentRepository.save(inappropriateContent);
+		
+		Media media = mediaRepository.findOneById(content.getMediaId());	
+		Post post = postRepository.findOneById(content.getPostId());	
+		Favourites favourite = favouritesRepository.findByPost(post);
+		app.media.model.Collection collection = collectionRepository.findByFavourite(favourite);
+		if(collection != null) {
+			collectionRepository.delete(collection);
+		}
+		if(favourite !=null) {		
+			favouritesRepository.delete(favourite);
+		}
+		postRepository.delete(post);
+		
+		inapropriateContentRepository.delete(inappropriateContent);
+		mediaRepository.delete(media);
+		
 	}
 }

@@ -141,7 +141,7 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<FollowerDto> getFollowers(String username) {
 		List<FollowerDto> followers = new ArrayList<FollowerDto>();
-		for (Follow f : followRepository.findAll().stream().filter(f -> !f.isBlocked()).collect(Collectors.toList())) {
+		for (Follow f : followRepository.findAll().stream().filter(f -> !f.isBlocked() && f.getFollowedBy().isActive()).collect(Collectors.toList())) {
 			if (f.getProfile().getRegularUserUsername().equals(username)) {
 				followers.add(new FollowerDto(f.getFollowedBy().getRegularUserUsername()));
 			}
@@ -152,7 +152,7 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<FollowerDto> getFollowing(String username) {
 		List<FollowerDto> following = new ArrayList<FollowerDto>();
-		for (Follow f : followRepository.findAll().stream().filter(f -> !f.isBlocked()).collect(Collectors.toList())) {
+		for (Follow f : followRepository.findAll().stream().filter(f -> !f.isBlocked() && f.getProfile().isActive()).collect(Collectors.toList())) {
 			if (f.getFollowedBy().getRegularUserUsername().equals(username)) {
 				following.add(new FollowerDto(f.getProfile().getRegularUserUsername()));
 			}
@@ -320,11 +320,11 @@ public class ProfileServiceImpl implements ProfileService {
 	}
 
 	private int getFollowerCount(Profile profile) {
-		return followRepository.findByProfile(profile).stream().filter(f-> !f.isBlocked()).collect(Collectors.toList()).size();
+		return followRepository.findByProfile(profile).stream().filter(f-> !f.isBlocked() && f.getFollowedBy().isActive()).collect(Collectors.toList()).size();
 	}
 
 	private int getFollowingCount(Profile profile) {
-		return followRepository.findByFollowedBy(profile).stream().filter(f-> !f.isBlocked()).collect(Collectors.toList()).size();
+		return followRepository.findByFollowedBy(profile).stream().filter(f-> !f.isBlocked() && f.getProfile().isActive()).collect(Collectors.toList()).size();
 	}
 
 	private boolean isFollowing(Profile profile, String follower) {
@@ -483,5 +483,33 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public UrlResource getContent(String contentName) throws MalformedURLException {
 		return new UrlResource("file:" + storageDirectoryPath + File.separator + contentName);
+	}
+
+	@Override
+	public boolean isProfileActive(String username) {
+		Profile profile = profileRepository.findByRegularUserUsername(username);
+		if(profile.isActive() == true) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	@Override
+	public void deactivateProfile(String username) {
+		Profile profile = profileRepository.findByRegularUserUsername(username);
+		profile.setActive(false);
+		profileRepository.save(profile);
+	}
+
+	@Override
+	public List<String> getAllInactiveProfiles() {
+		List<String> results = new ArrayList<String>();
+		for(Profile profile : profileRepository.findAll()) {
+			if(profile.isActive() == false) {
+				results.add(profile.getRegularUserUsername());
+			}
+		}
+		return results;
 	}
 }

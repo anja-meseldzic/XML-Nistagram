@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import javax.websocket.server.PathParam;
-
 import app.profile.model.Profile;
 import app.profile.service.AuthService;
 import app.profile.util.TokenUtils;
@@ -210,6 +208,18 @@ public class ProfileContoller {
 		}
 	}
 
+	//don't put in api gateway
+		@GetMapping(value = "ms/deactivate/{username}")
+		public void deactivateProfile(@PathVariable String username) {
+			 profileService.deactivateProfile(username);
+		}
+		
+	//don't put in api gateway
+		@GetMapping(value = "ms/getAllInactiveProfiles")
+		public List<String> getAllInactiveProfiles() {
+	    	return profileService.getAllInactiveProfiles();
+	}	
+
 	@PostMapping(value = "addCloseFriend")
 	public ResponseEntity<String> addCloseFriend(@RequestBody String usernameOfFriend,  @RequestHeader("Authorization") String auth)
 	{
@@ -304,5 +314,12 @@ public class ProfileContoller {
 		} catch (IOException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
+	}
+	
+	@PostMapping("/activeProfile/{username}")
+	public ResponseEntity<Boolean> isProfileActive(@PathVariable String username) {
+		boolean isActive = profileService.isProfileActive(username);
+		return new ResponseEntity<>(isActive,HttpStatus.OK);
+
 	}
 }
