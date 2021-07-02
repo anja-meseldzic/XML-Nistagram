@@ -29,26 +29,25 @@ public class ProductController {
         this.productService = productService;
     }
 
-//    @GetMapping
-//    public ResponseEntity<Collection<Product>> getAll(@RequestHeader("Authorization") String auth) {
-//        if(!TokenUtils.verify(auth, "ADMIN", "USER"))
-//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//        return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
-//    }
-
     @GetMapping
     public ResponseEntity<Collection<Product>> getAll() {
         return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
+        if(!TokenUtils.verify(auth, "ADMIN"))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         productService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> create(@RequestParam(name = "imageFile", required = false)MultipartFile data, @RequestParam(name = "post", required = false) String model) throws JsonProcessingException {
+    public ResponseEntity<Void> create(@RequestParam(name = "imageFile", required = false)MultipartFile data, @RequestParam(name = "post", required = false) String model, @RequestHeader("Authorization") String auth) throws JsonProcessingException {
+        if(!TokenUtils.verify(auth, "ADMIN"))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         ObjectMapper mapper = new ObjectMapper();
         ProductDTO productDTO = mapper.readValue(model, ProductDTO.class);
 

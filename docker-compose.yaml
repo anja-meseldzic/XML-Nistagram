@@ -127,6 +127,26 @@ services:
     networks:
       - backend
 
+  agent:
+    image: agent
+    container_name: agent
+    build:
+      context: ./agent
+      dockerfile: Dockerfile
+    environment: 
+      DATABASE_DOMAIN : ${DATABASE_DOMAIN}
+      DATABASE_PORT : ${DATABASE_PORT}
+      MEDIA_STORAGE_PATH : ${MEDIA_STORAGE_PATH}
+    volumes:
+      - agentapp:/app/storage/media-content
+    restart: always
+    ports:
+      - 8090:8090
+    depends_on: 
+      - postgres
+    networks:
+      - backend
+
   postgres:
     image: postgres
     container_name: postgres
@@ -150,3 +170,4 @@ networks:
 volumes:
   myapp:
   myapp2:
+  agentapp:

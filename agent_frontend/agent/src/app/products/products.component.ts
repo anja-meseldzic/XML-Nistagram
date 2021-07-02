@@ -39,7 +39,11 @@ export class ProductsComponent implements OnInit {
     }
 
     axios
-      .post(environment.url + 'merch', fd)
+      .post(environment.url + 'merch', fd, {
+        headers: {
+          Authorization: 'Bearer ' + sessionStorage.getItem('jwt')
+        }
+      })
       .then(_ => {
         alert('Success');
         this.id = null;
@@ -68,7 +72,11 @@ export class ProductsComponent implements OnInit {
 
   delete(id: any) {
     axios
-      .delete(environment.url + 'merch/' + id)
+      .delete(environment.url + 'merch/' + id, {
+        headers: {
+          Authorization: 'Bearer ' + sessionStorage.getItem('jwt')
+        }
+      })
       .then(_ => {
         alert('success');
         this.fetchData()
@@ -78,11 +86,7 @@ export class ProductsComponent implements OnInit {
 
   fetchData = () => {
     axios
-      .get(environment.url + 'merch', {
-        headers: {
-          Authorization: 'Bearer ' + sessionStorage.getItem('jwt')
-        }
-      })
+      .get(environment.url + 'merch')
       .then(res => {
         this.products = res.data;
         // @ts-ignore
@@ -101,7 +105,11 @@ export class ProductsComponent implements OnInit {
 
   buy(id: any): void {
     axios
-      .get(environment.url + 'purchase/buy/' + this.authService.getUsername() + '/' + id)
+      .get(environment.url + 'purchase/buy/' + this.authService.getUsername() + '/' + id, {
+        headers: {
+          Authorization: 'Bearer ' + sessionStorage.getItem('jwt')
+        }
+      })
       .then(_ => this.fetchData())
       .catch(_ => alert('No more available product'))
   }

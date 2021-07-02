@@ -10,7 +10,7 @@ export class GuardService {
   canActivate(route: ActivatedRouteSnapshot): boolean {
     const expectedRoles: string[] = route.data.expectedRoles;
     if (!expectedRoles.includes(this.authService.getRole()) && this.authService.isLoggedIn()) {
-      this.router.navigate(['./feed']);
+      this.router.navigate(['./products']);
       return false;
     }
     if (!this.authService.isLoggedIn() && expectedRoles.length > 0) {
