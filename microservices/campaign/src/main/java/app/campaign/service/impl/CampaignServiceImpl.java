@@ -1,6 +1,7 @@
 package app.campaign.service.impl;
 
 import app.campaign.dto.CampaignDTO;
+import app.campaign.dto.DetailsDTO;
 import app.campaign.model.AgeGroup;
 import app.campaign.model.Campaign;
 import app.campaign.model.RepeatedCampaignDetails;
@@ -41,11 +42,26 @@ public class CampaignServiceImpl implements CampaignService {
         if(campaign == null)
             return;
         if(!campaign.getAgentUsername().equals(agent))
-            throw new Exception("You can't delete campaign that is not yours");
+            throw new Exception("You can't delete a campaign that is not yours");
         if(campaign.started())
             throw new Exception("Campaign has started");
         mediaService.delete(campaign.getMediaId());
         campaignRepository.delete(campaign);
+    }
+
+    @Override
+    public void update(long id, DetailsDTO dto, String agent) throws Exception {
+        Campaign campaign = campaignRepository.findById(id).orElse(null);
+        if(campaign == null)
+            return;
+        if(!campaign.getAgentUsername().equals(agent))
+            throw new Exception("You can't change a campaign that is not yours");
+        if(!campaign.isRepeated())
+            throw new Exception("You can't change a one-time campaign");
+        if(campaign.ended())
+            throw new Exception("You can't change a campaign that has ended");
+        campaign.addDetails(createDetails(dto));
+        campaignRepository.save(campaign);
     }
 
     private Campaign createCampaign(CampaignDTO dto, String agent) throws Exception {
@@ -60,7 +76,7 @@ public class CampaignServiceImpl implements CampaignService {
         campaign.setMediaId(dto.getMediaId());
         campaign.setTargetGroup(createTargetGroup(dto));
 
-        RepeatedCampaignDetails details = createDetails(dto);
+        RepeatedCampaignDetails details = createDetails(dto.getDetails());
         if(details != null) {
             LocalDateTime time = campaign.getStart();
             time.with(LocalTime.MIDNIGHT);
@@ -71,13 +87,13 @@ public class CampaignServiceImpl implements CampaignService {
         return campaign;
     }
 
-    private RepeatedCampaignDetails createDetails(CampaignDTO dto) throws Exception {
-        if(dto.getDetails() == null)
+    private RepeatedCampaignDetails createDetails(DetailsDTO dto) throws Exception {
+        if(dto == null)
             return null;
         RepeatedCampaignDetails details = new RepeatedCampaignDetails();
         details.setCreated(LocalDateTime.now());
-        details.setEndDate(dto.getDetails().getEndDate());
-        details.setTimesPerDay(dto.getDetails().getTimesPerDay());
+        details.setEndDate(dto.getEndDate());
+        details.setTimesPerDay(dto.getTimesPerDay());
         return details;
     }
 

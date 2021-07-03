@@ -1,6 +1,7 @@
 package app.campaign.model;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -118,5 +119,17 @@ public class Campaign {
 
 	public boolean started() {
 		return start.isBefore(LocalDateTime.now());
+	}
+
+	public boolean ended() {
+		if(isRepeated() && getActiveDetails().getEndDate().isBefore(LocalDate.now()))
+			return true;
+		if(!isRepeated() && started())
+			return true;
+		return false;
+	}
+
+	public boolean active() {
+		return started() && !ended();
 	}
 }
