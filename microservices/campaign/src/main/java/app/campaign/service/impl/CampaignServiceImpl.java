@@ -76,6 +76,24 @@ public class CampaignServiceImpl implements CampaignService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public boolean shouldDisplayMedia(long mediaId) {
+        Campaign campaign = campaignRepository.findAll().stream()
+                .filter(c -> c.getMediaId() == mediaId).findFirst().orElse(null);
+        if(campaign == null)
+            return false;
+        if(campaign.active())
+            return true;
+        return false;
+    }
+
+    @Override
+    public boolean isPartOfCampaign(long mediaId) {
+        return campaignRepository.findAll().stream()
+                .filter(c -> c.getMediaId() == mediaId)
+                .findFirst().isPresent();
+    }
+
     private Campaign createCampaign(CampaignDTO dto, String agent) throws Exception {
         if(!mediaService.exists(dto.getMediaId()))
             throw new Exception("Media content not created properly");

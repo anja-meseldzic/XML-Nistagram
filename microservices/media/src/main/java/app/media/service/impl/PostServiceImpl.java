@@ -12,6 +12,7 @@ import app.media.model.Favourites;
 import app.media.model.Post;
 import app.media.model.Rating;
 import app.media.model.RatingType;
+import app.media.service.CampaignService;
 import app.media.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,14 +35,16 @@ public class PostServiceImpl implements PostService {
 	private ProfileService profileService;
 	private FavouritesRepository favouritesRepository;
 	private CollectionRepository collectionRepository;
+	private CampaignService campaignService;
 
 	@Autowired
 	public PostServiceImpl(PostRepository postRepository, ProfileService profileService, FavouritesRepository favRepo,
-			CollectionRepository collectionRepository) {
+			CollectionRepository collectionRepository, CampaignService campaignService) {
 		this.postRepository = postRepository;
 		this.profileService = profileService;
 		this.favouritesRepository = favRepo;
 		this.collectionRepository = collectionRepository;
+		this.campaignService = campaignService;
 
 	}
 
@@ -135,7 +138,6 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public List<SearchResultDTO> search(String requestedBy, String criterion) {
-		System.out.println("USERNAME FROM TOKEN: " + requestedBy);
 		List<SearchResultDTO> result = new ArrayList<>();
 		for (String location : getAllLocations(requestedBy))
 			if (location.contains(criterion.toLowerCase()))
@@ -151,27 +153,29 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public List<PostInfoDTO> getAllWithLocation(String requestedBy, String location) {
-		System.out.println("USERNAME FROM TOKEN: " + requestedBy);
-		return postRepository.findAll().stream()
+		List<Post> posts = postRepository.findAll().stream()
 				.filter(p -> (profileService.isPublic(p.getMedia().getUsername())
 						|| p.getMedia().getUsername().equals(requestedBy)
 						|| (profileService.getFollowing(p.getMedia().getUsername()).contains(requestedBy)
 								&& !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername())))
 						&& p.getLocation() != null && location.toLowerCase().equals(p.getLocation().toLowerCase()))
-				.map(p -> toPostInfoDTO(p)).collect(Collectors.toList());
+				.collect(Collectors.toList());
+		posts = syncWithCampaigns(posts);
+		return posts.stream().map(p -> toPostInfoDTO(p)).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<PostInfoDTO> getAllWithHashtag(String requestedBy, String hashtag) {
-		System.out.println("USERNAME FROM TOKEN: " + requestedBy);
-		return postRepository.findAll().stream()
+		List<Post> posts = postRepository.findAll().stream()
 				.filter(p -> (profileService.isPublic(p.getMedia().getUsername())
 						|| p.getMedia().getUsername().equals(requestedBy)
 						|| (profileService.getFollowing(p.getMedia().getUsername()).contains(requestedBy)
 								&& !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername())))
 						&& p.getTags() != null
 						&& p.getTags().stream().filter(t -> hashtag.toLowerCase().equals(t.toLowerCase())).count() > 0)
-				.map(p -> toPostInfoDTO(p)).collect(Collectors.toList());
+				.collect(Collectors.toList());
+		posts = syncWithCampaigns(posts);
+		return posts.stream().map(p -> toPostInfoDTO(p)).collect(Collectors.toList());
 	}
 
 	@Override
@@ -184,7 +188,7 @@ public class PostServiceImpl implements PostService {
 								&& !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername())))
 						&& p.getId() == postId)
 				.findFirst().orElse(null);
-		if (post == null)
+		if (post == null || !campaignService.shouldDispaly(post.getMedia().getId()))
 			throw new PostDoesNotExistException();
 		return toPostInfoDTO(post);
 	}
@@ -241,8 +245,10 @@ public class PostServiceImpl implements PostService {
 	}
 
 	private List<PostInfoDTO> getForProfile(String profile) {
-		return postRepository.findAll().stream().filter(p -> p.getMedia().getUsername().equals(profile))
-				.map(p -> toPostInfoDTO(p)).collect(Collectors.toList());
+		List<Post> posts = postRepository.findAll().stream().filter(p -> p.getMedia().getUsername().equals(profile))
+							.collect(Collectors.toList());
+		posts = syncWithCampaigns(posts);
+		return posts.stream().map(p -> toPostInfoDTO(p)).collect(Collectors.toList());
 	}
 
 	private PostInfoDTO toPostInfoDTO(Post post) {
@@ -320,4 +326,14 @@ public class PostServiceImpl implements PostService {
 		return dto;
 	}
 
+	private List<Post> syncWithCampaigns(List<Post> posts) {
+		List<Post> result = new ArrayList<>();
+		for(Post post : posts) {
+			if(!campaignService.isPartOfCampaign(post.getMedia().getId()))
+				result.add(post);
+			else if(campaignService.shouldDispaly(post.getMedia().getId()))
+				result.add(post);
+		}
+		return result;
+	}
 }

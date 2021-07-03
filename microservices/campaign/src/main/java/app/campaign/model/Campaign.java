@@ -124,7 +124,7 @@ public class Campaign {
 	public boolean ended() {
 		if(isRepeated() && getActiveDetails().getEndDate().isBefore(LocalDate.now()))
 			return true;
-		if(!isRepeated() && started())
+		if(!isRepeated() && started() && start.plusHours(24).isAfter(LocalDateTime.now()))
 			return true;
 		return false;
 	}

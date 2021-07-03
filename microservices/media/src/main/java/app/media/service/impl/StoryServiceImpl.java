@@ -3,8 +3,10 @@ package app.media.service.impl;
 import app.media.dtos.StoryInfoDTO;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
+import app.media.model.Post;
 import app.media.model.Story;
 import app.media.repository.StoryRepository;
+import app.media.service.CampaignService;
 import app.media.service.ProfileService;
 import app.media.service.StoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,13 @@ public class StoryServiceImpl implements StoryService {
 
 	private StoryRepository storyRepository;
 	private ProfileService profileService;
+	private CampaignService campaignService;
 
 	@Autowired
-	public StoryServiceImpl(StoryRepository storyRepository, ProfileService profileService) {
+	public StoryServiceImpl(StoryRepository storyRepository, ProfileService profileService, CampaignService campaignService) {
 		this.storyRepository = storyRepository;
 		this.profileService = profileService;
+		this.campaignService = campaignService;
 	}
 
 	@Override
@@ -76,6 +80,8 @@ public class StoryServiceImpl implements StoryService {
 						&& (!p.isCloseFriends() || profile.equals(requestedBy)
 								|| profileService.getCloseFriends(profile).contains(requestedBy)))
 				.collect(Collectors.toList());
+		stories = syncWithCampaigns(stories);
+		stories.addAll(addInactiveFromCampaigns(profile));
 		stories.forEach(s -> s.getMedia().getPath().forEach(url -> result.add(toStoryInfoDTO(s, url))));
 
 		result.sort((r1, r2) -> r1.getCreated().isBefore(r2.getCreated()) ? 1 : -1);
@@ -97,6 +103,7 @@ public class StoryServiceImpl implements StoryService {
 		List<StoryInfoDTO> result = new ArrayList<StoryInfoDTO>();
 		List<Story> stories = storyRepository.findAll().stream()
 				.filter(s -> s.getMedia().getUsername().equals(username)).collect(Collectors.toList());
+		stories = syncWithCampaigns(stories);
 		stories.forEach(s -> s.getMedia().getPath().forEach(url -> result.add(toStoryInfoDTO(s, url))));
 		return result;
 	}
@@ -115,5 +122,24 @@ public class StoryServiceImpl implements StoryService {
 		Story story= storyRepository.findById(dto.getId()).get();
 		story.setHighlighted(true);
 		storyRepository.save(story);
+	}
+
+	private List<Story> syncWithCampaigns(List<Story> stories) {
+		List<Story> result = new ArrayList<>();
+		for(Story story : stories) {
+			if(!campaignService.isPartOfCampaign(story.getMedia().getId()))
+				result.add(story);
+			else if(campaignService.shouldDispaly(story.getMedia().getId()))
+				result.add(story);
+		}
+		return result;
+	}
+
+	private List<Story> addInactiveFromCampaigns(String user) {
+		return storyRepository.findAll().stream().filter(s -> s.getMedia().getUsername().equals(user))
+				.filter(s -> !s.isActive())
+				.filter(s -> campaignService.isPartOfCampaign(s.getMedia().getId()))
+				.filter(s -> campaignService.shouldDispaly(s.getMedia().getId()))
+				.collect(Collectors.toList());
 	}
 }

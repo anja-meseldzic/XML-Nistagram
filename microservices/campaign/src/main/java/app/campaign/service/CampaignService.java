@@ -14,4 +14,8 @@ public interface CampaignService {
     void update(long id, DetailsDTO dto, String agent) throws Exception;
 
     List<CampaignDTO> get(String agent);
+
+    boolean shouldDisplayMedia(long mediaId);
+
+    boolean isPartOfCampaign(long mediaId);
 }
