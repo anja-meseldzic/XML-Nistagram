@@ -18,6 +18,10 @@ export class LandingPageComponent implements OnInit {
     this.router.navigate(['/registration']);
   }
 
+  registrationAgent(): void {
+    this.router.navigate(['/registration-agent']);
+  }
+
   login(): void {
     this.router.navigate(['/login']);
   }

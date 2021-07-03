@@ -17,9 +17,11 @@ import { DislikedDataComponent } from './microservices/components/disliked-data/
 import { NotificationSettingsComponent } from './microservices/components/notification-settings/notification-settings.component';
 import { NotificationsComponent } from './microservices/components/notifications/notifications.component';
 import { InappropriateContentComponent } from './microservices/components/inappropriate-content/inappropriate-content.component';
+import { RegisterAgentComponent } from './microservices/auth-service/register-agent/register-agent.component';
 
 const routes: Routes = [
   {path: 'registration', component: RegistrationComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
+  {path: 'registration-agent', component: RegisterAgentComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
   {path: 'personal-edit', component: PersonalInfoEditComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
   {path: 'profile-config', component: ProfileConfigComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
   {path: 'login', component: LoginComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
