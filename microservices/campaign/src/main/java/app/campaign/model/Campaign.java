@@ -1,10 +1,11 @@
 package app.campaign.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.apache.tomcat.jni.Local;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.Set;
 
 
 @Entity
@@ -14,17 +15,23 @@ public class Campaign {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	@Column(name = "profileId", nullable = false)
-	private long profileId;
+	@Column(name = "agentUsername", nullable = false)
+	private String agentUsername;
 	
 	@Column(name = "mediaId", nullable = false)
 	private long mediaId;
 
-	@Column(name = "mediaType", nullable = false)
-	private MediaType mediaType;
-
 	@Column(name = "link", nullable = false)
 	private String link;
+
+	@Column(name = "start", nullable = false)
+	private LocalDateTime start;
+
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private TargetGroup targetGroup;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<RepeatedCampaignDetails> details;
 
 	public Campaign() {
 		super();
@@ -38,12 +45,12 @@ public class Campaign {
 		this.id = id;
 	}
 
-	public long getProfileId() {
-		return profileId;
+	public String getAgentUsername() {
+		return agentUsername;
 	}
 
-	public void setProfileId(long profileId) {
-		this.profileId = profileId;
+	public void setAgentUsername(String agentUsername) {
+		this.agentUsername = agentUsername;
 	}
 
 	public long getMediaId() {
@@ -62,11 +69,39 @@ public class Campaign {
 		this.link = link;
 	}
 
-	public MediaType getMediaType() {
-		return mediaType;
+	public LocalDateTime getStart() {
+		return start;
 	}
 
-	public void setMediaType(MediaType mediaType) {
-		this.mediaType = mediaType;
+	public void setStart(LocalDateTime start) {
+		this.start = start;
 	}
+
+	public TargetGroup getTargetGroup() {
+		return targetGroup;
+	}
+
+	public void setTargetGroup(TargetGroup targetGroup) {
+		this.targetGroup = targetGroup;
+	}
+
+	public Set<RepeatedCampaignDetails> getDetails() {
+		return details;
+	}
+
+	public void setDetails(Set<RepeatedCampaignDetails> details) {
+		this.details = details;
+	}
+
+	public boolean isRepeated() {
+		return details != null;
+	}
+
+	public RepeatedCampaignDetails getActiveDetails() {
+		return details.stream()
+				.filter(d -> d.applicable())
+				.max(Comparator.comparing(c -> c.getCreated()))
+				.orElse(null);
+	}
+
 }

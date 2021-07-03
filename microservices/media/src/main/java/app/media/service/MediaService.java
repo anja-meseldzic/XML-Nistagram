@@ -27,9 +27,9 @@ public interface MediaService {
 
 	void createStory(MultipartFile file, boolean closeFriends, String username) throws  IOException;
 
-	void createAlbumAsPost(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws  IOException;
+	long createAlbumAsPost(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws  IOException;
 
-	void createAlbumAsStory(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws  IOException;
+	long createAlbumAsStory(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws  IOException;
 
 	void postComment(CommentDTO dto, String username) throws PostDoesNotExistException;
 
