@@ -61,4 +61,8 @@ export class AppComponent {
   public inappropriateContent(){
     this.router.navigate(['../inappropriate-content']);
   }
+  public agentRequests(){
+    this.router.navigate(['../agent-requests']);
+
+  }
 }

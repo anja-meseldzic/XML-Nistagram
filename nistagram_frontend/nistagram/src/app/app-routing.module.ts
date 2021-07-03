@@ -18,6 +18,7 @@ import { NotificationSettingsComponent } from './microservices/components/notifi
 import { NotificationsComponent } from './microservices/components/notifications/notifications.component';
 import { InappropriateContentComponent } from './microservices/components/inappropriate-content/inappropriate-content.component';
 import { RegisterAgentComponent } from './microservices/auth-service/register-agent/register-agent.component';
+import { AgentRequestsComponent } from './microservices/components/agent-requests/agent-requests.component';
 
 const routes: Routes = [
   {path: 'registration', component: RegistrationComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
@@ -33,6 +34,7 @@ const routes: Routes = [
   {path: 'verify-profile', component: VerifyAccountComponent},
   {path: 'verification-requests', component: VerificationRequestsComponent},
   {path: 'inappropriate-content', component: InappropriateContentComponent},
+  {path: 'agent-requests', component: AgentRequestsComponent},
   {path: 'likedData', component: LikedDataComponent},
   {path: 'dislikedData', component: DislikedDataComponent},
   {path: 'settings/notifications', component: NotificationSettingsComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},

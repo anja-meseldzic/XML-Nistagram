@@ -5,6 +5,7 @@ import jwtDecode from 'jwt-decode';
 import { Router } from '@angular/router';
 import { AgentDTO } from '../DTOs/agent-dto';
 import {environment} from '../../../environments/environment';
+import { AgentRequestDTO } from '../DTOs/agent-request-dto';
 
 
 @Injectable({
@@ -13,6 +14,7 @@ import {environment} from '../../../environments/environment';
 export class AuthService {
 
   private sendAgentRequestUrl = environment.authBaseUrl + "agent/agentRegistrationRequest";
+  private getAllAgentRequestsUrl = environment.authBaseUrl + "agent/getAllRegistrationRequests";
 
   constructor(private http: HttpClient, private router : Router) { }
 
@@ -50,4 +52,10 @@ export class AuthService {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }
+  public getAllAgentRequests() : Observable<AgentRequestDTO[]> {
+    return this.http.get<AgentRequestDTO[]>(this.getAllAgentRequestsUrl, {headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+
 }
