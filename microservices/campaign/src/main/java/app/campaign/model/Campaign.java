@@ -1,10 +1,9 @@
 package app.campaign.model;
 
-import org.apache.tomcat.jni.Local;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -73,7 +72,9 @@ public class Campaign {
 		return start;
 	}
 
-	public void setStart(LocalDateTime start) {
+	public void setStart(LocalDateTime start) throws Exception {
+		if(start.isBefore(LocalDateTime.now()))
+			throw new Exception("Campaign must start in the future");
 		this.start = start;
 	}
 
@@ -98,10 +99,20 @@ public class Campaign {
 	}
 
 	public RepeatedCampaignDetails getActiveDetails() {
+		if(details == null) return null;
 		return details.stream()
 				.filter(d -> d.applicable())
 				.max(Comparator.comparing(c -> c.getCreated()))
 				.orElse(null);
 	}
 
+	public void addDetails(RepeatedCampaignDetails newDetails) throws Exception {
+		if(newDetails == null)
+			return;
+		if(newDetails.getEndDate().isBefore(start.toLocalDate()))
+			throw new Exception("End date must be after start date");
+		if(details == null)
+			details = new HashSet<>();
+		details.add(newDetails);
+	}
 }

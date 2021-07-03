@@ -44,7 +44,9 @@ public class RepeatedCampaignDetails {
         return timesPerDay;
     }
 
-    public void setTimesPerDay(int timesPerDay) {
+    public void setTimesPerDay(int timesPerDay) throws Exception {
+        if(timesPerDay > 5)
+            throw new Exception("Campaign can occur up to 5 times per day");
         this.timesPerDay = timesPerDay;
     }
 
