@@ -29,7 +29,7 @@ public class AgentController {
 	}
 	
 	 @PostMapping(value = "agentRegistrationRequest")
-	 public ResponseEntity<String> sendRegistrationRequest(@RequestBody AgentDTO agentRequest) {
+	 public ResponseEntity<String> sendRegistrationRequest(@RequestBody AgentDTO agentRequest, @RequestHeader("Authorization") String auth) {
 		 String message = agentService.sendRegistrationRequest(agentRequest);
 		 return new ResponseEntity<>(message, HttpStatus.OK);
 	    
@@ -65,4 +65,13 @@ public class AgentController {
 			agentService.rejectRegistration(idOfRequest);
 			return new ResponseEntity<>("ok", HttpStatus.OK);
 	}
+	
+	 @PostMapping(value = "registerAgent")
+	 public ResponseEntity<String> registerAgentByAdmin(@RequestBody AgentDTO agentRequest, @RequestHeader("Authorization") String auth) {
+		 if(!TokenUtils.verify(auth, "ADMIN"))
+	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		 String message = agentService.registerAgentByAdmin(agentRequest);
+		 return new ResponseEntity<>(message, HttpStatus.OK);
+	    
+	 }
 }

@@ -15,4 +15,6 @@ public interface AgentService {
 
 	void rejectRegistration(Long idOfRequest);
 
+	String registerAgentByAdmin(AgentDTO agentRequest);
+
 }
