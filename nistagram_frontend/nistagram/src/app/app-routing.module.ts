@@ -19,10 +19,12 @@ import { NotificationsComponent } from './microservices/components/notifications
 import { InappropriateContentComponent } from './microservices/components/inappropriate-content/inappropriate-content.component';
 import { RegisterAgentComponent } from './microservices/auth-service/register-agent/register-agent.component';
 import { AgentRequestsComponent } from './microservices/components/agent-requests/agent-requests.component';
+import { RegisterAgentAdminComponent } from './microservices/components/register-agent-admin/register-agent-admin.component';
 
 const routes: Routes = [
   {path: 'registration', component: RegistrationComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
   {path: 'registration-agent', component: RegisterAgentComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
+  {path: 'registration-agent-admin', component: RegisterAgentAdminComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['ADMIN']}},
   {path: 'personal-edit', component: PersonalInfoEditComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
   {path: 'profile-config', component: ProfileConfigComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
   {path: 'login', component: LoginComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},

@@ -44,9 +44,10 @@ import { NotificationsComponent } from './components/notifications/notifications
 import { InappropriateContentComponent } from './components/inappropriate-content/inappropriate-content.component';
 import { RegisterAgentComponent } from './auth-service/register-agent/register-agent.component';
 import { AgentRequestsComponent } from './components/agent-requests/agent-requests.component';
+import { RegisterAgentAdminComponent } from './components/register-agent-admin/register-agent-admin.component';
 
 @NgModule({
-  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, ProfileConfigComponent, VerifyAccountComponent, VerificationRequestsComponent, RatingsDialogComponent, LikedDataComponent, DislikedDataComponent, ReportDialogComponent, NotificationSettingsComponent, NotificationsComponent, InappropriateContentComponent, RegisterAgentComponent, AgentRequestsComponent],
+  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, ProfileConfigComponent, VerifyAccountComponent, VerificationRequestsComponent, RatingsDialogComponent, LikedDataComponent, DislikedDataComponent, ReportDialogComponent, NotificationSettingsComponent, NotificationsComponent, InappropriateContentComponent, RegisterAgentComponent, AgentRequestsComponent, RegisterAgentAdminComponent],
   imports: [
     CommonModule,
     MicroservicesRoutingModule,

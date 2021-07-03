@@ -17,6 +17,7 @@ export class AuthService {
   private getAllAgentRequestsUrl = environment.authBaseUrl + "agent/getAllRegistrationRequests";
   private acceptRegistrationUrl = environment.authBaseUrl + "agent/acceptRegistration";
   private rejectRegistrationUrl = environment.authBaseUrl + "agent/rejectRegistration";
+  private registerAgentByAdminUrl = environment.authBaseUrl + "agent/registerAgent";
 
   constructor(private http: HttpClient, private router : Router) { }
 
@@ -66,6 +67,12 @@ export class AuthService {
   }
   public acceptRegistration(data : number) {
     return this.http.post(this.acceptRegistrationUrl, data, {responseType: 'text',headers : {
+      Authorization: 'Bearer ' + localStorage.getItem('jwt')
+    }});
+  }
+
+  public registerAgentByAdmin(data : AgentDTO) {
+    return this.http.post(this.registerAgentByAdminUrl, data, {responseType: 'text',headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
   }

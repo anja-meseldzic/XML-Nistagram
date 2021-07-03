@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {Router} from '@angular/router';
+import { AuthService } from '../../auth-service/auth.service';
 import { AgentDTO } from '../../DTOs/agent-dto';
-import { AuthService } from '../auth.service';
-
 
 @Component({
-  selector: 'app-register-agent',
-  templateUrl: './register-agent.component.html',
-  styleUrls: ['./register-agent.component.css']
+  selector: 'app-register-agent-admin',
+  templateUrl: './register-agent-admin.component.html',
+  styleUrls: ['./register-agent-admin.component.css']
 })
-export class RegisterAgentComponent implements OnInit {
+export class RegisterAgentAdminComponent implements OnInit {
 
   name = '';
   lastName = '';
@@ -23,10 +22,11 @@ export class RegisterAgentComponent implements OnInit {
   username = '';
   password = '';
 
+
   constructor(private _snackBar: MatSnackBar, private router: Router, private authService : AuthService) { }
 
   ngOnInit(): void {
-
+   
   }
 
   register(): void {
@@ -47,7 +47,7 @@ export class RegisterAgentComponent implements OnInit {
       return;
     }
 
-    this.authService.sendAgentRegistrationRequest(new AgentDTO(this.name, this.lastName, this.gender, this.email, this.phoneNumber,
+    this.authService.registerAgentByAdmin(new AgentDTO(this.name, this.lastName, this.gender, this.email, this.phoneNumber,
       this.birthDate + 'T00:00:00.123Z', this.website, this.biography, this.username, this.password)).subscribe(
      (data) => {      
        let message = data;
@@ -56,12 +56,12 @@ export class RegisterAgentComponent implements OnInit {
   error => {
     this.openSnackBar(error.error, "Okay");
   } );
-
+   
   }
 
-
+  
   cancel(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['../agent-requests']);
   }
 
   validateRequiredFields(): boolean {
@@ -79,4 +79,5 @@ export class RegisterAgentComponent implements OnInit {
       duration: 5000,
     });
   }
+
 }

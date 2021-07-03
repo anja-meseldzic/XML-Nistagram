@@ -116,4 +116,28 @@ public class AgentServiceImpl implements AgentService{
 		agentRegistrationRequestRepository.save(agentRequest);
 		
 	}
+
+	@Override
+	public String registerAgentByAdmin(AgentDTO agentRequest) {
+		for(User user : userRepository.findAll()) {
+			if(user.getUsername().equals(agentRequest.getUsername()))
+				return "This username is already taken.";
+		}
+		RegularUser newUser = new RegularUser();
+		
+		newUser.setName(agentRequest.getName());
+		newUser.setSurname(agentRequest.getSurname());
+		newUser.setGender(agentRequest.getGender());
+		newUser.setEmail(agentRequest.getEmail());
+		newUser.setPhoneNumber(agentRequest.getPhoneNumber());
+		newUser.setBirthDate(agentRequest.getBirthDate());
+		newUser.setWebsite(agentRequest.getWebsite());
+		newUser.setBiography(agentRequest.getBiography());
+		newUser.setUser(new User(agentRequest.getUsername(), PasswordUtil.hashPBKDF2(agentRequest.getPassword()), Role.AGENT));
+		
+		regularUserRepository.save(newUser);
+		profileClient.createFromUser(newUser.getUser().getUsername());
+		
+		return "You have successfully created new agent";
+	}
 }

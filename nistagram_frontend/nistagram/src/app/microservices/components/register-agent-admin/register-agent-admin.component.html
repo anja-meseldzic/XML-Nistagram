@@ -1,0 +1,52 @@
+<div class="bg" style="background-image: url(assets/insta.jpg); background-size: cover; height: 100%; display: flex; justify-content:right;">
+    <div class="m-4" style="background-color: ghostwhite; width: 30%; padding: 20px; border-radius: 3%">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="First Name" [(ngModel)]="name">
+      </div>
+  
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Last Name" [(ngModel)]="lastName">
+      </div>
+  
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Email" [(ngModel)]="email">
+      </div>
+  
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Phone Number" [(ngModel)]="phoneNumber">
+      </div>
+  
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Website URL" [(ngModel)]="website">
+      </div>
+  
+      <div class="input-group mb-3">
+        <textarea class="form-control" placeholder="Biography" [(ngModel)]="biography"></textarea>
+      </div>
+  
+      <div class="input-group mb-3">
+        <label class="mr-2 mt-2">Date of Birth</label>
+        <input type="date" class="form-control" [(ngModel)]="birthDate"/>
+      </div>
+  
+      <div class="input-group mb-3">
+        <select class="form-control" [(ngModel)]="gender">
+          <option disabled selected>Select gender</option>
+          <option>MALE</option>
+          <option>FEMALE</option>
+          <option>OTHER</option>
+        </select>
+      </div>
+  
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="username" [(ngModel)]="username"/>
+      </div>
+  
+      <div class="input-group mb-3">
+        <input type="password" class="form-control" placeholder="password" [(ngModel)]="password"/>
+      </div>
+      <button class="btn btn-success m-1" (click)="register()">Register</button>
+      <button class="btn btn-danger" (click)="cancel()">Cancel</button>
+    </div>
+  </div>
+  
