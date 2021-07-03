@@ -4,5 +4,7 @@ import app.campaign.dto.CampaignDTO;
 
 public interface CampaignService {
 
-    void Create(CampaignDTO dto, String agent) throws Exception;
+    void create(CampaignDTO dto, String agent) throws Exception;
+
+    void delete(long id, String agent) throws Exception;
 }

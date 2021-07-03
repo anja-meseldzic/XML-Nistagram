@@ -30,9 +30,22 @@ public class CampaignServiceImpl implements CampaignService {
     }
 
     @Override
-    public void Create(CampaignDTO dto, String agent) throws Exception {
+    public void create(CampaignDTO dto, String agent) throws Exception {
         Campaign campaign = createCampaign(dto, agent);
         campaignRepository.save(campaign);
+    }
+
+    @Override
+    public void delete(long id, String agent) throws Exception {
+        Campaign campaign = campaignRepository.findById(id).orElse(null);
+        if(campaign == null)
+            return;
+        if(!campaign.getAgentUsername().equals(agent))
+            throw new Exception("You can't delete campaign that is not yours");
+        if(campaign.started())
+            throw new Exception("Campaign has started");
+        mediaService.delete(campaign.getMediaId());
+        campaignRepository.delete(campaign);
     }
 
     private Campaign createCampaign(CampaignDTO dto, String agent) throws Exception {

@@ -6,10 +6,7 @@ import app.campaign.service.CampaignService;
 import app.campaign.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -26,13 +23,26 @@ public class CampaignController {
     }
 
     @PostMapping
-    public void Create(CampaignDTO dto, @RequestHeader("Authorization") String auth) {
+    public void create(@RequestBody CampaignDTO dto, @RequestHeader("Authorization") String auth) {
         if(!authService.verify(auth, "AGENT"))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         String token = TokenUtils.getToken(auth);
         String username = authService.getUsernameFromToken(token);
         try {
-            campaignService.Create(dto, username);
+            campaignService.create(dto, username);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @DeleteMapping(value = "{id}")
+    public void delete(@PathVariable("id") long id, @RequestHeader("Authorization") String auth) {
+        if(!authService.verify(auth, "AGENT"))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        String token = TokenUtils.getToken(auth);
+        String username = authService.getUsernameFromToken(token);
+        try {
+            campaignService.delete(id, username);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }

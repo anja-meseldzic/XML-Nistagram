@@ -115,4 +115,8 @@ public class Campaign {
 			details = new HashSet<>();
 		details.add(newDetails);
 	}
+
+	public boolean started() {
+		return start.isBefore(LocalDateTime.now());
+	}
 }
