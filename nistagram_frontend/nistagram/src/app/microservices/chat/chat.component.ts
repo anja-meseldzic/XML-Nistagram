@@ -18,6 +18,7 @@ export class ChatComponent implements OnInit {
   peerChosen: boolean;
   txtMessage: string;
   messages = [];
+  selectedFile: any = null;
   months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUN', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
 
 
@@ -81,7 +82,7 @@ export class ChatComponent implements OnInit {
   choosePeer = () => {
     this.peerChosen = true;
     axios
-      .get(environment.messageBaseUrl + 'messages/' + this.peer, {
+      .get(environment.messageBaseUrl + 'messages/' + this.authService.getUsername() + '/' + this.peer, {
         headers : {
           Authorization: 'Bearer ' + localStorage.getItem('jwt')
         }
@@ -97,6 +98,10 @@ export class ChatComponent implements OnInit {
         });
         this.messages = res.data.sort((a, b) => (a.date.nano > b.date.nano) ? 1 : ((a.date.nano < b.date.nano) ? -1 : 0));;
       });
+  }
+
+  onFileSelected(event: any): void {
+    this.selectedFile = <File> event.target.files[0];
   }
 
 

@@ -26,6 +26,7 @@
             <input type="text" class="write_msg" placeholder="Type a message" [(ngModel)]="txtMessage" [disabled]="!peerChosen"/>
             <button class="msg_send_btn" type="button" (click)="sendTextMessage()" [disabled]="!peerChosen">Send</button>
           </div>
+          <input type="file" accept=".jpg, .png" (change)="onFileSelected($event)"/>
         </div>
       </div>
     </div>
