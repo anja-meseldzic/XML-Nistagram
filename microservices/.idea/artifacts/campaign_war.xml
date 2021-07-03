@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="campaign:war">
+    <output-path>$PROJECT_DIR$/campaign/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>campaign</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="campaign-0.0.1-SNAPSHOT.war">
+      <element id="artifact" artifact-name="campaign:war exploded" />
+    </root>
+  </artifact>
+</component>
