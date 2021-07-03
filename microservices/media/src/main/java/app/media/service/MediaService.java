@@ -54,4 +54,8 @@ public interface MediaService {
 	void approveInappropriateContent(InappropriateListDTO content);
 
 	void deleteInappropriateContent(InappropriateListDTO content);
+
+	void delete(long id);
+
+	boolean exists(long id);
 }

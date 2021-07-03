@@ -280,4 +280,14 @@ public class MediaController {
 		mediaService.deleteInappropriateContent(content);
 		return new ResponseEntity<>("ok", HttpStatus.OK);
 	}
+
+	@DeleteMapping(value = "{id}")
+	public void delete(@PathVariable("id") long id) {
+    	mediaService.delete(id);
+	}
+
+	@PostMapping(value = "{id}")
+	public boolean exists(@PathVariable("id") long id) {
+    	return mediaService.exists(id);
+	}
 }

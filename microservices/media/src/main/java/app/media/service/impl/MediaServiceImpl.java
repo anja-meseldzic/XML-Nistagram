@@ -463,4 +463,21 @@ public class MediaServiceImpl implements MediaService{
 		mediaRepository.delete(media);
 		
 	}
+
+	public void delete(long id) {
+		Post post = postRepository.findAll().stream().filter(p -> p.getMedia().getId() == id)
+				.findFirst().orElse(null);
+		if(post != null) {
+			postRepository.delete(post);
+			return;
+		}
+		Story story = storyRepository.findAll().stream().filter(s -> s.getMedia().getId() == id)
+				.findFirst().orElse(null);
+		if(story != null)
+			storyRepository.delete(story);
+	}
+
+	public boolean exists(long id) {
+		return mediaRepository.findById(id).isPresent();
+	}
 }
