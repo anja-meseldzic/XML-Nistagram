@@ -11,4 +11,8 @@ public interface AgentService {
 
 	List<AgentRequestDTO> getAllAgentRequests();
 
+	void acceptRegistration(Long idOfRequest);
+
+	void rejectRegistration(Long idOfRequest);
+
 }

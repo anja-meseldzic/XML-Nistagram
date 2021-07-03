@@ -24,6 +24,7 @@ export class PersonalInfoEditComponent implements OnInit {
   gender = 'Select gender';
   username: string;
   originalUsername: string;
+  public role : string;
 
   // tslint:disable-next-line:variable-name
   constructor(private _snackBar: MatSnackBar, private router: Router) { }
@@ -36,7 +37,10 @@ export class PersonalInfoEditComponent implements OnInit {
     }
     const jwtDec = jwtDecode(jwt);
     // @ts-ignore
-    if (jwtDec.role !== 'USER') {
+    this.role = jwtDec.role;
+
+    // @ts-ignore
+    if (jwtDec.role == 'ADMIN') {
       this.router.navigate(['/unauthorized']);
       return;
     }
@@ -97,7 +101,7 @@ export class PersonalInfoEditComponent implements OnInit {
         user : {
           id : this.userId,
           username : this.originalUsername,
-          role : 'USER'
+          role : this.role
         }
       }, {
         headers : {

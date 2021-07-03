@@ -5,7 +5,9 @@ import org.springframework.stereotype.Repository;
 
 import app.auth.model.AgentRegistrationRequest;
 
+
 @Repository
 public interface AgentRegistrationRequestRepository extends JpaRepository<AgentRegistrationRequest, Long> {
 
+	AgentRegistrationRequest findOneById(long id);
 }

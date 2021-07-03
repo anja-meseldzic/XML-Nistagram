@@ -33,7 +33,7 @@ public class RegularUserController {
 
     @PostMapping(value = "/update")
     public ResponseEntity<Void> update(@RequestHeader("Authorization") String auth, @RequestBody RegularUser user) {
-        if(!TokenUtils.verify(auth, "USER"))
+        if(!TokenUtils.verify(auth, "USER", "AGENT"))
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         service.update(user);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -41,7 +41,7 @@ public class RegularUserController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<RegularUser> getRegularUser(@RequestHeader("Authorization") String auth, @PathVariable long id) {
-        if(!TokenUtils.verify(auth, "USER", "ADMIN"))
+        if(!TokenUtils.verify(auth, "USER", "ADMIN", "AGENT"))
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         RegularUser user;
         try {

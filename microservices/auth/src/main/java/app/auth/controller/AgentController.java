@@ -43,5 +43,26 @@ public class AgentController {
 			List<AgentRequestDTO> agents = agentService.getAllAgentRequests();
 			return new ResponseEntity<>(agents, HttpStatus.OK);
 		}
-	
+	 
+	@PostMapping(value = "acceptRegistration")
+	public ResponseEntity<String> acceptRegistration(@RequestBody Long idOfRequest,  @RequestHeader("Authorization") String auth)
+		{
+			if(!TokenUtils.verify(auth, "ADMIN"))
+		        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			try {
+				 agentService.acceptRegistration(idOfRequest);
+			} catch (IllegalArgumentException e) {
+	            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	        }
+			return new ResponseEntity<>("ok", HttpStatus.OK);
+	}
+		
+	@PostMapping(value = "rejectRegistration")
+	public ResponseEntity<String> rejectRegistration(@RequestBody Long idOfRequest,  @RequestHeader("Authorization") String auth)
+	{
+			if(!TokenUtils.verify(auth, "ADMIN"))
+		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			agentService.rejectRegistration(idOfRequest);
+			return new ResponseEntity<>("ok", HttpStatus.OK);
+	}
 }
