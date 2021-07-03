@@ -1,12 +1,7 @@
 package app.campaign.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,29 +17,17 @@ public class Campaign {
 	@Column(name = "profileId", nullable = false)
 	private long profileId;
 	
-	@Column(name = "pathToContent", nullable = false)
-	private String pathToContent;
-	
-	@Column(name = "typeOfContent", nullable = false)
-	private TypeOfCampaignContent typeOfContent;
-	
+	@Column(name = "mediaId", nullable = false)
+	private long mediaId;
 
-	@Column(name = "targetGroup")
-	@ElementCollection(targetClass=Long.class, fetch = FetchType.LAZY)
-	private Set<Long> targetGroup = new HashSet<Long>();
+	@Column(name = "mediaType", nullable = false)
+	private MediaType mediaType;
+
+	@Column(name = "link", nullable = false)
+	private String link;
 
 	public Campaign() {
 		super();
-	}
-	
-	public Campaign(long id, long profileId, String pathToContent, TypeOfCampaignContent typeOfContent,
-			Set<Long> targetGroup) {
-		super();
-		this.id = id;
-		this.profileId = profileId;
-		this.pathToContent = pathToContent;
-		this.typeOfContent = typeOfContent;
-		this.targetGroup = targetGroup;
 	}
 
 	public long getId() {
@@ -63,29 +46,27 @@ public class Campaign {
 		this.profileId = profileId;
 	}
 
-	public String getPathToContent() {
-		return pathToContent;
+	public long getMediaId() {
+		return mediaId;
 	}
 
-	public void setPathToContent(String pathToContent) {
-		this.pathToContent = pathToContent;
+	public void setMediaId(long mediaId) {
+		this.mediaId = mediaId;
 	}
 
-	public TypeOfCampaignContent getTypeOfContent() {
-		return typeOfContent;
+	public String getLink() {
+		return link;
 	}
 
-	public void setTypeOfContent(TypeOfCampaignContent typeOfContent) {
-		this.typeOfContent = typeOfContent;
+	public void setLink(String link) {
+		this.link = link;
 	}
 
-	public Set<Long> getTargetGroup() {
-		return targetGroup;
+	public MediaType getMediaType() {
+		return mediaType;
 	}
 
-	public void setTargetGroup(Set<Long> targetGroup) {
-		this.targetGroup = targetGroup;
+	public void setMediaType(MediaType mediaType) {
+		this.mediaType = mediaType;
 	}
-	
-	
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="notification" />
+        <module name="campaign" />
+        <module name="media" />
+        <module name="message" />
+        <module name="auth" />
+        <module name="profile" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="auth" target="1.8" />
+      <module name="campaign" target="1.8" />
+      <module name="media" target="1.8" />
+      <module name="message" target="1.8" />
+      <module name="notification" target="1.8" />
+      <module name="profile" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="auth" options="-parameters" />
+      <module name="campaign" options="-parameters" />
+      <module name="media" options="-parameters" />
+      <module name="message" options="-parameters" />
+      <module name="notification" options="-parameters" />
+      <module name="profile" options="-parameters" />
+    </option>
+  </component>
+</project>
