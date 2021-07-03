@@ -13,7 +13,7 @@ public class Message {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	
 	@Column(name = "sender", nullable = false)
 	private String sender;

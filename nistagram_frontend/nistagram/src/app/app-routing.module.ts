@@ -16,6 +16,7 @@ import { LikedDataComponent } from './microservices/components/liked-data/liked-
 import { DislikedDataComponent } from './microservices/components/disliked-data/disliked-data.component';
 import { NotificationSettingsComponent } from './microservices/components/notification-settings/notification-settings.component';
 import { NotificationsComponent } from './microservices/components/notifications/notifications.component';
+import {ChatComponent} from './microservices/chat/chat.component';
 
 const routes: Routes = [
   {path: 'registration', component: RegistrationComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
@@ -23,6 +24,7 @@ const routes: Routes = [
   {path: 'profile-config', component: ProfileConfigComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
   {path: 'login', component: LoginComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
   {path: 'feed', component: FeedComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
+  {path: 'chat', component: ChatComponent}, // TODO ADD ROLES
   {path: 'post/:id', component: PostDetailsComponent},
   {path: 'post', component: SearchResultsComponent},
   {path: 'profile/:username', component: ProfileComponent },
