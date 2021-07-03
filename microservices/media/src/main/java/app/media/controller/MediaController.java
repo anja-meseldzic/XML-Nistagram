@@ -152,7 +152,7 @@ public class MediaController {
 	}
 
     @PostMapping(value="createAlbum")
-    public ResponseEntity<Void> uploadFiles(MultipartHttpServletRequest request, @RequestHeader("Authorization") String auth) throws IOException {
+    public ResponseEntity<Long> uploadFiles(MultipartHttpServletRequest request, @RequestHeader("Authorization") String auth) throws IOException {
 		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		String token = TokenUtils.getToken(auth);
@@ -169,12 +169,10 @@ public class MediaController {
         }
 
         if(albumDTO.isPostSelected() == true) {
-        	mediaService.createAlbumAsPost(files, albumDTO, username);
+			return new ResponseEntity<>(mediaService.createAlbumAsPost(files, albumDTO, username), HttpStatus.OK);
         } else {
-        	mediaService.createAlbumAsStory(files, albumDTO, username);
+			return new ResponseEntity<>(mediaService.createAlbumAsStory(files, albumDTO, username), HttpStatus.OK);
         }
-    	return new ResponseEntity<>(HttpStatus.OK);
-    
     }
     @PostMapping(value="createStory",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
    	public ResponseEntity<Void> creatStory(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "story", required = false) String model,  @RequestHeader("Authorization") String auth) throws JsonMappingException, JsonProcessingException{

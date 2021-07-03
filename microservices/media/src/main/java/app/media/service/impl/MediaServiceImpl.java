@@ -146,7 +146,7 @@ public class MediaServiceImpl implements MediaService{
 	}
 
 	@Override
-	public void createAlbumAsPost(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws IOException {
+	public long createAlbumAsPost(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws IOException {
 		Set<String> fileNames = new HashSet<String>();
 		for(MultipartFile file : files) {
 			String fileName = saveFile(file, storageDirectoryPath);
@@ -159,7 +159,7 @@ public class MediaServiceImpl implements MediaService{
 		media.setUsername(username);
 		media.setPath(fileNames);
 		media.setCreated(LocalDateTime.now());
-		mediaRepository.save(media);
+		media = mediaRepository.save(media);
 		
 		Post post = new Post();
 		post.setDescription(albumDTO.getDescription());
@@ -173,10 +173,12 @@ public class MediaServiceImpl implements MediaService{
 		for(String follower : followers) {
 			sendNotification(NotificationType.POST, follower, media.getUsername(), Long.toString(post.getId()));
 		}
+
+		return media.getId();
 	}
 
 	@Override
-	public void createAlbumAsStory(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws  IOException {
+	public long createAlbumAsStory(List<MultipartFile> files, AlbumDTO albumDTO, String username) throws  IOException {
 		Set<String> fileNames = new HashSet<String>();
 		for(MultipartFile file : files) {
 			String fileName = saveFile(file, storageDirectoryPath);
@@ -189,7 +191,7 @@ public class MediaServiceImpl implements MediaService{
 		media.setUsername(username);
 		media.setPath(fileNames);
 		media.setCreated(LocalDateTime.now());
-		mediaRepository.save(media);
+		media = mediaRepository.save(media);
 		
 		Story story = new Story();
 		story.setDateCreated(LocalDateTime.now());
@@ -206,6 +208,8 @@ public class MediaServiceImpl implements MediaService{
 		for(String follower : followers) {
 			sendNotification(NotificationType.STORY, follower, media.getUsername(), media.getUsername());
 		}
+
+		return media.getId();
 	}
 
 	@Override

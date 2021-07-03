@@ -3,22 +3,14 @@ package app.campaign.model;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 
 @Entity
-public class CampaignDetails {
+public class RepeatedCampaignDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Campaign campaign;
-
-    @Column(name = "type", nullable = false)
-    private CampaignType type;
-
-    @Column(name = "startDate", nullable = false)
-    private LocalDate startDate;
 
     @Column(name = "endDate", nullable = false)
     private LocalDate endDate;
@@ -29,10 +21,7 @@ public class CampaignDetails {
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private TargetGroup targetGroup;
-
-    public CampaignDetails() {
+    public RepeatedCampaignDetails() {
     }
 
     public long getId() {
@@ -41,30 +30,6 @@ public class CampaignDetails {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public Campaign getCampaign() {
-        return campaign;
-    }
-
-    public void setCampaign(Campaign campaign) {
-        this.campaign = campaign;
-    }
-
-    public CampaignType getType() {
-        return type;
-    }
-
-    public void setType(CampaignType type) {
-        this.type = type;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
     }
 
     public LocalDate getEndDate() {
@@ -89,5 +54,9 @@ public class CampaignDetails {
 
     public void setCreated(LocalDateTime created) {
         this.created = created;
+    }
+
+    public boolean applicable() {
+        return created.isBefore(LocalDateTime.now().minusHours(24));
     }
 }
