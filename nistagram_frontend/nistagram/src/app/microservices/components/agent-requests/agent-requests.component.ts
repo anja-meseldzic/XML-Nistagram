@@ -27,12 +27,28 @@ export class AgentRequestsComponent implements OnInit {
   }
 
   reject(id : number){
+    this.authService.rejectRegistration(id).subscribe(
+      (data) => {      
+        
+       this.getAllRequests();
+   },
+   error => {
+    this.openSnackBar(error.error.message)
+   } );
 
   }
 
   accept(id : number){
-
+    this.authService.acceptRegistration(id).subscribe(
+      (data) => {      
+        
+       this.getAllRequests();
+   },
+   error => {
+    this.openSnackBar(error.error.message)
+   } );
   }
+
   openSnackBar(message: string) {
     this.snackBar.open(message, "Okay", {
       duration: 5000,

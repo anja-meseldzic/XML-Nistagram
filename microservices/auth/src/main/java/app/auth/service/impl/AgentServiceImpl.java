@@ -7,25 +7,37 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import app.auth.client.ProfileClient;
 import app.auth.model.AgentRegistrationRequest;
+import app.auth.model.RegularUser;
+import app.auth.model.Role;
 import app.auth.model.User;
 import app.auth.model.dto.AgentDTO;
 import app.auth.model.dto.AgentRequestDTO;
 import app.auth.repository.AgentRegistrationRequestRepository;
+import app.auth.repository.RegularUserRepository;
 import app.auth.repository.UserRepository;
 import app.auth.service.AgentService;
+import app.auth.util.PasswordUtil;
 
 @Service
 public class AgentServiceImpl implements AgentService{
 
 	private UserRepository userRepository;
 	private AgentRegistrationRequestRepository agentRegistrationRequestRepository;
+    private RegularUserRepository regularUserRepository;
+    private ProfileClient profileClient;
+
 	
 	
 	@Autowired
-    public AgentServiceImpl(UserRepository userRepository, AgentRegistrationRequestRepository agentRegistrationRequestRepository) {
+    public AgentServiceImpl(UserRepository userRepository, AgentRegistrationRequestRepository agentRegistrationRequestRepository,
+    		RegularUserRepository regularUserRepository, ProfileClient profileClient) {
 		 this.userRepository = userRepository;
 		 this.agentRegistrationRequestRepository = agentRegistrationRequestRepository;
+		 this.regularUserRepository = regularUserRepository;
+		 this.profileClient = profileClient;
+		 
     }
 
 	@Override
@@ -69,5 +81,39 @@ public class AgentServiceImpl implements AgentService{
 			result.add(dto);
 		}
 		return result;
+	}
+
+	@Override
+	public void acceptRegistration(Long idOfRequest) {
+		AgentRegistrationRequest agentRequest = agentRegistrationRequestRepository.findOneById(idOfRequest);
+		agentRequest.setReviewed(true);
+		agentRegistrationRequestRepository.save(agentRequest);
+		
+		RegularUser newUser = new RegularUser();
+		
+		newUser.setName(agentRequest.getName());
+		newUser.setSurname(agentRequest.getSurname());
+		newUser.setGender(agentRequest.getGender());
+		newUser.setEmail(agentRequest.getEmail());
+		newUser.setPhoneNumber(agentRequest.getPhoneNumber());
+		newUser.setBirthDate(agentRequest.getBirthDate());
+		newUser.setWebsite(agentRequest.getWebsite());
+		newUser.setBiography(agentRequest.getBiography());
+		newUser.setUser(new User(agentRequest.getUsername(), PasswordUtil.hashPBKDF2(agentRequest.getPassword()), Role.AGENT));
+		
+		try {
+			regularUserRepository.save(newUser);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Username must be unique");
+        }
+        profileClient.createFromUser(newUser.getUser().getUsername());
+	}
+
+	@Override
+	public void rejectRegistration(Long idOfRequest) {
+		AgentRegistrationRequest agentRequest = agentRegistrationRequestRepository.findOneById(idOfRequest);
+		agentRequest.setReviewed(true);
+		agentRegistrationRequestRepository.save(agentRequest);
+		
 	}
 }
