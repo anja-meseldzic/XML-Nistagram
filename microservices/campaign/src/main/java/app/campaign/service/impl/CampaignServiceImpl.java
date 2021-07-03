@@ -14,8 +14,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CampaignServiceImpl implements CampaignService {
@@ -64,6 +67,15 @@ public class CampaignServiceImpl implements CampaignService {
         campaignRepository.save(campaign);
     }
 
+    @Override
+    public List<CampaignDTO> get(String agent) {
+        return campaignRepository.findAll().stream()
+                .filter(c -> c.getAgentUsername().equals(agent))
+                .map(c -> createCampaignDTO(c))
+                .sorted(Comparator.comparing(dto -> dto.getStart()))
+                .collect(Collectors.toList());
+    }
+
     private Campaign createCampaign(CampaignDTO dto, String agent) throws Exception {
         if(!mediaService.exists(dto.getMediaId()))
             throw new Exception("Media content not created properly");
@@ -85,6 +97,26 @@ public class CampaignServiceImpl implements CampaignService {
         campaign.addDetails(details);
 
         return campaign;
+    }
+
+    private CampaignDTO createCampaignDTO(Campaign campaign) {
+        CampaignDTO dto = new CampaignDTO();
+        dto.setId(campaign.getId());
+        dto.setMediaId(campaign.getMediaId());
+        dto.setStart(campaign.getStart());
+        dto.setLink(campaign.getLink());
+        dto.setTargetedGenders(campaign.getTargetGroup().getGenders());
+        if(campaign.getActiveDetails() == null)
+            dto.setDetails(null);
+        else {
+            DetailsDTO detDTO = new DetailsDTO();
+            detDTO.setEndDate(campaign.getActiveDetails().getEndDate());
+            detDTO.setTimesPerDay(campaign.getActiveDetails().getTimesPerDay());
+            dto.setDetails(detDTO);
+        }
+        dto.setTargetedAges(campaign.getTargetGroup().getAgeGroups().stream()
+                .map(a -> a.getId()).collect(Collectors.toSet()));
+        return dto;
     }
 
     private RepeatedCampaignDetails createDetails(DetailsDTO dto) throws Exception {

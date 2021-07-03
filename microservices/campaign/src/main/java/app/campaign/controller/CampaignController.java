@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "campaign")
 public class CampaignController {
@@ -46,5 +48,14 @@ public class CampaignController {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+    }
+
+    @GetMapping
+    public List<CampaignDTO> get(@RequestHeader("Authorization") String auth) {
+        if(!authService.verify(auth, "AGENT"))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        String token = TokenUtils.getToken(auth);
+        String username = authService.getUsernameFromToken(token);
+        return campaignService.get(username);
     }
 }
