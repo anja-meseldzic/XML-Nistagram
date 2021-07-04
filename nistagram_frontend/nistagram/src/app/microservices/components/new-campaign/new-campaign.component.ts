@@ -97,9 +97,14 @@ export class NewCampaignComponent implements OnInit {
   createCampaign(mediaId : number) {
     var details : CampaignDetails = null;
     if(this.repeated) {
+      var end : Date = this.range.value.end
+      end.setHours(end.getHours() + 2)
       details = new CampaignDetails(this.range.value.end, this.timesPerDay)
     }
-    const start = this.repeated ? this.range.value.start : this.date.value
+    var start : Date = this.repeated ? this.range.value.start : this.date.value
+    start.setHours(start.getHours() + 2)
+    start.setHours(Number(this.time.split(":")[0]) + 2)
+    start.setMinutes(Number(this.time.split(":")[1]))
     var campaign = new Campaign(1, mediaId, this.link, start, this.genders.value, this.ages.value, details)
     this.campService.create(campaign).subscribe(
       _ => this.openSnackBar("Campaign is successfully created"),
@@ -129,7 +134,7 @@ export class NewCampaignComponent implements OnInit {
       return true;
     if(this.link.length == 0)
       return true;
-    if((this.ages.value == null || this.ages.value.length == 0) && (this.genders.value == null || this.genders.value.length == 0))
+    if((this.ages.value == null || this.ages.value.length == 0) || (this.genders.value == null || this.genders.value.length == 0))
       return true;
     if(this.repeated && this.range.value.start < new Date())
       return true;

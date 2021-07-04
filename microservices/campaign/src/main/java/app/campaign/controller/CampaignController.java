@@ -1,6 +1,7 @@
 package app.campaign.controller;
 
 import app.campaign.dto.CampaignDTO;
+import app.campaign.dto.DetailsDTO;
 import app.campaign.service.AuthService;
 import app.campaign.service.CampaignService;
 import app.campaign.util.TokenUtils;
@@ -33,7 +34,6 @@ public class CampaignController {
         try {
             campaignService.create(dto, username);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
@@ -58,5 +58,18 @@ public class CampaignController {
         String token = TokenUtils.getToken(auth);
         String username = authService.getUsernameFromToken(token);
         return campaignService.get(username);
+    }
+
+    @PutMapping(value = "{id}")
+    public void update(@PathVariable("id") long id, @RequestBody DetailsDTO dto, @RequestHeader("Authorization") String auth) {
+        if(!authService.verify(auth, "AGENT"))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        String token = TokenUtils.getToken(auth);
+        String username = authService.getUsernameFromToken(token);
+        try {
+            campaignService.update(id, dto, username);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 }

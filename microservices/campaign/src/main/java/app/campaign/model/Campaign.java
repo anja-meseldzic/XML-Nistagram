@@ -104,7 +104,9 @@ public class Campaign {
 		return details.stream()
 				.filter(d -> d.applicable())
 				.max(Comparator.comparing(c -> c.getCreated()))
-				.orElse(null);
+				.orElse(details.stream()
+						.min(Comparator.comparing(cc -> cc.getCreated()))
+						.orElse(null));
 	}
 
 	public void addDetails(RepeatedCampaignDetails newDetails) throws Exception {

@@ -1,7 +1,7 @@
 export class AgeGroup {
     constructor(
-        id : number,
-        minAge : number,
-        maxAge : number
+        public id : number,
+        public minAge : number,
+        public maxAge : number
     ) {}
 }

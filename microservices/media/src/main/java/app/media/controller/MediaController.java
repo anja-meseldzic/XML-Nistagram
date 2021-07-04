@@ -290,4 +290,9 @@ public class MediaController {
 	public boolean exists(@PathVariable("id") long id) {
     	return mediaService.exists(id);
 	}
+
+	@GetMapping(value = "path/{id}")
+	public String getPath(@PathVariable("id") long id) {
+    	return mediaService.getPath(id);
+	}
 }

@@ -35,8 +35,14 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public void create(CampaignDTO dto, String agent) throws Exception {
-        Campaign campaign = createCampaign(dto, agent);
-        campaignRepository.save(campaign);
+        try {
+            Campaign campaign = createCampaign(dto, agent);
+            campaignRepository.save(campaign);
+        } catch (Exception e) {
+            if(mediaService.exists(dto.getMediaId()))
+                mediaService.delete(dto.getMediaId());
+            throw e;
+        }
     }
 
     @Override

@@ -21,6 +21,7 @@
 
     <span style="flex: 1 1 auto;" *ngIf="this.authService.isLoggedIn()">
       <button style="float: right; margin-right: 20px;" mat-stroked-button (click)="this.authService.logOut()">Log out</button>
+      <button mat-stroked-button style="float: right; margin-right: 20px;" routerLink="campaign" *ngIf="this.authService.getRole() == 'AGENT'">Campaigns</button>
       <button mat-stroked-button style="float: right; margin-right: 20px;" (click)="verifyProfile()" *ngIf="this.authService.getRole() != 'ADMIN'">Verify profile</button>
       <button mat-stroked-button style="float: right; margin-right: 20px;" (click)="verificationRequests()" *ngIf="this.authService.getRole() == 'ADMIN'">Verification requests</button>
       <button mat-stroked-button style="float: right; margin-right: 20px;" (click)="inappropriateContent()" *ngIf="this.authService.getRole() == 'ADMIN'">Inappropriate content</button>

@@ -480,4 +480,12 @@ public class MediaServiceImpl implements MediaService{
 	public boolean exists(long id) {
 		return mediaRepository.findById(id).isPresent();
 	}
+
+	@Override
+	public String getPath(long id) {
+		Media media = mediaRepository.findById(id).orElse(null);
+		if(media == null)
+			return null;
+		return media.getPath().stream().findFirst().orElse(null);
+	}
 }
