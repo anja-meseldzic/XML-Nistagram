@@ -33,6 +33,7 @@ public class CampaignController {
         try {
             campaignService.create(dto, username);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }

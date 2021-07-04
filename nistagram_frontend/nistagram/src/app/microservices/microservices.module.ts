@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MicroservicesRoutingModule } from './microservices-routing.module';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import {MatSelectModule} from '@angular/material/select';
@@ -45,9 +45,12 @@ import { InappropriateContentComponent } from './components/inappropriate-conten
 import { RegisterAgentComponent } from './auth-service/register-agent/register-agent.component';
 import { AgentRequestsComponent } from './components/agent-requests/agent-requests.component';
 import { RegisterAgentAdminComponent } from './components/register-agent-admin/register-agent-admin.component';
+import { NewCampaignComponent } from './components/new-campaign/new-campaign.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
-  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, ProfileConfigComponent, VerifyAccountComponent, VerificationRequestsComponent, RatingsDialogComponent, LikedDataComponent, DislikedDataComponent, ReportDialogComponent, NotificationSettingsComponent, NotificationsComponent, InappropriateContentComponent, RegisterAgentComponent, AgentRequestsComponent, RegisterAgentAdminComponent],
+  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, ProfileConfigComponent, VerifyAccountComponent, VerificationRequestsComponent, RatingsDialogComponent, LikedDataComponent, DislikedDataComponent, ReportDialogComponent, NotificationSettingsComponent, NotificationsComponent, InappropriateContentComponent, RegisterAgentComponent, AgentRequestsComponent, RegisterAgentAdminComponent, NewCampaignComponent],
   imports: [
     CommonModule,
     MicroservicesRoutingModule,
@@ -64,7 +67,10 @@ import { RegisterAgentAdminComponent } from './components/register-agent-admin/r
     MatDividerModule,
     MatTabsModule,
     FlexLayoutModule,
-    MatListModule
+    MatListModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ]
 })
 export class MicroservicesModule { }

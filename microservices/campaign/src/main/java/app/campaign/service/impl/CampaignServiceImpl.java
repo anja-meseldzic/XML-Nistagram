@@ -151,10 +151,12 @@ public class CampaignServiceImpl implements CampaignService {
         TargetGroup targetGroup = new TargetGroup();
         targetGroup.setGenders(dto.getTargetedGenders());
         Set<AgeGroup> ageGroups = new HashSet<>();
-        for(long id : dto.getTargetedAges()) {
-            AgeGroup ageGroup = ageGroupRepository.findById(id).orElse(null);
-            if(ageGroup != null)
-                ageGroups.add(ageGroup);
+        if(dto.getTargetedAges() != null) {
+            for(long id : dto.getTargetedAges()) {
+                AgeGroup ageGroup = ageGroupRepository.findById(id).orElse(null);
+                if(ageGroup != null)
+                    ageGroups.add(ageGroup);
+            }
         }
         targetGroup.setAgeGroups(ageGroups);
         return targetGroup;

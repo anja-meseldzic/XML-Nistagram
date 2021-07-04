@@ -20,6 +20,7 @@ import { InappropriateContentComponent } from './microservices/components/inappr
 import { RegisterAgentComponent } from './microservices/auth-service/register-agent/register-agent.component';
 import { AgentRequestsComponent } from './microservices/components/agent-requests/agent-requests.component';
 import { RegisterAgentAdminComponent } from './microservices/components/register-agent-admin/register-agent-admin.component';
+import { NewCampaignComponent } from './microservices/components/new-campaign/new-campaign.component';
 
 const routes: Routes = [
   {path: 'registration', component: RegistrationComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
@@ -29,6 +30,7 @@ const routes: Routes = [
   {path: 'profile-config', component: ProfileConfigComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
   {path: 'login', component: LoginComponent, canActivate: [RouteGuardService], data: {expectedRoles: []}},
   {path: 'feed', component: FeedComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['USER', 'AGENT']}},
+  {path: 'campaign/add', component: NewCampaignComponent, canActivate: [RouteGuardService], data: {expectedRoles: ['AGENT']}},
   {path: 'post/:id', component: PostDetailsComponent},
   {path: 'post', component: SearchResultsComponent},
   {path: 'profile/:username', component: ProfileComponent },

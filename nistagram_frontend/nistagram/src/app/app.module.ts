@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -25,6 +25,8 @@ import { FollowerRequestDialogComponent } from './microservices/components/follo
 import { FollowersDialogComponent } from './microservices/components/followers-dialog/followers-dialog.component';
 import { CollectionDialogComponent } from './microservices/components/collection-dialog/collection-dialog.component';
 import { CloseFriendsComponent } from './microservices/components/close-friends/close-friends.component';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 
 
@@ -52,8 +54,10 @@ import { CloseFriendsComponent } from './microservices/components/close-friends/
     NgImageSliderModule,
     MatAutocompleteModule,
     MatListModule,
-    MatDialogModule
-    
+    MatDialogModule,
+    ReactiveFormsModule,
+    MatNativeDateModule,
+    MatDatepickerModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
