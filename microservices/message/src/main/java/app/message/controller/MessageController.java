@@ -1,6 +1,7 @@
 package app.message.controller;
 
 import app.message.model.Message;
+import app.message.service.AuthService;
 import app.message.service.MediaMessageService;
 import app.message.service.MessageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,27 +24,28 @@ import java.util.Collection;
 public class MessageController {
     private final MessageService messageService;
     private final MediaMessageService mediaMessageService;
+    private final AuthService authService;
 
     @Autowired
-    public MessageController(MessageService messageService, MediaMessageService mediaMessageService) {
+    public MessageController(MessageService messageService, MediaMessageService mediaMessageService, AuthService authService) {
         this.messageService = messageService;
         this.mediaMessageService = mediaMessageService;
+        this.authService = authService;
     }
 
     @GetMapping("/{firstPeer}/{secondPeer}")
-    public ResponseEntity<Collection<Message>> getByUser(@PathVariable String firstPeer, @PathVariable String secondPeer) {
+    public ResponseEntity<Collection<Message>> getByUser(@PathVariable String firstPeer, @PathVariable String secondPeer, @RequestHeader("Authorization") String auth) {
+        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         return new ResponseEntity<>(messageService.getUserMessages(firstPeer, secondPeer), HttpStatus.OK);
-    }
-
-    @PostMapping("/share")
-    public ResponseEntity<Void> createShareMessage(@RequestBody Message message) {
-        messageService.create(message);
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> create(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "post", required = false) String model, @RequestHeader("Authorization") String auth) throws JsonProcessingException {
-        //TODO AUTHORIZATION
+        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
 
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(model, Message.class);
@@ -73,7 +75,11 @@ public class MessageController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> seeMessage(@PathVariable Long id) {
+    public ResponseEntity<Void> seeMessage(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
+        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         try {
             mediaMessageService.seeMessage(id);
         } catch (IllegalArgumentException e) {

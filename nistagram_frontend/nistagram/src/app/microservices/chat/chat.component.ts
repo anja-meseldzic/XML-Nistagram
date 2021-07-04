@@ -43,7 +43,19 @@ export class ChatComponent implements OnInit {
         (msg) => {
           const message = JSON.parse(msg.body);
           message.linkToSource = environment.messageBaseUrl + message.linkToSource;
-          console.log(message);
+          if (message.type === 'LINK') {
+            if (message.content.includes('profile')) {
+              const urlParts = message.content.split('/');
+              axios
+                .get(environment.mediaBaseUrl + 'verify/story/' + urlParts[urlParts.length - 1] + '/' + this.authService.getUsername())
+                .then(r => message.private = !r.data);
+            } else {
+              const urlParts = message.content.split('/');
+              axios
+                .get(environment.mediaBaseUrl + 'verify/post/' + urlParts[urlParts.length - 1] + '/' + this.authService.getUsername())
+                .then(r => message.private = !r.data);
+            }
+          }
           this.messages.push(message);
         }
       );
@@ -52,7 +64,11 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  sendMessage = () => {
+  sendMessage = (e) => {
+    if (e.key !== 'Enter') {
+      return;
+    }
+
     if (this.selectedFile == null) {
       this.sendTextMessage();
     }
@@ -110,11 +126,11 @@ export class ChatComponent implements OnInit {
     axios
       .post(environment.messageBaseUrl + 'messages', fd, {
         headers: {
-          Authorization: 'Bearer ' + sessionStorage.getItem('jwt')
+          Authorization: 'Bearer ' + localStorage.getItem('jwt')
         }
       })
       // @ts-ignore
-      .then(res => message.linkToSource = environment.messageBaseUrl + res.data);
+      .then(res => console.log(message.linkToSource = environment.messageBaseUrl + res.data));
 
     const d = new Date();
     // @ts-ignore
@@ -127,8 +143,20 @@ export class ChatComponent implements OnInit {
     this.messages.push(message);
   }
 
-  choosePeer = () => {
-    this.peerChosen = true;
+  choosePeer = async () => {
+    await axios
+      .get(environment.profileBaseUrl + '/messages/' + this.peer, {
+        headers : {
+          Authorization: 'Bearer ' + localStorage.getItem('jwt')
+        }
+      })
+      .then(res => this.peerChosen = res.data);
+
+    if (!this.peerChosen) {
+      alert('User does not exist');
+      return;
+    }
+
     axios
       .get(environment.messageBaseUrl + 'messages/' + this.authService.getUsername() + '/' + this.peer, {
         headers : {
@@ -146,6 +174,19 @@ export class ChatComponent implements OnInit {
             nano: new Date(m.date[0], m.date[1], m.date[2], m.date[3], m.date[4], m.date[5]).getTime()
           };
           m.linkToSource = environment.messageBaseUrl + m.linkToSource;
+          if (m.type === 'LINK') {
+            if (m.content.includes('profile')) {
+              const urlParts = m.content.split('/');
+              axios
+                .get(environment.mediaBaseUrl + 'verify/story/' + urlParts[urlParts.length - 1] + '/' + this.authService.getUsername())
+                .then(r => m.private = !r.data);
+            } else {
+              const urlParts = m.content.split('/');
+              axios
+                .get(environment.mediaBaseUrl + 'verify/post/' + urlParts[urlParts.length - 1] + '/' + this.authService.getUsername())
+                .then(r => m.private = !r.data);
+            }
+          }
         });
         this.messages = res.data.sort((a, b) => (a.date.nano > b.date.nano) ? 1 : ((a.date.nano < b.date.nano) ? -1 : 0));;
       });

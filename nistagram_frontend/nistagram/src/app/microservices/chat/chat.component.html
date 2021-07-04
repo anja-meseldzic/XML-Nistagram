@@ -15,7 +15,8 @@
             <div [ngClass]="msg.receiver === this.authService.getUsername() ? 'received_msg' : 'sent_msg'">
               <div [ngClass]="{'received_withd_msg' : msg.receiver === this.authService.getUsername()}">
                 <p *ngIf="msg.type !== 'LINK'">{{msg.content}}</p>
-                <a *ngIf="msg.type === 'LINK'" href="{{msg.content}}" target="_blank">Shared Content</a>
+                <a *ngIf="msg.type === 'LINK' && !msg.private" href="{{msg.content}}" target="_blank">Shared Content</a>
+                <p style="border: gray solid 1px" *ngIf="msg.type === 'LINK' && msg.private">You cannot see this content because you don't follow the author's profile</p>
                 <img *ngIf="msg.type === 'ONETIME'" src="{{msg.linkToSource}}" (mouseleave)="seeMessage(msg.type, msg.id)">
                 <span class="time_date"> {{(msg.date.hour < 10) ? '0' + msg.date.hour : msg.date.hour}}:{{(msg.date.minute < 10) ? '0' + msg.date.minute : msg.date.minute}}    |    {{msg.date.month}} {{msg.date.dayOfMonth}}</span>
               </div>
@@ -28,14 +29,13 @@
     </div>
 
     </div></div>
+</div>
 
-    <div class="type_msg">
-      <div class="input_msg_write">
-        <input type="text" class="write_msg" placeholder="Type a message" [(ngModel)]="txtMessage" [disabled]="!peerChosen"/>
-        <button class="msg_send_btn" type="button" (click)="sendMessage()" [disabled]="!peerChosen">Send</button>
-      </div>
-      <input type="file" accept=".jpg, .png" (change)="onFileSelected($event)"/>
-    </div>
+<div class="type_msg">
+  <div class="input_msg_write">
+    <input type="text" class="write_msg" placeholder="Type a message" [(ngModel)]="txtMessage" [disabled]="!peerChosen" (keydown)="sendMessage($event)"/>
+  </div>
+  <input type="file" accept=".jpg, .png" (change)="onFileSelected($event)"/>
 </div>
 
 
