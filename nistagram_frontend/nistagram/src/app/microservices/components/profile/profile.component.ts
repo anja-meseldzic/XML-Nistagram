@@ -15,6 +15,7 @@ import { CollectionDialogComponent } from '../collection-dialog/collection-dialo
 import { FollowerRequestDialogComponent } from '../follower-request-dialog/follower-request-dialog.component';
 import { FollowersDialogComponent } from '../followers-dialog/followers-dialog.component';
 import { RatingsDialogComponent } from '../ratings-dialog/ratings-dialog.component';
+import {ShareDialogComponent} from '../share-dialog/share-dialog.component';
 
 @Component({
   selector: 'app-profile',
@@ -260,5 +261,9 @@ export class ProfileComponent implements OnInit {
 
   public includes(id : Number) : boolean {
     return this.storyHighlights.filter(h => h.id === id).length > 0;
+  }
+
+  shareStories = () => {
+    this.matDialog.open(ShareDialogComponent, { width: '30vw', maxWidth: '30vw'});
   }
 }
