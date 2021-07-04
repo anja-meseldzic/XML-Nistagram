@@ -82,7 +82,7 @@ public class CampaignServiceImpl implements CampaignService {
                 .filter(c -> c.getMediaId() == mediaId).findFirst().orElse(null);
         if(campaign == null)
             return false;
-        if(campaign.active())
+        if(campaign.started())
             return true;
         return false;
     }

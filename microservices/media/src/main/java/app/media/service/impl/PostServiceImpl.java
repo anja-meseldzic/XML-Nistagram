@@ -188,7 +188,8 @@ public class PostServiceImpl implements PostService {
 								&& !profileService.getBlocked(requestedBy).contains(p.getMedia().getUsername())))
 						&& p.getId() == postId)
 				.findFirst().orElse(null);
-		if (post == null || !campaignService.shouldDispaly(post.getMedia().getId()))
+		if (post == null || (campaignService.isPartOfCampaign(post.getMedia().getId())
+				&& !campaignService.shouldDispaly(post.getMedia().getId())))
 			throw new PostDoesNotExistException();
 		return toPostInfoDTO(post);
 	}

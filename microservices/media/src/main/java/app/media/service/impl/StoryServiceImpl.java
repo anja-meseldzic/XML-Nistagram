@@ -113,6 +113,7 @@ public class StoryServiceImpl implements StoryService {
 		List<StoryInfoDTO> result = new ArrayList<StoryInfoDTO>();
 		List<Story> stories = storyRepository.findAll().stream()
 				.filter(s -> s.getMedia().getUsername().equals(username) && s.isHighlighted()).collect(Collectors.toList());
+		stories = syncWithCampaigns(stories);
 		stories.forEach(s -> s.getMedia().getPath().forEach(url -> result.add(toStoryInfoDTO(s, url))));
 		return result;
 	}
