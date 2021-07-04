@@ -1,12 +1,12 @@
-<mat-toolbar style="min-width: 100%; max-width: max-content; background-color: white; color: gray;" class="mat-elevation-z8"> 
+<mat-toolbar style="min-width: 100%; max-width: max-content; background-color: white; color: gray;" class="mat-elevation-z8">
     <span style="width: 10px;"></span>
-  
+
     <button mat-icon-button routerLink="../feed">
       <mat-icon>home</mat-icon>
     </button>
     <span style="margin-left: 10px;" routerLink="../feed">nistagram</span>
     <span style="width: 20px;"></span>
-    
+
     <span style="margin-left: 100px;" *ngIf="this.authService.getRole() != 'ADMIN'">
         <mat-form-field>
             <input type="text" placeholder="search" matInput [matAutocomplete]="auto" (input)="updated()" [(ngModel)]="data">
@@ -26,6 +26,7 @@
       <button mat-stroked-button style="float: right; margin-right: 20px;" (click)="inappropriateContent()" *ngIf="this.authService.getRole() == 'ADMIN'">Inappropriate content</button>
       <button mat-stroked-button style="float: right; margin-right: 20px;" (click)="agentRequests()" *ngIf="this.authService.getRole() == 'ADMIN'">Agent requests</button>
       <button mat-stroked-button style="float: right; margin-right: 20px;" routerLink="./notifications" *ngIf="this.authService.getRole() != 'ADMIN'">Notifications</button>
+      <button mat-stroked-button style="float: right; margin-right: 20px;" routerLink="./chat" *ngIf="this.authService.getRole() != 'ADMIN'">Chat</button>
       <button mat-raised-button color="accent" style="float: right; margin-right: 20px;" (click)="goToProfile()" *ngIf="this.authService.getRole() != 'ADMIN'">Your profile</button>
     </span>
   </mat-toolbar>

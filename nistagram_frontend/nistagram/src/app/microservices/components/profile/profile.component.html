@@ -24,6 +24,7 @@
         </p>
         <p>
             <button *ngIf="this.authService.isLoggedIn() && profile.owned" mat-stroked-button style="margin-left: 10px;" (click)="ratings()">Ratings</button>
+            <button *ngIf="this.authService.isLoggedIn() && (!(profile.privateProfile && !profile.following) || profile.owned)" mat-stroked-button style="margin-left: 10px;" (click)="shareStories()">Share stories</button>
         </p>
         <p style="color: gray;" *ngIf="profile.fullName != null">Name: {{profile.fullName}}</p>
         <p style="color: gray;" *ngIf="profile.birthDate != null">Birth date: {{profile.birthDate | date: 'dd. MM. yyyy.'}}</p>

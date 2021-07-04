@@ -10,53 +10,53 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 
-@Entity
+//@Entity
 public class TextMessage {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Message message;
-	
-	@Column(name = "content", nullable = false)
-	private String content;
-	
-	public TextMessage() {
-		super();
-	}
-
-	public TextMessage(long id, Message message, String content) {
-		super();
-		this.id = id;
-		this.message = message;
-		this.content = content;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public Message getMessage() {
-		return message;
-	}
-
-	public void setMessage(Message message) {
-		this.message = message;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	
+//
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	private Long id;
+//
+//	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//	private Message message;
+//
+//	@Column(name = "content", nullable = false)
+//	private String content;
+//
+//	public TextMessage() {
+//		super();
+//	}
+//
+//	public TextMessage(long id, Message message, String content) {
+//		super();
+//		this.id = id;
+//		this.message = message;
+//		this.content = content;
+//	}
+//
+//	public Long getId() {
+//		return id;
+//	}
+//
+//	public void setId(Long id) {
+//		this.id = id;
+//	}
+//
+//	public Message getMessage() {
+//		return message;
+//	}
+//
+//	public void setMessage(Message message) {
+//		this.message = message;
+//	}
+//
+//	public String getContent() {
+//		return content;
+//	}
+//
+//	public void setContent(String content) {
+//		this.content = content;
+//	}
+//
+//
 }
