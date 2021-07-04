@@ -1,6 +1,7 @@
 package app.message.controller;
 
 import app.message.model.Message;
+import app.message.service.MediaMessageService;
 import app.message.service.MessageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,10 +22,12 @@ import java.util.Collection;
 @RequestMapping("/messages")
 public class MessageController {
     private final MessageService messageService;
+    private final MediaMessageService mediaMessageService;
 
     @Autowired
-    public MessageController(MessageService messageService) {
+    public MessageController(MessageService messageService, MediaMessageService mediaMessageService) {
         this.messageService = messageService;
+        this.mediaMessageService = mediaMessageService;
     }
 
     @GetMapping("/{firstPeer}/{secondPeer}")
@@ -32,19 +35,25 @@ public class MessageController {
         return new ResponseEntity<>(messageService.getUserMessages(firstPeer, secondPeer), HttpStatus.OK);
     }
 
+    @PostMapping("/share")
+    public ResponseEntity<Void> createShareMessage(@RequestBody Message message) {
+        messageService.create(message);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> create(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "post", required = false) String model, @RequestHeader("Authorization") String auth) throws JsonProcessingException {
+    public ResponseEntity<String> create(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "post", required = false) String model, @RequestHeader("Authorization") String auth) throws JsonProcessingException {
         //TODO AUTHORIZATION
 
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(model, Message.class);
 
         try {
-            messageService.createMultimediaMessage(data, message);
+            return new ResponseEntity<>(mediaMessageService.createMultimediaMessage(data, message), HttpStatus.CREATED);
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
 
@@ -52,14 +61,24 @@ public class MessageController {
     public @ResponseBody
     ResponseEntity<UrlResource> getContent(@PathVariable(name = "contentName") String fileName) {
         try {
-            UrlResource resource = messageService.getContent(fileName);
+            UrlResource resource = mediaMessageService.getContent(fileName);
             return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
                     .contentType(MediaTypeFactory
                             .getMediaType(resource)
                             .orElse(MediaType.APPLICATION_OCTET_STREAM))
-                    .body(messageService.getContent(fileName));
+                    .body(mediaMessageService.getContent(fileName));
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> seeMessage(@PathVariable Long id) {
+        try {
+            mediaMessageService.seeMessage(id);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

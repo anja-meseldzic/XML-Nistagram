@@ -25,4 +25,8 @@ public class SocketEndpoint {
         messageService.create(msg);
         messagingTemplate.convertAndSendToUser(msg.getReceiver(), "/queue/messages", msg);
     }
+
+    public void publishMediaMessage(Message msg) {
+        messagingTemplate.convertAndSendToUser(msg.getReceiver(), "/queue/messages", msg);
+    }
 }

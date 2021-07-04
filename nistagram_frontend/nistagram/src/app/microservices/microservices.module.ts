@@ -42,9 +42,10 @@ import { ProfileConfigComponent } from './profile-config/profile-config.componen
 import { NotificationSettingsComponent } from './components/notification-settings/notification-settings.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { ChatComponent } from './chat/chat.component';
+import { ShareDialogComponent } from './components/share-dialog/share-dialog.component';
 
 @NgModule({
-  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, ProfileConfigComponent, VerifyAccountComponent, VerificationRequestsComponent, RatingsDialogComponent, LikedDataComponent, DislikedDataComponent, ReportDialogComponent, NotificationSettingsComponent, NotificationsComponent, ChatComponent],
+  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, ProfileConfigComponent, VerifyAccountComponent, VerificationRequestsComponent, RatingsDialogComponent, LikedDataComponent, DislikedDataComponent, ReportDialogComponent, NotificationSettingsComponent, NotificationsComponent, ChatComponent, ShareDialogComponent],
   imports: [
     CommonModule,
     MicroservicesRoutingModule,

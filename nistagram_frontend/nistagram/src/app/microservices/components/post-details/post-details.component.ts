@@ -9,6 +9,9 @@ import { MediaService } from '../../media-service/media.service';
 import { Post } from '../../model/post';
 import { ReportDialogComponent } from '../report-dialog/report-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import axios from 'axios';
+import {AuthService} from '../../auth-service/auth.service';
+import {ShareDialogComponent} from '../share-dialog/share-dialog.component';
 
 
 @Component({
@@ -19,6 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class PostDetailsComponent implements OnInit {
 
   post : Post;
+  peer: '';
   public comments : AllCommentDTO[] = [];
   public likes : number = 0;
   public dislikes : number = 0;
@@ -135,5 +139,9 @@ export class PostDetailsComponent implements OnInit {
   reportPost(){
     this.matDialog.open(ReportDialogComponent, {data : Number(this.route.snapshot.paramMap.get('id')),  width: '30vw',
       maxWidth: '30vw'})
+  }
+
+  share = () => {
+    this.matDialog.open(ShareDialogComponent, { width: '30vw', maxWidth: '30vw'});
   }
 }

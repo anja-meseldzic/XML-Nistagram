@@ -6,10 +6,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Collection;
 
-public interface MessageService {
-    void create(Message message);
+public interface MediaMessageService {
+    String createMultimediaMessage(MultipartFile file, Message message) throws IOException;
+    UrlResource getContent(String contentName) throws MalformedURLException;
 
-    Collection<Message> getUserMessages(String firstPeer, String secondPeer);
+    void seeMessage(Long id);
 }
