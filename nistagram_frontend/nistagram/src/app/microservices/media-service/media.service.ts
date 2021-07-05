@@ -83,7 +83,7 @@ export class MediaService {
     }});
   }
 
-  postAlbum(data : FormData) {
+  postAlbum(data : FormData) : Observable<any> {
     return this._http.post(this.createAlbumUrl, data, {responseType: 'text',headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});

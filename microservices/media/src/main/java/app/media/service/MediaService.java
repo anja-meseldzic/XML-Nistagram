@@ -58,4 +58,6 @@ public interface MediaService {
 	void delete(long id);
 
 	boolean exists(long id);
+
+	String getPath(long id);
 }
