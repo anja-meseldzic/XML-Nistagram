@@ -22,4 +22,9 @@ public class ReportController {
     public ResponseEntity<String> generateReport() {
         return new ResponseEntity<>(reportService.generatePDFReport(), HttpStatus.CREATED);
     }
+
+    @GetMapping("/resources")
+    public ResponseEntity<String> fetchResourceNames() {
+        return new ResponseEntity<>(reportService.fetchResourceNames(), HttpStatus.CREATED);
+    }
 }

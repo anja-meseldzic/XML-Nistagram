@@ -1,0 +1,5 @@
+<h2 class="m-2">Reports on Campaigns</h2>
+<button class="btn btn-outline-primary m-2" (click)="generateNewReport()">Generate Current Report</button>
+<div class="m-3" *ngFor="let url of urls" style="background-color: ghostwhite">
+  <a href="{{url.dest}}" target="_blank">{{url.title}}</a>
+</div>

@@ -1,9 +1,9 @@
 <nav class="navbar navbar-light bg-light justify-content-between mb-4" >
   <a class="navbar-brand">WebShop</a>
-  <a href="http://localhost:8090/merch/content/c6bd72e3-fe2c-43e9-9021-7034f400341f.pdf" target="_blank"
-     *ngIf="this.authService.isLoggedIn() && authService.getRole() == 'ADMIN'">
-    <button class="btn btn-outline-primary">Generate Report</button>
-  </a>
+  <button class="btn btn-outline-primary"
+          *ngIf="this.authService.isLoggedIn() && authService.getRole() == 'ADMIN'"
+          (click)="this.router.navigate(['reports'])"
+  >Reports</button>
   <button class="btn btn-outline-secondary my-2 my-sm-0"
           *ngIf="this.authService.isLoggedIn()"
           (click)="this.authService.logOut()"

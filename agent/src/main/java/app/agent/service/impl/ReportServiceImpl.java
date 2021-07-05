@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -46,10 +45,15 @@ public class ReportServiceImpl implements ReportService {
         reports.addCampaign(cr3);
         UUID id = reportRepository.generate(reports);
         generatePDF(id.toString(), reports);
-        return reportRepository.fetchReport(id.toString());
+        return "/merch/content/" + id + ".pdf";
     }
 
-    public void generatePDF(String filename, CampaignReports campaignReports) {
+    @Override
+    public String fetchResourceNames() {
+        return reportRepository.fetchResourceNames();
+    }
+
+        private void generatePDF(String filename, CampaignReports campaignReports) {
         Document doc = new Document();
         try {
             Path dest = Paths.get(storageDirectory + File.separator + filename + ".pdf");
