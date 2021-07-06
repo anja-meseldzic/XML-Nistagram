@@ -106,6 +106,7 @@ public class CampaignServiceImpl implements CampaignService {
 
         Campaign campaign = new Campaign();
 
+        campaign.setId(0);
         campaign.setAgentUsername(agent);
         campaign.setLink(dto.getLink());
         campaign.setStart(dto.getStart());
