@@ -9,4 +9,5 @@ import java.util.Collection;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
     Collection<Message> findAllByActiveTrue();
+    Collection<Message> findAllBySenderAndReceiver(String sender, String receiver);
 }

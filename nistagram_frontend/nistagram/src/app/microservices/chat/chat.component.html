@@ -17,7 +17,7 @@
                 <p *ngIf="msg.type !== 'LINK'">{{msg.content}}</p>
                 <a *ngIf="msg.type === 'LINK' && !msg.private" href="{{msg.content}}" target="_blank">Shared Content</a>
                 <p style="border: gray solid 1px" *ngIf="msg.type === 'LINK' && msg.private">You cannot see this content because you don't follow the author's profile</p>
-                <img *ngIf="msg.type === 'ONETIME'" src="{{msg.linkToSource}}" (mouseleave)="seeMessage(msg.type, msg.id)">
+                <img *ngIf="msg.type === 'ONETIME'" src="{{msg.linkToSource}}" (mouseleave)="seeMessage(msg)">
                 <span class="time_date"> {{(msg.date.hour < 10) ? '0' + msg.date.hour : msg.date.hour}}:{{(msg.date.minute < 10) ? '0' + msg.date.minute : msg.date.minute}}    |    {{msg.date.month}} {{msg.date.dayOfMonth}}</span>
               </div>
             </div>
@@ -29,13 +29,23 @@
     </div>
 
     </div></div>
+
+
+  <div class="type_msg">
+    <div style="background-color: lightgrey; opacity: 0.8" *ngIf="approval && !denied">
+      <h3 class="pl-2 pt-2">You have received messages from a profile you don't follow.</h3>
+      <button class="btn btn-outline-primary m-2" (click)="approveMessages()">Approve</button>
+      <button class="btn btn-outline-secondary m-2" (click)="denyMessages()">Deny</button>
+      <button class="btn btn-outline-danger m-2" (click)="deleteMessages()">Delete</button>
+    </div>
+    <div *ngIf="!approval">
+    <div class="input_msg_write">
+      <input type="text" class="write_msg" placeholder="Type a message" [(ngModel)]="txtMessage" [disabled]="!peerChosen" (keydown)="sendMessage($event)"/>
+    </div>
+    <input type="file" accept=".jpg, .png" (change)="onFileSelected($event)"/>
+    </div>
+  </div>
 </div>
 
-<div class="type_msg">
-  <div class="input_msg_write">
-    <input type="text" class="write_msg" placeholder="Type a message" [(ngModel)]="txtMessage" [disabled]="!peerChosen" (keydown)="sendMessage($event)"/>
-  </div>
-  <input type="file" accept=".jpg, .png" (change)="onFileSelected($event)"/>
-</div>
 
 

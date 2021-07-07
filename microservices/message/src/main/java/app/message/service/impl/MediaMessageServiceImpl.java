@@ -44,7 +44,6 @@ public class MediaMessageServiceImpl implements MediaMessageService {
 
         message.setLinkToSource(fileDownloadUri);
         message.setDate(LocalDateTime.now());
-        message.setSeen(false);
         message = messageRepository.save(message);
         socketEndpoint.publishMediaMessage(message);
         return fileDownloadUri;
@@ -56,11 +55,12 @@ public class MediaMessageServiceImpl implements MediaMessageService {
     }
 
     @Override
-    public void seeMessage(Long id) {
+    public void seeMessage(Long id, String seenBy) {
         Optional<Message> message = messageRepository.findById(id);
         if(!message.isPresent())
             throw new IllegalArgumentException("No such message");
-        message.get().setSeen(true);
+        message.get().setActive(false);
+        message.get().setDeletedBy(seenBy);
         messageRepository.save(message.get());
     }
 

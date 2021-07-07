@@ -12,4 +12,6 @@ public interface MessageService {
     void create(Message message);
 
     Collection<Message> getUserMessages(String firstPeer, String secondPeer);
+
+    void deleteMessages(String sender, String receiver);
 }
