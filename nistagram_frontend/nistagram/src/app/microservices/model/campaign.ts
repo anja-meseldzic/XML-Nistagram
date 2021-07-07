@@ -1,4 +1,5 @@
 import { CampaignDetails } from "./campaign-details";
+import { Report } from "./report";
 
 export class Campaign {
     constructor(
@@ -8,6 +9,7 @@ export class Campaign {
         public start : Date,
         public targetedGenders : string[],
         public targetedAges : number[],
-        public details : CampaignDetails
+        public details : CampaignDetails,
+        public report : Report
     ) {}
 }

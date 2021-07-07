@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -36,7 +36,7 @@ export class NewCampaignComponent implements OnInit {
 
   public repeated = false;
   public date = new FormControl(new Date());
-  public time : string = new Date().getHours + ":" + new Date().getMinutes;
+  time = `${new Date().getHours()}:${(new Date().getMinutes()<10?'0':'') + new Date().getMinutes()}`;
   public range = new FormGroup({
     start: new FormControl(),
     end: new FormControl()
@@ -99,13 +99,15 @@ export class NewCampaignComponent implements OnInit {
     if(this.repeated) {
       var end : Date = this.range.value.end
       end.setHours(end.getHours() + 2)
-      details = new CampaignDetails(this.range.value.end, this.timesPerDay)
+      details = new CampaignDetails(end, this.timesPerDay)
     }
     var start : Date = this.repeated ? this.range.value.start : this.date.value
-    start.setHours(start.getHours() + 2)
-    start.setHours(Number(this.time.split(":")[0]) + 2)
-    start.setMinutes(Number(this.time.split(":")[1]))
-    var campaign = new Campaign(1, mediaId, this.link, start, this.genders.value, this.ages.value, details)
+    const h = Number(this.time.split(":")[0])
+    const m = Number(this.time.split(":")[1])
+    console.log(h + ' ' + m)
+    start.setHours(h + 2)
+    start.setMinutes(m)
+    var campaign = new Campaign(1, mediaId, this.link, start, this.genders.value, this.ages.value, details, null)
     this.campService.create(campaign).subscribe(
       _ => this.openSnackBar("Campaign is successfully created"),
       error => this.openSnackBar(error.error.message)
@@ -142,8 +144,8 @@ export class NewCampaignComponent implements OnInit {
       return true;
     if(!this.repeated) {
       var d = new Date(this.date.value)
-      const h : number = Number(this.time.split(":")[0])
-      const m : number = Number(this.time.split(":")[1])
+      const h = this.time['getHours']()
+      const m = this.time['getMinutes']();
       d.setHours(h)
       d.setMinutes(m)
       if(d < new Date())

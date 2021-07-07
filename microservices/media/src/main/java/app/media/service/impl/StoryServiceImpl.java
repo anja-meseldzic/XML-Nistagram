@@ -1,5 +1,6 @@
 package app.media.service.impl;
 
+import app.media.dtos.CampaignForUserDTO;
 import app.media.dtos.StoryInfoDTO;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
@@ -32,7 +33,7 @@ public class StoryServiceImpl implements StoryService {
 
 	@Override
 	public List<StoryInfoDTO> getFeed(String username) {
-		List<StoryInfoDTO> result = new ArrayList<>();
+		List<Story> result = new ArrayList<>();
 
 		List<String> targetedProfiles = profileService.getFollowing(username);
 		List<String> mutedProfiles = profileService.getMuted(username);
@@ -49,13 +50,26 @@ public class StoryServiceImpl implements StoryService {
 		for (Story story : targetedStories) {
 			if (story.isActive() && (!story.isCloseFriends()
 					|| profileService.getCloseFriends(story.getMedia().getUsername()).contains(username)))
-				story.getMedia().getPath().forEach(url -> result.add(toStoryInfoDTO(story, url)));
+				result.add(story);
 		}
-		storyRepository.findAll().stream().filter(s -> s.getMedia().getUsername().equals(username) && s.isActive())
-				.forEach(s -> s.getMedia().getPath().forEach(url -> result.add(toStoryInfoDTO(s, url))));
+		for (Story story : storyRepository.findAll().stream().filter(s -> s.getMedia().getUsername().equals(username) && s.isActive()).collect(Collectors.toList()))
+			result.add(story);
 
-		result.sort((r1, r2) -> r1.getCreated().isBefore(r2.getCreated()) ? 1 : -1);
-		return result;
+		result = syncFeed(result, username);
+		result.sort((r1, r2) -> r1.getMedia().getCreated().isBefore(r2.getMedia().getCreated()) ? 1 : -1);
+
+		List<StoryInfoDTO> res = new ArrayList<>();
+		for(Story story : result) {
+			if(!mutedProfiles.contains(story.getMedia().getUsername())
+				&& ! blockedProfiles.contains(story.getMedia().getUsername())
+				&& ! inactiveProfiles.contains(story.getMedia().getUsername())) {
+				for(String path : story.getMedia().getPath()) {
+					res.add(toStoryInfoDTO(story, path));
+				}
+			}
+		}
+
+		return res;
 	}
 
 	@Override
@@ -94,6 +108,7 @@ public class StoryServiceImpl implements StoryService {
 		result.setCreated(story.getMedia().getCreated());
 		result.setUsername(story.getMedia().getUsername());
 		result.setUrl(url);
+		result.setLink(getLink(story.getMedia().getId()));
 		return result;
 	}
 
@@ -142,5 +157,35 @@ public class StoryServiceImpl implements StoryService {
 				.filter(s -> campaignService.isPartOfCampaign(s.getMedia().getId()))
 				.filter(s -> campaignService.shouldDispaly(s.getMedia().getId()))
 				.collect(Collectors.toList());
+	}
+
+	public List<Story> syncFeed(List<Story> stories, String username) {
+		List<Story> result = new ArrayList<>();
+		for(Story story : stories) {
+			if(!campaignService.isPartOfCampaign(story.getMedia().getId()))
+				result.add(story);
+		}
+		for(CampaignForUserDTO c : campaignService.getCampaignsForUser(username)) {
+			Story story = storyRepository.findAll().stream().filter(s -> s.getMedia().getId() == c.mediaId)
+					.findFirst().orElse(null);
+			if(story != null) {
+				story.getMedia().setCreated(c.published);
+				result.add(story);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public String getLink(long id) {
+		return campaignService.getLink(id);
+	}
+
+	@Override
+	public void saveLinkClick(long id, String username) {
+		Story story = storyRepository.findById(id).orElse(null);
+		if(story != null) {
+			campaignService.saveLinkClick(story.getMedia().getId(), username);
+		}
 	}
 }

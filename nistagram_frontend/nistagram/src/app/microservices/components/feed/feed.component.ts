@@ -36,10 +36,11 @@ export class FeedComponent implements OnInit {
       const userStories = stories.filter(story => story.username === username)
       const storyObject = new Array<Object>();
       for(const userStory of userStories) {
+        const link = userStory.link != null && userStory.link.length > 0 ? userStory.link : ''
         if(userStory.url.endsWith('.jpg') || userStory.url.endsWith('.png')) {
-          storyObject.push( {image: environment.mediaBaseUrl + userStory.url, thumbImage: environment.mediaBaseUrl + userStory.url});
+          storyObject.push( {username: userStory.username, link: userStory.link, id: userStory.id, image: environment.mediaBaseUrl + userStory.url, thumbImage: environment.mediaBaseUrl + userStory.url, title: userStory.username + ' ' + link});
         } else {
-          storyObject.push({video: environment.mediaBaseUrl + userStory.url, alt: 'video unavailable'});
+          storyObject.push({username: userStory.username, link: userStory.link, id: userStory.id, video: environment.mediaBaseUrl + userStory.url, alt: 'video unavailable', title: userStory.username + ' ' + link});
         }
       }
       this.stories.push(storyObject);
@@ -50,13 +51,6 @@ export class FeedComponent implements OnInit {
   constructSliderObjectsForPosts() {
     for(const post of this.posts) {
       const storyObject = new Array<Object>();
-      // post.urls.forEach(url => {
-      //   url = environment.mediaBaseUrl + url;
-      //   console.log(url)
-      // });
-      // for(let url of post.urls) {
-      //   url = environment.mediaBaseUrl + url;
-      // }
       for(const url of post.urls) {
         if(url.endsWith('.jpg') || url.endsWith('.png')) {
           storyObject.push( {image: environment.mediaBaseUrl + url, thumbImage: environment.mediaBaseUrl + url});
@@ -76,5 +70,13 @@ export class FeedComponent implements OnInit {
     this.snackBar.open(message, "Okay", {
       duration: 5000,
     });
+  }
+
+  public storyClick(event, storyList : Object[]) {
+    var s = storyList[event]
+    this.mediaService.sendStoryLinkClick(s['id']).subscribe()
+    if(s['link'] != null && s['link'].length > 0) {
+      document.location.href = s['link']
+    }
   }
 }

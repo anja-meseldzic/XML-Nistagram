@@ -3,6 +3,7 @@ export class Story {
         public id : Number,
         public username : String,
         public url : String,
-        public created : Date
+        public created : Date,
+        public link : String
     ) {}
 }

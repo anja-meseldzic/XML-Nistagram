@@ -29,10 +29,13 @@ export class PostDetailsComponent implements OnInit {
   public comment : string;
   public hidden : boolean = false;
 
+  public id = 0;
+
   constructor(private mediaService : MediaService, private route : ActivatedRoute, private router : Router, private _snackBar: MatSnackBar, private matDialog : MatDialog) { }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
+    this.id = Number(id)
     this.getPost(id);
     this.getComments(Number(id));
     this.getRatingsNumber(Number(id));
@@ -143,5 +146,9 @@ export class PostDetailsComponent implements OnInit {
 
   share = () => {
     this.matDialog.open(ShareDialogComponent, { width: '30vw', maxWidth: '30vw'});
+  }
+
+  sendClick() {
+    this.mediaService.sendPostLinkClick(this.id).subscribe()
   }
 }

@@ -1,7 +1,10 @@
 package app.campaign.service;
 
 import app.campaign.dto.CampaignDTO;
+import app.campaign.dto.CampaignForUserDTO;
 import app.campaign.dto.DetailsDTO;
+import app.campaign.dto.ReportDto;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -18,4 +21,12 @@ public interface CampaignService {
     boolean shouldDisplayMedia(long mediaId);
 
     boolean isPartOfCampaign(long mediaId);
+
+    List<CampaignForUserDTO> getCampaigns(String username);
+
+    String getLink(long id);
+
+    void saveLinkClick(long mediaId, String profile);
+
+    ReportDto getReport(long id);
 }
