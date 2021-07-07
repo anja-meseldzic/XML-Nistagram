@@ -11,6 +11,7 @@ public class PostInfoDTO {
     private String description;
     private Set<String> hashtags;
     private LocalDateTime created;
+    private String link;
 
     public PostInfoDTO() {
 
@@ -80,5 +81,13 @@ public class PostInfoDTO {
 
     public void setCreated(LocalDateTime created) {
         this.created = created;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 }

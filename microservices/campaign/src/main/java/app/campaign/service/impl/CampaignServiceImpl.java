@@ -1,23 +1,19 @@
 package app.campaign.service.impl;
 
-import app.campaign.dto.CampaignDTO;
-import app.campaign.dto.DetailsDTO;
-import app.campaign.model.AgeGroup;
-import app.campaign.model.Campaign;
-import app.campaign.model.RepeatedCampaignDetails;
-import app.campaign.model.TargetGroup;
+import app.campaign.dto.*;
+import app.campaign.model.*;
 import app.campaign.repository.AgeGroupRepository;
 import app.campaign.repository.CampaignRepository;
+import app.campaign.repository.LinkClickRepository;
+import app.campaign.service.AuthService;
 import app.campaign.service.CampaignService;
 import app.campaign.service.MediaService;
+import app.campaign.service.ProfileService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,11 +22,19 @@ public class CampaignServiceImpl implements CampaignService {
     private CampaignRepository campaignRepository;
     private AgeGroupRepository ageGroupRepository;
     private MediaService mediaService;
+    private ProfileService profileService;
+    private AuthService authService;
+    private LinkClickRepository linkClickRepository;
 
-    public CampaignServiceImpl(CampaignRepository campaignRepository, AgeGroupRepository ageGroupRepository, MediaService mediaService) {
+    public CampaignServiceImpl(CampaignRepository campaignRepository, AgeGroupRepository ageGroupRepository,
+                               MediaService mediaService, ProfileService profileService, AuthService authService,
+                               LinkClickRepository linkClickRepository) {
         this.campaignRepository = campaignRepository;
         this.ageGroupRepository = ageGroupRepository;
         this.mediaService = mediaService;
+        this.profileService = profileService;
+        this.authService = authService;
+        this.linkClickRepository = linkClickRepository;
     }
 
     @Override
@@ -100,6 +104,46 @@ public class CampaignServiceImpl implements CampaignService {
                 .findFirst().isPresent();
     }
 
+    @Override
+    public List<CampaignForUserDTO> getCampaigns(String username) {
+        List<Campaign> campaigns = new ArrayList<>();
+        for(Campaign campaign : getActive()) {
+            if(campaign.getAgentUsername().equals(username)) {
+                campaigns.add(campaign);
+            } else if (profileService.getFollowers(campaign.getAgentUsername()).contains(username)) {
+                campaigns.add(campaign);
+            } else if (authService.getTargetGroup(campaign.getTargetGroup()).contains(username)) {
+                campaigns.add(campaign);
+            }
+        }
+
+        List<CampaignForUserDTO> result = new ArrayList<>();
+        for(Campaign campaign : campaigns) {
+            for(LocalDateTime exposureDate : campaign.getExposureDates()) {
+                CampaignForUserDTO cfu = new CampaignForUserDTO();
+                cfu.mediaId = campaign.getMediaId();
+                cfu.published = exposureDate;
+                result.add(cfu);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public String getLink(long id) {
+        return campaignRepository.findAll().stream().filter(c -> c.getMediaId() == id)
+                .findFirst().map(c -> c.getLink()).orElse(null);
+    }
+
+    @Override
+    public void saveLinkClick(long mediaId, String profile) {
+        Campaign campaign = campaignRepository.findAll().stream().filter(c -> c.getMediaId() == mediaId)
+                .findFirst().orElse(null);
+        if(campaign != null) {
+            linkClickRepository.save(new LinkClick(campaign, profile));
+        }
+    }
+
     private Campaign createCampaign(CampaignDTO dto, String agent) throws Exception {
         if(!mediaService.exists(dto.getMediaId()))
             throw new Exception("Media content not created properly");
@@ -141,6 +185,7 @@ public class CampaignServiceImpl implements CampaignService {
         }
         dto.setTargetedAges(campaign.getTargetGroup().getAgeGroups().stream()
                 .map(a -> a.getId()).collect(Collectors.toSet()));
+        dto.report = getReport(dto.getId());
         return dto;
     }
 
@@ -167,5 +212,26 @@ public class CampaignServiceImpl implements CampaignService {
         }
         targetGroup.setAgeGroups(ageGroups);
         return targetGroup;
+    }
+
+    List<Campaign> getActive() {
+        return campaignRepository.findAll().stream().filter(c -> c.started()).collect(Collectors.toList());
+    }
+
+    @Override
+    public ReportDto getReport(long id) {
+        Campaign campaign = campaignRepository.findById(id).orElse(null);
+        if(campaign == null) return null;
+        ReportDto report = new ReportDto();
+        report.postReport = mediaService.getReport(campaign.getMediaId());
+        report.timesPublished = campaign.getExposureDates().size();
+        List<LinkClick> clicks = linkClickRepository.findAll().stream().filter(l -> l.getCampaign().getId() == campaign.getId()).collect(Collectors.toList());
+        report.totalClicks = clicks.size();
+        report.clicks = new ArrayList<>();
+        Map<String, Integer> rclicks = new HashMap<>();
+        clicks.forEach(l -> rclicks.put(l.getProfile(), 0));
+        clicks.forEach(l -> rclicks.put(l.getProfile(), rclicks.get(l.getProfile()) + 1));
+        rclicks.keySet().forEach(rc -> report.clicks.add(new ClicksByProfileDto(rc, rclicks.get(rc))));
+        return report;
     }
 }

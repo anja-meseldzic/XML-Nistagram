@@ -48,6 +48,24 @@
             </div>
         </div>
 
+        <!-- Report -->
+        <div style="width: 100%;">
+            <h2 style="text-align: center;">Report</h2>
+            <div *ngIf="c.report.postReport != null">
+                <p>Total comments: {{c.report.postReport.commentCount}}</p>
+                <p>Total likes: {{c.report.postReport.likeCount}}</p>
+                <p>Total dislikes: {{c.report.postReport.dislikeCount}}</p>
+            </div>
+            <p>Times published: {{c.report.timesPublished}}</p>
+            <p>Total clicks: {{c.report.totalClicks}}</p>
+            <div *ngIf="c.report.clicks.length > 0">
+                <p>Click count by profile: </p>
+                <p *ngFor="let cp of c.report.clicks">
+                    {{cp.profile}} : {{cp.clicks}}
+                </p>
+            </div>
+        </div>
+
         <!-- Buttons -->
         <div>
             <button mat-raised-button color="primary" *ngIf="repeated(c)" style="margin-right: 10px;" (click)="update(c.id, c.details)" [disabled]="disabled(c)">Update</button>

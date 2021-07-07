@@ -1,9 +1,6 @@
 package app.media.service.impl;
 
-import app.media.dtos.CollectionDTO;
-import app.media.dtos.CollectionInfoDTO;
-import app.media.dtos.PostInfoDTO;
-import app.media.dtos.SearchResultDTO;
+import app.media.dtos.*;
 import app.media.exception.PostDoesNotExistException;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
@@ -98,8 +95,7 @@ public class PostServiceImpl implements PostService {
 	
 	@Override
 	public List<PostInfoDTO> getFeed(String username) {
-		System.out.println("USERNAME FROM TOKEN: " + username);
-		List<PostInfoDTO> result = new ArrayList<>();
+		List<Post> result = new ArrayList<>();
 
 		List<String> targetedProfiles = profileService.getFollowing(username);
 		List<String> mutedProfiles = profileService.getMuted(username);
@@ -115,12 +111,22 @@ public class PostServiceImpl implements PostService {
 		Collectors.toList();
 
 		for (Post post : targetedPosts)
-			result.add(toPostInfoDTO(post));
-		postRepository.findAll().stream().filter(p -> p.getMedia().getUsername().equals(username))
-				.forEach(p -> result.add(toPostInfoDTO(p)));
+			result.add(post);
+		for(Post post : postRepository.findAll().stream().filter(p -> p.getMedia().getUsername().equals(username)).collect(Collectors.toList()))
+			result.add(post);
 
-		result.sort((r1, r2) -> r1.getCreated().isBefore(r2.getCreated()) ? 1 : -1);
-		return result;
+		result = syncFeed(result, username);
+		result.sort((r1, r2) -> r1.getMedia().getCreated().isBefore(r2.getMedia().getCreated()) ? 1 : -1);
+
+		List<PostInfoDTO> res = new ArrayList<>();
+		for(Post post : result) {
+			if(!mutedProfiles.contains(post.getMedia().getUsername())
+			&& !blockedProfiles.contains(post.getMedia().getUsername())
+			&& !inactiveProfiles.contains(post.getMedia().getUsername())) {
+				res.add(toPostInfoDTO(post));
+			}
+		}
+		return res;
 	}
 
 	@Override
@@ -261,6 +267,7 @@ public class PostServiceImpl implements PostService {
 		result.setLocation(post.getLocation());
 		result.setCreated(post.getMedia().getCreated());
 		result.setUrls(post.getMedia().getPath());
+		result.setLink(getLink(post.getMedia().getId()));
 		return result;
 	}
 
@@ -334,6 +341,53 @@ public class PostServiceImpl implements PostService {
 				result.add(post);
 			else if(campaignService.shouldDispaly(post.getMedia().getId()))
 				result.add(post);
+		}
+		return result;
+	}
+
+	public List<Post> syncFeed(List<Post> posts, String username) {
+		List<Post> result = new ArrayList<>();
+		for(Post post : posts) {
+			if(!campaignService.isPartOfCampaign(post.getMedia().getId()))
+				result.add(post);
+		}
+		for(CampaignForUserDTO c : campaignService.getCampaignsForUser(username)) {
+			Post post = postRepository.findAll().stream().filter(p -> p.getMedia().getId() == c.mediaId)
+					.findFirst().orElse(null);
+			if(post != null) {
+				post.getMedia().setCreated(c.published);
+				result.add(post);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public String getLink(long id) {
+		return campaignService.getLink(id);
+	}
+
+	@Override
+    public void saveLinkClick(long id, String username) {
+	    Post post = postRepository.findById(id).orElse(null);
+	    if(post != null) {
+            campaignService.saveLinkClick(post.getMedia().getId(), username);
+        }
+    }
+
+	@Override
+	public ReportDto getReport(long id) {
+		List<Post> posts = postRepository.findAll().stream()
+				.filter(p -> p.getMedia().getId() == id).collect(Collectors.toList());
+		if(posts.size() == 0) return null;
+		ReportDto result = new ReportDto();
+		result.commentCount = 0;
+		result.likeCount = 0;
+		result.dislikeCount = 0;
+		for(Post post : posts) {
+			result.commentCount += post.getComments().size();
+			result.likeCount += post.getRatings().stream().filter(r -> r.getRatingType() == RatingType.LIKE).count();
+			result.dislikeCount += post.getRatings().stream().filter(r -> r.getRatingType() == RatingType.DISLIKE).count();
 		}
 		return result;
 	}

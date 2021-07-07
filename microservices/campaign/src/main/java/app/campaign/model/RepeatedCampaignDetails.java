@@ -3,7 +3,10 @@ package app.campaign.model;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class RepeatedCampaignDetails {
@@ -20,6 +23,9 @@ public class RepeatedCampaignDetails {
 
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
+
+    @ElementCollection
+    private Set<LocalTime> exposureTimes = new HashSet<>();
 
     public RepeatedCampaignDetails() {
     }
@@ -48,6 +54,7 @@ public class RepeatedCampaignDetails {
         if(timesPerDay > 5)
             throw new Exception("Campaign can occur up to 5 times per day");
         this.timesPerDay = timesPerDay;
+        setExposureTimes();
     }
 
     public LocalDateTime getCreated() {
@@ -60,5 +67,21 @@ public class RepeatedCampaignDetails {
 
     public boolean applicable() {
         return created.isBefore(LocalDateTime.now().minusHours(24));
+    }
+
+    public Set<LocalTime> getExposureTimes() {
+        return exposureTimes;
+    }
+
+    public void setExposureTimes() {
+        exposureTimes = new HashSet<>();
+        LocalTime minTime = LocalTime.of(8, 0);
+        LocalTime maxTime = LocalTime.of(22, 0);
+        int totalMinutes = (maxTime.getHour()*60+maxTime.getMinute()) - (minTime.getHour()*60+minTime.getMinute());
+        for(int i = 1; i <= timesPerDay; i++) {
+            int minutes = minTime.getHour()*60+minTime.getMinute() + ((totalMinutes/timesPerDay)*i);
+            LocalTime time = LocalTime.of((int)Math.floor(minutes / 60), minutes % 60);
+            exposureTimes.add(time);
+        }
     }
 }

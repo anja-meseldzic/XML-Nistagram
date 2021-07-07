@@ -3,9 +3,8 @@ package app.campaign.model;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalTime;
+import java.util.*;
 
 
 @Entity
@@ -96,13 +95,23 @@ public class Campaign {
 	}
 
 	public boolean isRepeated() {
-		return details != null;
+		return details != null && details.size() > 0;
 	}
 
 	public RepeatedCampaignDetails getActiveDetails() {
 		if(details == null) return null;
 		return details.stream()
 				.filter(d -> d.applicable())
+				.max(Comparator.comparing(c -> c.getCreated()))
+				.orElse(details.stream()
+						.min(Comparator.comparing(cc -> cc.getCreated()))
+						.orElse(null));
+	}
+
+	public RepeatedCampaignDetails getActiveDetails(LocalDate now) {
+		if(details == null) return null;
+		return details.stream()
+				.filter(d -> d.applicable() && d.getCreated().toLocalDate().isBefore(now))
 				.max(Comparator.comparing(c -> c.getCreated()))
 				.orElse(details.stream()
 						.min(Comparator.comparing(cc -> cc.getCreated()))
@@ -133,5 +142,27 @@ public class Campaign {
 
 	public boolean active() {
 		return started() && !ended();
+	}
+
+	public List<LocalDateTime> getExposureDates() {
+		List<LocalDateTime> expDates = new ArrayList<>();
+		LocalDate startDate = start.toLocalDate();
+		if(!started()) {
+			return expDates;
+		}
+		if(!isRepeated()) {
+			expDates.add(start);
+			return expDates;
+		}
+		while(startDate.isBefore(LocalDate.now().plusDays(1))) {
+			RepeatedCampaignDetails details = getActiveDetails(startDate);
+			for(LocalTime time : details.getExposureTimes()) {
+				LocalDateTime dateTime = LocalDateTime.of(startDate, time);
+				if(dateTime.isBefore(LocalDateTime.now()))
+					expDates.add(dateTime);
+			}
+			startDate = startDate.plusDays(1);
+		}
+		return expDates;
 	}
 }

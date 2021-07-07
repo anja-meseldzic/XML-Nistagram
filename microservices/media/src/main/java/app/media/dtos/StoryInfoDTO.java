@@ -8,6 +8,7 @@ public class StoryInfoDTO {
     private String username;
     private String url;
     private LocalDateTime created;
+    private String link;
 
     public StoryInfoDTO() {
 
@@ -51,6 +52,12 @@ public class StoryInfoDTO {
 	public void setId(long id) {
 		this.id = id;
 	}
-    
-    
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
 }

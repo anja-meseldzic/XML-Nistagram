@@ -14,6 +14,7 @@ public class CampaignDTO {
     private Set<Gender> targetedGenders;
     private Set<Long> targetedAges;
     private DetailsDTO details;
+    public ReportDto report;
 
     public CampaignDTO() { }
 

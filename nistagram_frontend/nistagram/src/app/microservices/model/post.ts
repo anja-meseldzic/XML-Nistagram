@@ -6,8 +6,7 @@ export class Post {
         public location : String,
         public description : String,
         public hashtags : String[],
-        //public comments : Comment[],
-        //public ratings : Rating[]
-        public created : Date
+        public created : Date,
+        public link : String
     ){}
 }

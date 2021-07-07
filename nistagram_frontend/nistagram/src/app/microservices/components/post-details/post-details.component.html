@@ -18,6 +18,9 @@
             Description: <span *ngIf="post.description != null" style="color: gray;">{{post.description}}</span>
             <div></div>
             Hashtags: <span *ngFor="let tag of post.hashtags" style="color: gray;">{{tag}}</span>
+            <div *ngIf="post.link != null && post.link.length > 0">
+              Link: <a [href]="post.link" (click)="sendClick()">{{post.link}}</a>
+            </div>
         </div>
         <mat-divider></mat-divider>
         <div >

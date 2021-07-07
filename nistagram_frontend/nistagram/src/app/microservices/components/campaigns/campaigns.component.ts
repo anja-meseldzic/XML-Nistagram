@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from 'src/environments/environment';
 import { CampaignService } from '../../campaign-service/campaign.service';
@@ -31,7 +30,7 @@ export class CampaignsComponent implements OnInit {
           c['ageStrings'] = []
           c.start = new Date(c.start[0], c.start[1]-1, c.start[2], c.start[3], c.start[4])
           if(c.details != null) {
-            c.details.endDate = new Date(c.details.endDate[0], c.details.endDate[1]-1, c.details.endDate[2], c.details.endDate[3], c.details.endDate[4])
+            c.details.endDate = new Date(c.details.endDate[0], c.details.endDate[1]-1, c.details.endDate[2])
           }
           for(let a of c.targetedAges) {
             this.campService.getAge(a).subscribe(
@@ -56,17 +55,17 @@ export class CampaignsComponent implements OnInit {
     this.campService.delete(id).subscribe(
       res => {
         this.campService.get().subscribe(
-          res => { this.campaigns = res; this.getMediaUrls(); }
+          res => { this.campaigns = res; this.getMediaUrls(); },
         )
-      }
+      },
+      error => this.openSnackBar(error.error.message)
     )
   }
 
   update(id: number, dto: CampaignDetails) {
-    dto.endDate.setHours(dto.endDate.getHours() + 2)
     this.campService.update(id, dto).subscribe(
       _ => {
-        this.openSnackBar("Update successful! Changes will be applicable after 24 hours")
+        this.openSnackBar("Update successful! Your changes will be applicable tomorrow")
         this.campService.get().subscribe(
           res => { this.campaigns = res; this.getMediaUrls(); }
         )
