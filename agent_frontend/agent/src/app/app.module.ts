@@ -10,6 +10,7 @@ import { LoginComponent } from './login/login.component';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { ProductsComponent } from './products/products.component';
 import {CommonModule} from '@angular/common';
+import { ReportComponent } from './report/report.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import {CommonModule} from '@angular/common';
     RegistrationComponent,
     LoginComponent,
     LandingPageComponent,
-    ProductsComponent
+    ProductsComponent,
+    ReportComponent
   ],
   imports: [
     BrowserModule,

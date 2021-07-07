@@ -1,11 +1,11 @@
 <div id="profile_info" style="margin-top: 50px; margin-left: 15%; width: 70%; height: max-content;">
     <div style="float: left; width: 200px; height: 200px; margin-right: 20px; overflow: hidden; border-radius: 50%;">
-        <ng-image-slider style="width: 100px;"
+        <ng-image-slider style="width: 100px;" (imageClick)="storyClick($event)"
             [images]="stories['slider']"
             imageSize="{width: '100px', height: '100px', space: 4}"
-            [imagePopup]="true"
-            [showArrow]="false"
-            [arrowKeyMove]="false"
+            [imagePopup]="false"
+            [showArrow]="true"
+            [arrowKeyMove]="true"
             #nav>
         </ng-image-slider>
     </div>

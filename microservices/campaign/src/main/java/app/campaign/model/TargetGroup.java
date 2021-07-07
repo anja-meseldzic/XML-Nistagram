@@ -9,7 +9,7 @@ public class TargetGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<AgeGroup> ageGroups;
     @ElementCollection(fetch = FetchType.LAZY)
     private Set<Gender> genders;

@@ -3,15 +3,7 @@ package app.media.model;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 public class Story {
@@ -32,7 +24,7 @@ public class Story {
 	@Column(name = "isHighlighted", nullable = false)
 	private boolean isHighlighted;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Media media;
 
 	public Story() {

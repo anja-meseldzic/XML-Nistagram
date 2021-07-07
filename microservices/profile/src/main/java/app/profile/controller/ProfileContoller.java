@@ -321,7 +321,6 @@ public class ProfileContoller {
 	public ResponseEntity<Boolean> isProfileActive(@PathVariable String username) {
 		boolean isActive = profileService.isProfileActive(username);
 		return new ResponseEntity<>(isActive,HttpStatus.OK);
-
 	}
 	
 	@GetMapping(value = "/influencers")

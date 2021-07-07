@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgImageSliderComponent } from 'ng-image-slider';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../../auth-service/auth.service';
 import { CollectionInfoDto } from '../../DTOs/collection-info-dto';
@@ -37,6 +38,8 @@ export class ProfileComponent implements OnInit {
   collections : CollectionInfoDto[] = [];
   collections1 = [];
   
+
+  @ViewChild('nav') slider: NgImageSliderComponent;
 
 
   ngOnInit(): void {
@@ -137,9 +140,9 @@ export class ProfileComponent implements OnInit {
     const storyObject = new Array<Object>();
     for(const story of this.stories) {
       if(story.url.endsWith('.jpg') || story.url.endsWith('.png')) {
-        storyObject.push( {image: environment.mediaBaseUrl + story.url, thumbImage: environment.mediaBaseUrl + story.url});
+        storyObject.push( {image: environment.mediaBaseUrl + story.url, thumbImage: environment.mediaBaseUrl + story.url, title: story.link});
       } else {
-        storyObject.push({video: environment.mediaBaseUrl + story.url, alt: 'video unavailable'});
+        storyObject.push({video: environment.mediaBaseUrl + story.url, alt: 'video unavailable', title: story.link});
       }
     }
     this.stories['slider'] = storyObject;
@@ -275,5 +278,12 @@ export class ProfileComponent implements OnInit {
       this.matDialog.open(InfluencerCampaignDialogComponent, {data : data,  width: '70vw',
       maxWidth: '70vw', height: '800px'})
     });
+  }
+  public storyClick(event) {
+    const s = this.stories[event]
+    this.mediaService.sendStoryLinkClick(s['id']).subscribe()
+    if(s.link != null && s.link.length > 0) {
+      document.location.href = s.link.toString()
+    }
   }
 }

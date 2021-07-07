@@ -1,8 +1,14 @@
 package app.campaign.service;
 
 import app.campaign.dto.CampaignDTO;
+import app.campaign.dto.CampaignForUserDTO;
 import app.campaign.dto.DetailsDTO;
+
 import app.campaign.dto.InfluencerCampaignDTO;
+
+import app.campaign.dto.ReportDto;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,4 +34,12 @@ public interface CampaignService {
 	void denyCampaign(String username, CampaignDTO dto);
 
 	void acceptCampaign(String username, CampaignDTO dto);
+
+    List<CampaignForUserDTO> getCampaigns(String username);
+
+    String getLink(long id);
+
+    void saveLinkClick(long mediaId, String profile);
+
+    ReportDto getReport(long id);
 }

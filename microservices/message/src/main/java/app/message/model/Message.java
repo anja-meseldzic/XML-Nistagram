@@ -31,13 +31,10 @@ public class Message {
 	private String content;
 
 	@Column
-	private String linkToPost;
-
-	@Column
 	private String linkToSource;
 
 	@Column
-	private boolean seen;
+	private String deletedBy;
 
 	@Column
 	private boolean active;
@@ -46,17 +43,16 @@ public class Message {
 		super();
 	}
 
-	public Message(Long id, String sender, String receiver, LocalDateTime date, MessageType type, String content, String linkToPost, String linkToSource) {
+	public Message(Long id, String sender, String receiver, LocalDateTime date, MessageType type, String content, String linkToSource, String deletedBy, boolean active) {
 		this.id = id;
 		this.sender = sender;
 		this.receiver = receiver;
 		this.date = date;
 		this.type = type;
 		this.content = content;
-		this.linkToPost = linkToPost;
 		this.linkToSource = linkToSource;
-		this.seen = false;
-		this.active = true;
+		this.deletedBy = deletedBy;
+		this.active = active;
 	}
 
 	public Long getId() {
@@ -107,14 +103,6 @@ public class Message {
 		this.content = content;
 	}
 
-	public String getLinkToPost() {
-		return linkToPost;
-	}
-
-	public void setLinkToPost(String linkToPost) {
-		this.linkToPost = linkToPost;
-	}
-
 	public String getLinkToSource() {
 		return linkToSource;
 	}
@@ -123,12 +111,12 @@ public class Message {
 		this.linkToSource = linkToSource;
 	}
 
-	public boolean isSeen() {
-		return seen;
+	public String getDeletedBy() {
+		return deletedBy;
 	}
 
-	public void setSeen(boolean seen) {
-		this.seen = seen;
+	public void setDeletedBy(String deletedBy) {
+		this.deletedBy = deletedBy;
 	}
 
 	public boolean isActive() {

@@ -39,10 +39,20 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Collection<Message> getUserMessages(String firstPeer, String secondPeer) {
-        return messageRepository.findAllByActiveTrue().stream()
-                .filter(m -> (m.getReceiver().equals(firstPeer) && m.getSender().equals(secondPeer)) || (m.getReceiver().equals(secondPeer) && m.getSender().equals(firstPeer)))
-                .filter(m -> m.getType() != MessageType.ONETIME || !m.isSeen())
+    public Collection<Message> getUserMessages(String sender, String receiver) {
+        return messageRepository.findAll().stream()
+                .filter(m -> (m.getReceiver().equals(sender) && m.getSender().equals(receiver)) || (m.getReceiver().equals(receiver) && m.getSender().equals(sender)))
+                .filter(m -> m.isActive() || !m.getDeletedBy().equals(receiver))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteMessages(String sender, String receiver) {
+        Collection<Message> messages = messageRepository.findAllBySenderAndReceiver(sender, receiver);
+        messages.forEach(m -> {
+            m.setActive(false);
+            m.setDeletedBy(receiver);
+        });
+        messages.forEach(messageRepository::save);
     }
 }

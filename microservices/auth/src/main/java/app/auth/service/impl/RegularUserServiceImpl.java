@@ -1,24 +1,20 @@
 package app.auth.service.impl;
 
 import app.auth.client.ProfileClient;
+import app.auth.dto.AgeGroup;
+import app.auth.dto.TargetGroup;
 import app.auth.exception.UserNotFoundException;
+import app.auth.model.Gender;
 import app.auth.model.RegularUser;
 import app.auth.model.dto.UserInfoDTO;
 import app.auth.repository.RegularUserRepository;
 import app.auth.service.RegularUserService;
 import app.auth.util.PasswordUtil;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
-import java.util.Arrays;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 public class RegularUserServiceImpl implements RegularUserService {
@@ -71,6 +67,33 @@ public class RegularUserServiceImpl implements RegularUserService {
         result.setGender(user.getGender().toString());
         result.setWebsite(user.getWebsite());
         result.setFullName(user.getName() != null ? user.getName() : "" + " " + user.getSurname() != null ? user.getSurname() : "");
+        return result;
+    }
+
+    @Override
+    public List<String> getByTargetGroup(TargetGroup targetGroup) {
+        List<String> result = new ArrayList<>();
+        for(RegularUser user : repository.findAll()) {
+            if(fitsAnyAgeGroup(user, targetGroup.getAgeGroups()) && fitsAnyGender(user, targetGroup.getGenders())) {
+                result.add(user.getUser().getUsername());
+            }
+        }
+        return result;
+    }
+
+    private boolean fitsAnyGender(RegularUser user, Set<Gender> genders) {
+        return genders.contains(user.getGender());
+    }
+
+    private boolean fitsAnyAgeGroup(RegularUser user, Set<AgeGroup> ageGroups) {
+        boolean result = false;
+        int userYears = user.getBirthDate().until(LocalDate.now()).getYears();
+        for(AgeGroup ageGroup : ageGroups) {
+            if(userYears >= ageGroup.getMinAge() && userYears <= ageGroup.getMaxAge()) {
+                result = true;
+                break;
+            }
+        }
         return result;
     }
 }

@@ -1,11 +1,11 @@
 package app.campaign.controller;
 
+import app.campaign.dto.CampaignForUserDTO;
 import app.campaign.service.CampaignService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "media")
@@ -26,5 +26,10 @@ public class MediaController {
     @PostMapping(value = "{id}")
     public boolean partOfCampaign(@PathVariable("id") long id) {
         return campaignService.isPartOfCampaign(id);
+    }
+
+    @GetMapping(value = "{username}")
+    public List<CampaignForUserDTO> getCampaignsForUser(@PathVariable("username") String username) {
+        return campaignService.getCampaigns(username);
     }
 }

@@ -2,7 +2,10 @@ package app.campaign.controller;
 
 import app.campaign.dto.CampaignDTO;
 import app.campaign.dto.DetailsDTO;
+
 import app.campaign.dto.InfluencerCampaignDTO;
+
+import app.campaign.dto.ReportDto;
 import app.campaign.service.AuthService;
 import app.campaign.service.CampaignService;
 import app.campaign.util.TokenUtils;
@@ -75,7 +78,8 @@ public class CampaignController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-    
+
+  
     @PostMapping(value = "createInflCamp")
     public void createInfluencerCampaigns(@RequestBody InfluencerCampaignDTO dto,  @RequestHeader("Authorization") String auth) {
     	if(!authService.verify(auth, "AGENT"))
@@ -110,6 +114,21 @@ public class CampaignController {
     	String token = TokenUtils.getToken(auth);
         String username = authService.getUsernameFromToken(token);
         campaignService.acceptCampaign(username, dto);  
-        
+    }
+
+    @GetMapping(value="link/{id}")
+    public String getLink(@PathVariable("id") long id) {
+        return campaignService.getLink(id);
+    }
+
+    @PostMapping("{id}/{username}")
+    void saveLinkClick(@PathVariable("id") long id, @PathVariable("username") String username) {
+        campaignService.saveLinkClick(id, username);
+    }
+
+    @GetMapping("report/{id}")
+    ReportDto getReport(@PathVariable("id") long id) {
+        return campaignService.getReport(id);
+
     }
 }

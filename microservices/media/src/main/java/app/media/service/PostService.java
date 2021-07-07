@@ -1,9 +1,6 @@
 package app.media.service;
 
-import app.media.dtos.CollectionDTO;
-import app.media.dtos.CollectionInfoDTO;
-import app.media.dtos.PostInfoDTO;
-import app.media.dtos.SearchResultDTO;
+import app.media.dtos.*;
 import app.media.exception.PostDoesNotExistException;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
@@ -36,4 +33,10 @@ public interface PostService {
 	List<PostInfoDTO> getLikedContent(String username);
 
 	List<PostInfoDTO> getDislikedContent(String username);
+
+	String getLink(long id);
+
+	void saveLinkClick(long id, String username);
+
+	ReportDto getReport(long id);
 }

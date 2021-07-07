@@ -17,6 +17,8 @@ export class ChatComponent implements OnInit {
   peer: string;
   peerChosen: boolean;
   txtMessage: string;
+  approval = false;
+  denied = false;
   messages = [];
   selectedFile: any = null;
   months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUN', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
@@ -114,8 +116,7 @@ export class ChatComponent implements OnInit {
       receiver: this.peer,
       type: 'ONETIME',
       content: this.txtMessage,
-      active: true,
-      seen: false
+      active: true
     };
     if(this.selectedFile != null) {
       fd.append('imageFile', this.selectedFile, this.selectedFile.name);
@@ -145,7 +146,7 @@ export class ChatComponent implements OnInit {
 
   choosePeer = async () => {
     await axios
-      .get(environment.profileBaseUrl + '/messages/' + this.peer, {
+      .get(environment.profileBaseUrl + '/messages/' + this.authService.getUsername() + '/' + this.peer, {
         headers : {
           Authorization: 'Bearer ' + localStorage.getItem('jwt')
         }
@@ -153,18 +154,31 @@ export class ChatComponent implements OnInit {
       .then(res => this.peerChosen = res.data);
 
     if (!this.peerChosen) {
-      alert('User does not exist');
+      alert('User does not exist or has forbidden messages from people they do not follow');
       return;
     }
 
+    this.denied = false;
+
     axios
-      .get(environment.messageBaseUrl + 'messages/' + this.authService.getUsername() + '/' + this.peer, {
+      .get(environment.messageBaseUrl + 'messages/' + this.peer + '/' + this.authService.getUsername(), {
         headers : {
           Authorization: 'Bearer ' + localStorage.getItem('jwt')
         }
       })
       .then(res => {
         console.log(res.data);
+
+        if(res.data.filter(m => m.sender === this.peer).length > 0) {
+          axios
+            .get(environment.profileBaseUrl + 'messages/checkPermission/' + this.authService.getUsername() + '/' + this.peer, {
+              headers : {
+                Authorization: 'Bearer ' + localStorage.getItem('jwt')
+              }
+            })
+            .then(response => this.approval = !response.data);
+        }
+
         res.data.forEach(m => {
           m.date = {
             hour: m.date[3],
@@ -196,18 +210,47 @@ export class ChatComponent implements OnInit {
     this.selectedFile = <File> event.target.files[0];
   }
 
-  seeMessage = (type, id) => {
-    if (type !== 'ONETIME' || id == null) {
+  seeMessage = (msg) => {
+    const {type, id, sender} = msg;
+
+    if (type !== 'ONETIME' || sender === this.authService.getUsername()) {
       return;
     }
 
     axios
-      .put(environment.messageBaseUrl + 'messages/' + id, {
+      .put(environment.messageBaseUrl + 'messages/' + id + '/' + this.authService.getUsername(), {}, {
         headers : {
           Authorization: 'Bearer ' + localStorage.getItem('jwt')
         }
       })
       .then(_ => this.messages = this.messages.filter(m => m.id !== id));
+  }
+
+  approveMessages = () => {
+    axios
+      .get(environment.profileBaseUrl + 'messages/permission/' + this.authService.getUsername() + '/' + this.peer, {
+        headers : {
+          Authorization: 'Bearer ' + localStorage.getItem('jwt')
+        }
+      })
+      .then(_ => this.approval = false);
+  }
+
+  denyMessages = () => {
+    this.denied = true;
+  }
+
+  deleteMessages = () => {
+    axios
+      .delete(environment.messageBaseUrl + 'messages/' + this.peer + '/' + this.authService.getUsername(), {
+        headers : {
+          Authorization: 'Bearer ' + localStorage.getItem('jwt')
+        }
+      })
+      .then(_ => {
+        this.messages = [];
+        this.approval = false;
+      });
   }
 
 

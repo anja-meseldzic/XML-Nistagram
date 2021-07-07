@@ -33,17 +33,17 @@ public class MessageController {
         this.authService = authService;
     }
 
-    @GetMapping("/{firstPeer}/{secondPeer}")
-    public ResponseEntity<Collection<Message>> getByUser(@PathVariable String firstPeer, @PathVariable String secondPeer, @RequestHeader("Authorization") String auth) {
-        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
+    @GetMapping("/{sender}/{receiver}")
+    public ResponseEntity<Collection<Message>> getByUser(@PathVariable String sender, @PathVariable String receiver, @RequestHeader("Authorization") String auth) {
+        if (!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        return new ResponseEntity<>(messageService.getUserMessages(firstPeer, secondPeer), HttpStatus.OK);
+        return new ResponseEntity<>(messageService.getUserMessages(sender, receiver), HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> create(@RequestParam(name = "imageFile", required = false) MultipartFile data, @RequestParam(name = "post", required = false) String model, @RequestHeader("Authorization") String auth) throws JsonProcessingException {
-        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
+        if (!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
@@ -74,17 +74,26 @@ public class MessageController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> seeMessage(@PathVariable Long id, @RequestHeader("Authorization") String auth) {
-        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
+    @PutMapping("/{id}/{username}")
+    public ResponseEntity<Void> seeMessage(@PathVariable Long id, @PathVariable String username, @RequestHeader("Authorization") String auth) {
+        if (!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
         try {
-            mediaMessageService.seeMessage(id);
+            mediaMessageService.seeMessage(id, username);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{sender}/{receiver}")
+    public ResponseEntity<Void> deleteMessages(@PathVariable String sender, @PathVariable String receiver, @RequestHeader("Authorization") String auth) {
+        if (!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        messageService.deleteMessages(sender, receiver);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

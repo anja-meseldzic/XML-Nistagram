@@ -81,4 +81,14 @@ public class StoryController {
         else
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
+
+    @GetMapping(value = "camp/{id}")
+    public String getLink(@PathVariable("id") long id) {
+        return storyService.getLink(id);
+    }
+
+    @PostMapping(value = "visit/{id}/{username}")
+    public void saveLinkClick(@PathVariable("id") long id, @PathVariable("username") String username) {
+        storyService.saveLinkClick(id, username);
+    }
 }

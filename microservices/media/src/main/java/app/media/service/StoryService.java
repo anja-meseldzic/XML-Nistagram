@@ -17,4 +17,8 @@ public interface StoryService {
     List<StoryInfoDTO> getStoryHighlights(String username);
     
     void addToStoryHighlights(StoryInfoDTO dto);
+
+    String getLink(long id);
+
+    void saveLinkClick(long id, String username);
 }

@@ -1,9 +1,6 @@
 package app.media.controller;
 
-import app.media.dtos.CollectionDTO;
-import app.media.dtos.CollectionInfoDTO;
-import app.media.dtos.PostInfoDTO;
-import app.media.dtos.SearchResultDTO;
+import app.media.dtos.*;
 import app.media.exception.PostDoesNotExistException;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
@@ -153,4 +150,19 @@ public class PostController {
 		String loggedInUsername = authService.getUsernameFromToken(token);
 		return new ResponseEntity<List<CollectionInfoDTO>>(postService.getCollectionsForProfile(loggedInUsername), HttpStatus.OK);
 	}
+
+	@GetMapping(value = "camp/{id}")
+    public String getLink(@PathVariable("id") long id) {
+        return postService.getLink(id);
+    }
+
+    @PostMapping(value = "visit/{id}/{username}")
+    public void saveLinkClick(@PathVariable("id") long id, @PathVariable("username") String username) {
+        postService.saveLinkClick(id, username);
+    }
+
+    @GetMapping(value = "report/{id}")
+    public ReportDto getRepost(@PathVariable("id") long id) {
+        return postService.getReport(id);
+    }
 }

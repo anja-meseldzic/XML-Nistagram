@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { AuthService } from '../auth-service/auth.service';
 import { AllCommentDTO } from '../DTOs/all-comment-dto';
 import { AllReactionsDTO } from '../DTOs/all-reactions-dto';
 import { CollectionDTO } from '../DTOs/collection-dto';
@@ -33,7 +34,7 @@ export class MediaService {
   private deleteUnappropriateContentUrl = environment.mediaBaseUrl + "media/deleteContent";
   private approveInappropriateContentUrl = environment.mediaBaseUrl + "media/approveContent";
 
-  constructor(private _http : HttpClient) {}
+  constructor(private _http : HttpClient, private auth : AuthService) {}
 
   getAllReactions(data : number) : Observable<AllReactionsDTO>{
     return this._http.post<AllReactionsDTO>(this.getReactionsUrl, data, {responseType: 'json',headers : {
@@ -182,5 +183,13 @@ export class MediaService {
     return this._http.post(this.approveInappropriateContentUrl, data, {responseType: 'text',headers : {
       Authorization: 'Bearer ' + localStorage.getItem('jwt')
     }});
+  }
+
+  public sendPostLinkClick(id : Number) {
+    return this._http.post(environment.mediaBaseUrl + 'post/visit/' + id + '/' + this.auth.getUsername(), null)
+  }
+
+  public sendStoryLinkClick(id : Number) {
+    return this._http.post(environment.mediaBaseUrl + 'story/visit/' + id + '/' + this.auth.getUsername(), null)
   }
 }

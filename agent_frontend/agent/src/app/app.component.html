@@ -1,5 +1,9 @@
 <nav class="navbar navbar-light bg-light justify-content-between mb-4" >
   <a class="navbar-brand">WebShop</a>
+  <button class="btn btn-outline-primary"
+          *ngIf="this.authService.isLoggedIn() && authService.getRole() == 'ADMIN'"
+          (click)="this.router.navigate(['reports'])"
+  >Reports</button>
   <button class="btn btn-outline-secondary my-2 my-sm-0"
           *ngIf="this.authService.isLoggedIn()"
           (click)="this.authService.logOut()"
