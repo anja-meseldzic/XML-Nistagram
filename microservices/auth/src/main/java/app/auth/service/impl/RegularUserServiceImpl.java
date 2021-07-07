@@ -10,8 +10,10 @@ import app.auth.model.dto.UserInfoDTO;
 import app.auth.repository.RegularUserRepository;
 import app.auth.service.RegularUserService;
 import app.auth.util.PasswordUtil;
+import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.coreapis.commands.CreateUserCommand;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -19,24 +21,32 @@ import java.util.*;
 @Service
 public class RegularUserServiceImpl implements RegularUserService {
     private final RegularUserRepository repository;
+    private transient CommandGateway commandGateway;
+//    private final ProfileClient profileClient;
 
-    private final ProfileClient profileClient;
+//    @Autowired
+//    public RegularUserServiceImpl(RegularUserRepository repository, ProfileClient profileClient) {
+//        this.repository = repository;
+//        this.profileClient = profileClient;
+//    }
 
     @Autowired
-    public RegularUserServiceImpl(RegularUserRepository repository, ProfileClient profileClient) {
+    public RegularUserServiceImpl(RegularUserRepository repository, CommandGateway commandGateway) {
         this.repository = repository;
-        this.profileClient = profileClient;
+        this.commandGateway = commandGateway;
     }
 
     @Override
     public void register(RegularUser user) {
         user.getUser().setPassword(PasswordUtil.hashPBKDF2(user.getUser().getPassword()));
+        RegularUser regularUser = null;
         try {
-            repository.save(user);
+            regularUser = repository.save(user);
+            commandGateway.send(new CreateUserCommand(regularUser.getUser().getUsername(), regularUser.getId(), regularUser.getUser().getId()));
         } catch (Exception e) {
             throw new IllegalArgumentException("Username must be unique");
         }
-        profileClient.createFromUser(user.getUser().getUsername());
+//        profileClient.createFromUser(user.getUser().getUsername());
     }
 
     @Override
@@ -44,6 +54,11 @@ public class RegularUserServiceImpl implements RegularUserService {
         RegularUser regularUser = repository.findById(user.getId()).get();
         user.getUser().setPassword(regularUser.getUser().getPassword());
         repository.save(user);
+    }
+
+    @Override
+    public void remove(long id) {
+        repository.deleteById(id);
     }
 
     @Override
