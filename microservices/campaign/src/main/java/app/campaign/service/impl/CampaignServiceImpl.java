@@ -58,7 +58,9 @@ public class CampaignServiceImpl implements CampaignService {
             throw new Exception("You can't delete a campaign that is not yours");
         if(campaign.started())
             throw new Exception("Campaign has started");
-        mediaService.delete(campaign.getMediaId());
+        for(long mid : campaign.getMediaIds()) {
+            mediaService.delete(mid);
+        }
         campaignRepository.delete(campaign);
     }
 
@@ -89,7 +91,7 @@ public class CampaignServiceImpl implements CampaignService {
     @Override
     public boolean shouldDisplayMedia(long mediaId) {
         Campaign campaign = campaignRepository.findAll().stream()
-                .filter(c -> c.getMediaId() == mediaId).findFirst().orElse(null);
+                .filter(c -> c.containsMedia(mediaId)).findFirst().orElse(null);
         if(campaign == null)
             return false;
         if(campaign.started())
@@ -100,7 +102,7 @@ public class CampaignServiceImpl implements CampaignService {
     @Override
     public boolean isPartOfCampaign(long mediaId) {
         return campaignRepository.findAll().stream()
-                .filter(c -> c.getMediaId() == mediaId)
+                .filter(c -> c.containsMedia(mediaId))
                 .findFirst().isPresent();
     }
 
@@ -115,13 +117,18 @@ public class CampaignServiceImpl implements CampaignService {
             } else if (authService.getTargetGroup(campaign.getTargetGroup()).contains(username)) {
                 campaigns.add(campaign);
             }
+            else {
+                //ako je pratilac nekog od influensera koji je odobrio prikazivanje kampanje
+                //for petlja za svakog influensera koji deli kampanju i ista provera kao u 115. liniji
+                //umesto username-a agenta salje se username influensera
+            }
         }
 
         List<CampaignForUserDTO> result = new ArrayList<>();
         for(Campaign campaign : campaigns) {
             for(LocalDateTime exposureDate : campaign.getExposureDates()) {
                 CampaignForUserDTO cfu = new CampaignForUserDTO();
-                cfu.mediaId = campaign.getMediaId();
+                cfu.mediaId = campaign.getMediaIds().stream().findFirst().orElse(null);
                 cfu.published = exposureDate;
                 result.add(cfu);
             }
@@ -131,13 +138,13 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public String getLink(long id) {
-        return campaignRepository.findAll().stream().filter(c -> c.getMediaId() == id)
+        return campaignRepository.findAll().stream().filter(c -> c.containsMedia(id))
                 .findFirst().map(c -> c.getLink()).orElse(null);
     }
 
     @Override
     public void saveLinkClick(long mediaId, String profile) {
-        Campaign campaign = campaignRepository.findAll().stream().filter(c -> c.getMediaId() == mediaId)
+        Campaign campaign = campaignRepository.findAll().stream().filter(c -> c.containsMedia(mediaId))
                 .findFirst().orElse(null);
         if(campaign != null) {
             linkClickRepository.save(new LinkClick(campaign, profile));
@@ -154,7 +161,7 @@ public class CampaignServiceImpl implements CampaignService {
         campaign.setAgentUsername(agent);
         campaign.setLink(dto.getLink());
         campaign.setStart(dto.getStart());
-        campaign.setMediaId(dto.getMediaId());
+        campaign.addMedia(dto.getMediaId());
         campaign.setTargetGroup(createTargetGroup(dto));
 
         RepeatedCampaignDetails details = createDetails(dto.getDetails());
@@ -171,7 +178,7 @@ public class CampaignServiceImpl implements CampaignService {
     private CampaignDTO createCampaignDTO(Campaign campaign) {
         CampaignDTO dto = new CampaignDTO();
         dto.setId(campaign.getId());
-        dto.setMediaId(campaign.getMediaId());
+        dto.setMediaId(campaign.getMediaIds().stream().findFirst().orElse(null));
         dto.setStart(campaign.getStart());
         dto.setLink(campaign.getLink());
         dto.setTargetedGenders(campaign.getTargetGroup().getGenders());
@@ -223,7 +230,25 @@ public class CampaignServiceImpl implements CampaignService {
         Campaign campaign = campaignRepository.findById(id).orElse(null);
         if(campaign == null) return null;
         ReportDto report = new ReportDto();
-        report.postReport = mediaService.getReport(campaign.getMediaId());
+        PostReportDto preport = new PostReportDto();
+        preport.commentCount = 0;
+        preport.likeCount = 0;
+        preport.dislikeCount = 0;
+        boolean isNull = true;
+        for(long mid : campaign.getMediaIds()) {
+            PostReportDto postReport = mediaService.getReport(mid);
+            if(postReport != null) {
+                isNull = false;
+                preport.likeCount += postReport.likeCount;
+                preport.dislikeCount += postReport.dislikeCount;
+                preport.commentCount += postReport.commentCount;
+            }
+        }
+        if(isNull) {
+            report.postReport = null;
+        } else {
+            report.postReport = preport;
+        }
         report.timesPublished = campaign.getExposureDates().size();
         List<LinkClick> clicks = linkClickRepository.findAll().stream().filter(l -> l.getCampaign().getId() == campaign.getId()).collect(Collectors.toList());
         report.totalClicks = clicks.size();

@@ -17,8 +17,8 @@ public class Campaign {
 	@Column(name = "agentUsername", nullable = false)
 	private String agentUsername;
 	
-	@Column(name = "mediaId", nullable = false)
-	private long mediaId;
+	@ElementCollection
+	private Set<Long> mediaIds;
 
 	@Column(name = "link", nullable = false)
 	private String link;
@@ -52,12 +52,23 @@ public class Campaign {
 		this.agentUsername = agentUsername;
 	}
 
-	public long getMediaId() {
-		return mediaId;
+	public Set<Long> getMediaIds() {
+		return mediaIds;
 	}
 
-	public void setMediaId(long mediaId) {
-		this.mediaId = mediaId;
+	public boolean containsMedia(long id) {
+		return mediaIds != null && mediaIds.contains(id);
+	}
+
+	public void setMediaIds(Set<Long> mediaIds) {
+		this.mediaIds = mediaIds;
+	}
+
+	public void addMedia(long id) {
+		if(mediaIds == null) {
+			mediaIds = new HashSet<>();
+		}
+		mediaIds.add(id);
 	}
 
 	public String getLink() {
