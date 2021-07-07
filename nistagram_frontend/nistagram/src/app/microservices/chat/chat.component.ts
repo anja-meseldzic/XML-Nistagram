@@ -145,7 +145,7 @@ export class ChatComponent implements OnInit {
 
   choosePeer = async () => {
     await axios
-      .get(environment.profileBaseUrl + '/messages/' + this.peer, {
+      .get(environment.profileBaseUrl + '/messages/' + this.authService.getUsername() + '/' + this.peer, {
         headers : {
           Authorization: 'Bearer ' + localStorage.getItem('jwt')
         }
@@ -153,7 +153,7 @@ export class ChatComponent implements OnInit {
       .then(res => this.peerChosen = res.data);
 
     if (!this.peerChosen) {
-      alert('User does not exist');
+      alert('User does not exist or has forbidden messages from people they do not follow');
       return;
     }
 
@@ -202,7 +202,7 @@ export class ChatComponent implements OnInit {
     }
 
     axios
-      .put(environment.messageBaseUrl + 'messages/' + id, {
+      .put(environment.messageBaseUrl + 'messages/' + id, {}, {
         headers : {
           Authorization: 'Bearer ' + localStorage.getItem('jwt')
         }
