@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { AgeGroup } from '../model/age-group';
 import { Campaign } from '../model/campaign';
 import { CampaignDetails } from '../model/campaign-details';
+import { InfluencerCampaign } from '../model/influencer-campaign';
 
 @Injectable({
   providedIn: 'root'
@@ -44,5 +45,17 @@ export class CampaignService {
 
   public update(id: number, dto: CampaignDetails) {
     return this.http.put(environment.campaignBaseUrl + 'campaign/' + id, dto)
+  }
+
+  public createInfluencerCampaigns(dto : InfluencerCampaign){
+    return this.http.post(environment.campaignBaseUrl + 'campaign/createInflCamp', dto);
+  }
+
+  public denyCampaign(dto : Campaign){
+    return this.http.post(environment.campaignBaseUrl + 'campaign/denyCampaign',dto );
+  }
+
+  public acceptCampaign(dto : Campaign){
+    return this.http.post(environment.campaignBaseUrl + 'campaign/acceptCampaign',dto );
   }
 }

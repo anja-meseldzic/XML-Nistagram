@@ -2,7 +2,9 @@ package app.campaign.service;
 
 import app.campaign.dto.CampaignDTO;
 import app.campaign.dto.DetailsDTO;
+import app.campaign.dto.InfluencerCampaignDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface CampaignService {
@@ -18,4 +20,12 @@ public interface CampaignService {
     boolean shouldDisplayMedia(long mediaId);
 
     boolean isPartOfCampaign(long mediaId);
+
+	void createInfluencerCampaign(InfluencerCampaignDTO dto);
+
+	ArrayList<CampaignDTO> getCampaignsForInfluencer(String username);
+
+	void denyCampaign(String username, CampaignDTO dto);
+
+	void acceptCampaign(String username, CampaignDTO dto);
 }

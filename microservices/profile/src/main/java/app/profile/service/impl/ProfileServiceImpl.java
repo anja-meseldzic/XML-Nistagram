@@ -53,7 +53,7 @@ public class ProfileServiceImpl implements ProfileService {
 	private AuthService authService;
 	private VerificationRequestRepository verificationRequestRepo;
 	private NotificationService notificationService;
-	
+
 	@Value("${profile.storage}")
 	private String storageDirectoryPath;
 
@@ -98,13 +98,13 @@ public class ProfileServiceImpl implements ProfileService {
 
 			follow = followRepository.save(follow);
 			sendNotification(NotificationType.NEW_FOLLOW, follow.getProfile().getRegularUserUsername(),
-					follow.getFollowedBy().getRegularUserUsername(),
-					follow.getFollowedBy().getRegularUserUsername());
+					follow.getFollowedBy().getRegularUserUsername(), follow.getFollowedBy().getRegularUserUsername());
 			notificationService.createSettings(follow.getId(), follow.getProfile().getRegularUserUsername());
 		} else {
 			FollowRequest request = new FollowRequest();
 			request.setProfile(profile);
 			request.setFollowedBy(followedBy);
+			request.setDeleted(false);
 			boolean exists = false;
 
 			for (FollowRequest f : followRequestRepo.findAll()) {
@@ -141,7 +141,8 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<FollowerDto> getFollowers(String username) {
 		List<FollowerDto> followers = new ArrayList<FollowerDto>();
-		for (Follow f : followRepository.findAll().stream().filter(f -> !f.isBlocked() && f.getFollowedBy().isActive()).collect(Collectors.toList())) {
+		for (Follow f : followRepository.findAll().stream().filter(f -> !f.isBlocked() && f.getFollowedBy().isActive())
+				.collect(Collectors.toList())) {
 			if (f.getProfile().getRegularUserUsername().equals(username)) {
 				followers.add(new FollowerDto(f.getFollowedBy().getRegularUserUsername()));
 			}
@@ -152,7 +153,8 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<FollowerDto> getFollowing(String username) {
 		List<FollowerDto> following = new ArrayList<FollowerDto>();
-		for (Follow f : followRepository.findAll().stream().filter(f -> !f.isBlocked() && f.getProfile().isActive()).collect(Collectors.toList())) {
+		for (Follow f : followRepository.findAll().stream().filter(f -> !f.isBlocked() && f.getProfile().isActive())
+				.collect(Collectors.toList())) {
 			if (f.getFollowedBy().getRegularUserUsername().equals(username)) {
 				following.add(new FollowerDto(f.getProfile().getRegularUserUsername()));
 			}
@@ -163,7 +165,8 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public Set<FollowRequestDto> getFollowRequests(String username) {
 		Set<FollowRequest> requests = followRequestRepo
-				.findByProfile(profileRepository.findByRegularUserUsername(username));
+				.findByProfile(profileRepository.findByRegularUserUsername(username)).stream()
+				.filter(r -> !r.isDeleted()).collect(Collectors.toSet());
 		Set<FollowRequestDto> followRequests = new HashSet<FollowRequestDto>();
 
 		for (FollowRequest f : requests) {
@@ -190,8 +193,7 @@ public class ProfileServiceImpl implements ProfileService {
 
 		follow = followRepository.save(follow);
 		sendNotification(NotificationType.FOLLOW_REQUEST_ACCEPTED, follow.getFollowedBy().getRegularUserUsername(),
-				follow.getProfile().getRegularUserUsername(),
-				follow.getProfile().getRegularUserUsername());
+				follow.getProfile().getRegularUserUsername(), follow.getProfile().getRegularUserUsername());
 		notificationService.createSettings(follow.getId(), follow.getProfile().getRegularUserUsername());
 
 		return deleteRequest(username, loggedInUsername);
@@ -207,15 +209,14 @@ public class ProfileServiceImpl implements ProfileService {
 		FollowRequest delete = new FollowRequest();
 		for (FollowRequest f : requests) {
 			if (f.getFollowedBy().getRegularUserUsername().equals(username)) {
-				delete = f;
-				break;
+				f.setDeleted(true);
+				followRequestRepo.save(f);
 			}
 		}
-		if (delete != null) {
-			followRequestRepo.delete(delete);
-		}
+
 		Set<FollowRequest> newRequests = followRequestRepo
-				.findByProfile(profileRepository.findByRegularUserUsername(loggedInUsername));
+				.findByProfile(profileRepository.findByRegularUserUsername(loggedInUsername)).stream()
+				.filter(r -> !r.isDeleted()).collect(Collectors.toSet());
 
 		for (FollowRequest f : newRequests) {
 			FollowRequestDto dto = new FollowRequestDto();
@@ -270,7 +271,7 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<String> getFollowerss(String profile) {
 		List<String> following = new ArrayList<String>();
-		for (Follow f : followRepository.findAll().stream().filter(f-> !f.isBlocked()).collect(Collectors.toList())) {
+		for (Follow f : followRepository.findAll().stream().filter(f -> !f.isBlocked()).collect(Collectors.toList())) {
 			if (f.getProfile().getRegularUserUsername().equals(profile)) {
 				following.add(f.getFollowedBy().getRegularUserUsername());
 			}
@@ -281,7 +282,7 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<String> getFollowingg(String username) {
 		List<String> following = new ArrayList<String>();
-		for (Follow f : followRepository.findAll().stream().filter(f-> !f.isBlocked()).collect(Collectors.toList())) {
+		for (Follow f : followRepository.findAll().stream().filter(f -> !f.isBlocked()).collect(Collectors.toList())) {
 			if (f.getFollowedBy().getRegularUserUsername().equals(username)) {
 				following.add(f.getProfile().getRegularUserUsername());
 			}
@@ -320,11 +321,13 @@ public class ProfileServiceImpl implements ProfileService {
 	}
 
 	private int getFollowerCount(Profile profile) {
-		return followRepository.findByProfile(profile).stream().filter(f-> !f.isBlocked() && f.getFollowedBy().isActive()).collect(Collectors.toList()).size();
+		return followRepository.findByProfile(profile).stream()
+				.filter(f -> !f.isBlocked() && f.getFollowedBy().isActive()).collect(Collectors.toList()).size();
 	}
 
 	private int getFollowingCount(Profile profile) {
-		return followRepository.findByFollowedBy(profile).stream().filter(f-> !f.isBlocked() && f.getProfile().isActive()).collect(Collectors.toList()).size();
+		return followRepository.findByFollowedBy(profile).stream()
+				.filter(f -> !f.isBlocked() && f.getProfile().isActive()).collect(Collectors.toList()).size();
 	}
 
 	private boolean isFollowing(Profile profile, String follower) {
@@ -380,35 +383,34 @@ public class ProfileServiceImpl implements ProfileService {
 		System.out.println(fileDownloadUri);
 
 		Profile profile = profileRepository.findByRegularUserUsername(username);
-		if(!profile.isVerified()) {
-		VerificationRequest request = new VerificationRequest();
+		if (!profile.isVerified()) {
+			VerificationRequest request = new VerificationRequest();
 
-		request.setApproved(false);
-		request.setFilePath(fileDownloadUri);
-		request.setProfile(profile);
-		request.setName(requestDTO.getName());
-		request.setSurname(requestDTO.getSurname());
-		request.setDeleted(false);
+			request.setApproved(false);
+			request.setFilePath(fileDownloadUri);
+			request.setProfile(profile);
+			request.setName(requestDTO.getName());
+			request.setSurname(requestDTO.getSurname());
+			request.setDeleted(false);
 
-		String category = requestDTO.getCategory();
-		if (category.equalsIgnoreCase("Influencer")) {
-			request.setCategory(VerificationCategory.INFLUENCECR);
-		} else if (category.equalsIgnoreCase("Sports")) {
-			request.setCategory(VerificationCategory.SPORTS);
-		} else if (category.equalsIgnoreCase("Business")) {
-			request.setCategory(VerificationCategory.BUSINESS);
-		} else if (category.equalsIgnoreCase("News/Media")) {
-			request.setCategory(VerificationCategory.NEWS_MEDIA);
-		} else if (category.equalsIgnoreCase("Brand")) {
-			request.setCategory(VerificationCategory.BRAND);
-		} else if (category.equalsIgnoreCase("Organisation")) {
-			request.setCategory(VerificationCategory.ORGANISATION);
-		}
+			String category = requestDTO.getCategory();
+			if (category.equalsIgnoreCase("Influencer")) {
+				request.setCategory(VerificationCategory.INFLUENCECR);
+			} else if (category.equalsIgnoreCase("Sports")) {
+				request.setCategory(VerificationCategory.SPORTS);
+			} else if (category.equalsIgnoreCase("Business")) {
+				request.setCategory(VerificationCategory.BUSINESS);
+			} else if (category.equalsIgnoreCase("News/Media")) {
+				request.setCategory(VerificationCategory.NEWS_MEDIA);
+			} else if (category.equalsIgnoreCase("Brand")) {
+				request.setCategory(VerificationCategory.BRAND);
+			} else if (category.equalsIgnoreCase("Organisation")) {
+				request.setCategory(VerificationCategory.ORGANISATION);
+			}
 
-		verificationRequestRepo.save(request);
-		return "Request have been sent";
-		}
-		else {
+			verificationRequestRepo.save(request);
+			return "Request have been sent";
+		} else {
 			return "You are already verified.";
 		}
 	}
@@ -439,18 +441,18 @@ public class ProfileServiceImpl implements ProfileService {
 
 	@Override
 	public List<ProfileVerificationRequestDTO> getVerificationRequests() {
-		List<VerificationRequest> allRequests = verificationRequestRepo.findAll().stream().filter(r -> !r.isApproved() && !r.isDeleted())
-				.collect(Collectors.toList());
+		List<VerificationRequest> allRequests = verificationRequestRepo.findAll().stream()
+				.filter(r -> !r.isApproved() && !r.isDeleted()).collect(Collectors.toList());
 		List<ProfileVerificationRequestDTO> result = new ArrayList<ProfileVerificationRequestDTO>();
 		for (VerificationRequest vr : allRequests) {
-			
+
 			ProfileVerificationRequestDTO pvr = new ProfileVerificationRequestDTO();
 			pvr.setId(vr.getId());
 			pvr.setCategory(vr.getCategory().toString());
 			pvr.setName(vr.getName());
 			pvr.setSurname(vr.getSurname());
 			pvr.setUrl(vr.getFilePath());
-			
+
 			result.add(pvr);
 		}
 		return result;
@@ -462,16 +464,16 @@ public class ProfileServiceImpl implements ProfileService {
 		request.setApproved(true);
 		request.getProfile().setVerified(true);
 		verificationRequestRepo.save(request);
-		
+
 		return getVerificationRequests();
 	}
-	
+
 	@Override
 	public List<ProfileVerificationRequestDTO> deleteVerification(long id) {
 		VerificationRequest request = verificationRequestRepo.findById(id).get();
 		request.setDeleted(true);
 		verificationRequestRepo.save(request);
-		
+
 		return getVerificationRequests();
 	}
 
@@ -488,9 +490,9 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public boolean isProfileActive(String username) {
 		Profile profile = profileRepository.findByRegularUserUsername(username);
-		if(profile.isActive() == true) {
+		if (profile.isActive() == true) {
 			return true;
-		}else {
+		} else {
 			return false;
 		}
 	}
@@ -505,11 +507,30 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<String> getAllInactiveProfiles() {
 		List<String> results = new ArrayList<String>();
-		for(Profile profile : profileRepository.findAll()) {
-			if(profile.isActive() == false) {
+		for (Profile profile : profileRepository.findAll()) {
+			if (profile.isActive() == false) {
 				results.add(profile.getRegularUserUsername());
 			}
 		}
 		return results;
+	}
+
+	@Override
+	public ArrayList<String> getInfluencers(String loggedInUsername) {
+		ArrayList<String> result = new ArrayList<String>();
+		for (Profile p : profileRepository.findAll().stream()
+				.filter(p -> p.isVerified() && p.isActive()).collect(Collectors.toList())) {
+			if(p.isPrivateProfile()) {
+				List<String> followers = getFollowerss(p.getRegularUserUsername());
+				for(String u : followers) {
+					if(u.equals(loggedInUsername)) {
+						result.add(p.getRegularUserUsername());
+					}
+				}
+			}else {
+				result.add(p.getRegularUserUsername());
+			}
+		}
+		return result;
 	}
 }

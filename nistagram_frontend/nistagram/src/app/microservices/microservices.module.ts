@@ -51,9 +51,10 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { CampaignsComponent } from './components/campaigns/campaigns.component';
 import { ChatComponent } from './chat/chat.component';
 import { ShareDialogComponent } from './components/share-dialog/share-dialog.component';
+import { InfluencerCampaignDialogComponent } from './components/influencer-campaign-dialog/influencer-campaign-dialog.component';
 
 @NgModule({
-  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, ProfileConfigComponent, VerifyAccountComponent, VerificationRequestsComponent, RatingsDialogComponent, LikedDataComponent, DislikedDataComponent, ReportDialogComponent, NotificationSettingsComponent, NotificationsComponent, InappropriateContentComponent, RegisterAgentComponent, AgentRequestsComponent, RegisterAgentAdminComponent, NewCampaignComponent, CampaignsComponent, ChatComponent, ShareDialogComponent],
+  declarations: [LandingPageComponent, RegistrationComponent, FeedComponent, ProfileComponent, PostDetailsComponent, SearchResultsComponent, CreatePostComponent, PersonalInfoEditComponent, LoginComponent, CreateStoryComponent, CreateAlbumComponent, FollowerRequestDialogComponent, FollowersDialogComponent,UnauthorizedPageComponent, ReactionsListComponent, CloseFriendsComponent, CollectionDialogComponent, ProfileConfigComponent, VerifyAccountComponent, VerificationRequestsComponent, RatingsDialogComponent, LikedDataComponent, DislikedDataComponent, ReportDialogComponent, NotificationSettingsComponent, NotificationsComponent, InappropriateContentComponent, RegisterAgentComponent, AgentRequestsComponent, RegisterAgentAdminComponent, NewCampaignComponent, CampaignsComponent, ChatComponent, ShareDialogComponent, InfluencerCampaignDialogComponent],
   imports: [
     CommonModule,
     MicroservicesRoutingModule,

@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { AuthService } from '../../auth-service/auth.service';
 import { CollectionInfoDto } from '../../DTOs/collection-info-dto';
 import { MediaService } from '../../media-service/media.service';
+import { InfluencerCampaign } from '../../model/influencer-campaign';
 import { Post } from '../../model/post';
 import { ProfileInfo } from '../../model/profile-info';
 import { Story } from '../../model/story';
@@ -14,6 +15,7 @@ import { CloseFriendsComponent } from '../close-friends/close-friends.component'
 import { CollectionDialogComponent } from '../collection-dialog/collection-dialog.component';
 import { FollowerRequestDialogComponent } from '../follower-request-dialog/follower-request-dialog.component';
 import { FollowersDialogComponent } from '../followers-dialog/followers-dialog.component';
+import { InfluencerCampaignDialogComponent } from '../influencer-campaign-dialog/influencer-campaign-dialog.component';
 import { RatingsDialogComponent } from '../ratings-dialog/ratings-dialog.component';
 import {ShareDialogComponent} from '../share-dialog/share-dialog.component';
 
@@ -34,6 +36,7 @@ export class ProfileComponent implements OnInit {
   storyHighlights : Story[] = [];
   collections : CollectionInfoDto[] = [];
   collections1 = [];
+  
 
 
   ngOnInit(): void {
@@ -265,5 +268,12 @@ export class ProfileComponent implements OnInit {
 
   shareStories = () => {
     this.matDialog.open(ShareDialogComponent, { width: '30vw', maxWidth: '30vw'});
+  }
+
+  chooseCampaigns(){
+    this.profileService.getCampaignsForInfluencers().subscribe(data => {
+      this.matDialog.open(InfluencerCampaignDialogComponent, {data : data,  width: '70vw',
+      maxWidth: '70vw', height: '800px'})
+    });
   }
 }

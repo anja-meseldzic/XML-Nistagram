@@ -53,5 +53,14 @@
             <button mat-raised-button color="primary" *ngIf="repeated(c)" style="margin-right: 10px;" (click)="update(c.id, c.details)" [disabled]="disabled(c)">Update</button>
             <button mat-raised-button color="warn" (click)="delete(c.id)">Delete</button>
         </div>
+        <div style="width: 100%; margin-top: 5px;">
+            <mat-form-field appearance="fill" style="width: 100%;">
+                <mat-label>Engage influencer in campaign</mat-label>
+                <mat-select [formControl]="influencers" multiple>
+                  <mat-option *ngFor="let inf of influencersList" [value]="inf">{{inf}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <button mat-raised-button color="primary" (click) = "engage(c.id)">Engage influencers</button>
     </div>
 </div>

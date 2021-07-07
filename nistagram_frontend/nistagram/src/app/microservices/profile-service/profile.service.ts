@@ -9,12 +9,13 @@ import { ProfileVerificationRequest } from '../DTOs/profile-verification-request
 import { ProfileInfo } from '../model/profile-info';
 import {Profile} from '../model/profile';
 import axios from 'axios';
+import { Campaign } from '../model/campaign';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
-
+ 
   constructor(private _http : HttpClient) { }
 
   public getProfileInfo(username : String) : Observable<ProfileInfo> {
@@ -127,5 +128,13 @@ export class ProfileService {
 
   public getMuted(username: string): Observable<string[]> {
     return this._http.get<string[]>(environment.profileBaseUrl + 'interaction/muted/' + username);
+  }
+
+  public getInfluencers() : Observable<string[]>{
+    return this._http.get<string[]>(environment.profileBaseUrl + 'profile/influencers');
+  }
+
+  public getCampaignsForInfluencers() : Observable<Campaign[]>{
+    return this._http.get<Campaign[]>(environment.campaignBaseUrl + "/campaign/getForInfl");
   }
 }

@@ -20,21 +20,25 @@ public class InfluencerCampaign {
 	private Campaign campaign;
 	
 	@Column(name = "profileId", nullable = false)
-	private long profileId;
+	private String username;
 	
 	@Column(name = "approved", nullable = false)
 	private boolean approved;
+	
+	@Column(name = "deleted")
+	private boolean deleted;
 
 	public InfluencerCampaign() {
 		super();
 	}
 
-	public InfluencerCampaign(long id, Campaign campaign, long profileId, boolean approved) {
+	public InfluencerCampaign(long id, Campaign campaign, String username, boolean approved, boolean deleted) {
 		super();
 		this.id = id;
 		this.campaign = campaign;
-		this.profileId = profileId;
+		this.username = username;
 		this.approved = approved;
+		this.deleted = deleted;
 	}
 
 	public long getId() {
@@ -53,12 +57,12 @@ public class InfluencerCampaign {
 		this.campaign = campaign;
 	}
 
-	public long getProfileId() {
-		return profileId;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setProfileId(long profileId) {
-		this.profileId = profileId;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public boolean isApproved() {
@@ -67,6 +71,14 @@ public class InfluencerCampaign {
 
 	public void setApproved(boolean approved) {
 		this.approved = approved;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 	
 	

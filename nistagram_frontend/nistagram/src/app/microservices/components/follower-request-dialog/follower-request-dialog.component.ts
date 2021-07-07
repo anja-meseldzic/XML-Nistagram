@@ -4,16 +4,6 @@ import { FollowRequestDto } from '../../DTOs/follow-request-dto';
 import { ProfileService } from '../../profile-service/profile.service';
 
 
-export interface FollowRequest {
-  username: string;
-  id: number;
-}
-const ELEMENT_DATA: FollowRequest[] = [
-  {username: 'anja', id : 1},
-  {username: 'anja', id : 2},
-  {username: 'anja', id : 3}
-];
-
 @Component({
   selector: 'app-follower-request-dialog',
   templateUrl: './follower-request-dialog.component.html',

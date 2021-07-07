@@ -2,10 +2,12 @@ package app.profile.service;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import app.profile.dtos.ProfileInfoDTO;
@@ -71,4 +73,7 @@ public interface ProfileService {
 	void deactivateProfile(String username);
 	
 	List<String> getAllInactiveProfiles();
+	
+	ArrayList<String> getInfluencers(String username);
+	
 }

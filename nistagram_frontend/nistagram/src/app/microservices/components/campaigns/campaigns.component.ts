@@ -5,6 +5,8 @@ import { environment } from 'src/environments/environment';
 import { CampaignService } from '../../campaign-service/campaign.service';
 import { Campaign } from '../../model/campaign';
 import { CampaignDetails } from '../../model/campaign-details';
+import { InfluencerCampaign } from '../../model/influencer-campaign';
+import { ProfileService } from '../../profile-service/profile.service';
 
 @Component({
   selector: 'app-campaigns',
@@ -13,13 +15,17 @@ import { CampaignDetails } from '../../model/campaign-details';
 })
 export class CampaignsComponent implements OnInit {
 
-  constructor(private campService : CampaignService, private snackBar : MatSnackBar) { }
+  constructor(private campService : CampaignService, private snackBar : MatSnackBar, private profileService : ProfileService) { }
 
   public campaigns : Campaign[] = []
+  public influencersList = [];
+  public influencers = new FormControl();
+  public influencerCampaign : InfluencerCampaign = new InfluencerCampaign([], 0);
 
   ngOnInit(): void {
     this.campService.get().subscribe(
-      res => { this.campaigns = res; this.getMediaUrls(); }
+      res => { this.campaigns = res; this.getMediaUrls(); 
+      this.getInfluencers();}
     )
   }
 
@@ -92,5 +98,22 @@ export class CampaignsComponent implements OnInit {
   dateChanged(event, id : number) {
     console.log(id)
     this.campaigns.forEach(c => { if(c.id == id) {c.details.endDate = event.target.value} })
+  }
+
+  getInfluencers(){
+    this.profileService.getInfluencers().subscribe(data => this.influencersList = data)
+  }
+
+  engage(id: number){
+    console.log(this.influencers.value)
+    if(this.influencers.value == null){
+      this.snackBar.open("You have not selected any influencer.","Okay");
+    }else{
+      this.influencerCampaign.influencers = this.influencers.value;
+      this.influencerCampaign.campaignId = id;
+      this.campService.createInfluencerCampaigns(this.influencerCampaign).subscribe();
+      this.snackBar.open("You have successfully sent campaign requests.","Okay");
+    }
+    
   }
 }

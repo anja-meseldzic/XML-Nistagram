@@ -1,6 +1,7 @@
 package app.profile.model;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -22,15 +23,19 @@ public class FollowRequest {
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Profile followedBy;
 
+	@Column(name = "deleted")
+	private boolean deleted;
+	
 	public FollowRequest() {
 		super();
 	}
 
-	public FollowRequest(long id, Profile profile, Profile followedBy) {
+	public FollowRequest(long id, Profile profile, Profile followedBy, boolean deleted) {
 		super();
 		this.id = id;
 		this.profile = profile;
 		this.followedBy = followedBy;
+		this.deleted = deleted;
 	}
 
 	public long getId() {
@@ -56,5 +61,14 @@ public class FollowRequest {
 	public void setFollowedBy(Profile followedBy) {
 		this.followedBy = followedBy;
 	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+	
 	
 }

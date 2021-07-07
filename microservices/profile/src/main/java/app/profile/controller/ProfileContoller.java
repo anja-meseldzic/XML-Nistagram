@@ -4,6 +4,7 @@ import app.profile.dtos.ProfileInfoDTO;
 import app.profile.exception.ProfileNotFoundException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -321,5 +322,17 @@ public class ProfileContoller {
 		boolean isActive = profileService.isProfileActive(username);
 		return new ResponseEntity<>(isActive,HttpStatus.OK);
 
+	}
+	
+	@GetMapping(value = "/influencers")
+	public ResponseEntity<ArrayList<String>> getInfluencers(@RequestHeader("Authorization") String auth)
+	{
+		if(!authService.verify(auth, "AGENT"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		
+		String token = TokenUtils.getToken(auth);
+		String myUsername = authService.getUsernameFromToken(token);
+		
+		return new ResponseEntity<ArrayList<String>> (profileService.getInfluencers(myUsername),HttpStatus.OK);
 	}
 }
