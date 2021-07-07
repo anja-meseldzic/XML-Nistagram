@@ -11,5 +11,5 @@ public interface MediaMessageService {
     String createMultimediaMessage(MultipartFile file, Message message) throws IOException;
     UrlResource getContent(String contentName) throws MalformedURLException;
 
-    void seeMessage(Long id);
+    void seeMessage(Long id, String seenBy);
 }

@@ -38,4 +38,21 @@ public class MessageController {
         }
         return new ResponseEntity<>(followService.doesFollow(follower, followee), HttpStatus.OK);
     }
+
+    @GetMapping("/permission/{sender}/{receiver}")
+    public ResponseEntity<Void> createPermission(@PathVariable String sender, @PathVariable String receiver, @RequestHeader("Authorization") String auth) {
+        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        messageService.createMessagePermission(sender, receiver);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/checkPermission/{sender}/{receiver}")
+    public ResponseEntity<Boolean> checkPermission(@PathVariable String sender, @PathVariable String receiver, @RequestHeader("Authorization") String auth) {
+        if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT")) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        return new ResponseEntity<>(messageService.verifyProfileRestrictions(sender, receiver), HttpStatus.OK);
+    }
 }
