@@ -128,7 +128,7 @@ export class NewCampaignComponent implements OnInit {
     for (let i=0; i<dataSource2.length; i++){
       this.dataSource.push(dataSource2[i]);
     }
-    this.tag = ""  
+    this.tag = ""
   }
 
   submitDisabled() {
@@ -144,8 +144,10 @@ export class NewCampaignComponent implements OnInit {
       return true;
     if(!this.repeated) {
       var d = new Date(this.date.value)
-      const h = this.time['getHours']()
-      const m = this.time['getMinutes']();
+      // const h = this.time['getHours']();
+      // const m = this.time['getMinutes']();
+      const h = this.time['getHours'];
+      const m = this.time['getMinutes'];
       d.setHours(h)
       d.setMinutes(m)
       if(d < new Date())

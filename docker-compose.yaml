@@ -142,6 +142,8 @@ services:
       MEDIA_STORAGE_PATH : ${MEDIA_STORAGE_PATH}
       XML_DATABASE_DOMAIN : ${XML_DATABASE_DOMAIN}
       XML_DATABASE_PORT : ${XML_DATABASE_PORT}
+      CAMPAIGN_SERVICE_DOMAIN : ${CAMPAIGN_SERVICE_DOMAIN}
+      CAMPAIGN_SERVICE_PORT : ${CAMPAIGN_SERVICE_PORT}
     volumes:
       - agentapp:/app/storage/media-content
     restart: always

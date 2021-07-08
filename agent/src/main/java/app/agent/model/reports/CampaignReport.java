@@ -1,17 +1,16 @@
 package app.agent.model.reports;
 
-import org.apache.tomcat.jni.Local;
+import app.agent.model.dtos.campaign.CampaignReportDTO;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 import java.time.LocalDateTime;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "campaign")
 public class CampaignReport {
-    private String name;
+    private long id;
     private String created;
     private int likes;
     private int dislikes;
@@ -22,8 +21,8 @@ public class CampaignReport {
     public CampaignReport() {
     }
 
-    public CampaignReport(String name, LocalDateTime created, int likes, int dislikes, int comments, int clicks, double moneyIncrease) {
-        this.name = name;
+    public CampaignReport(long id, LocalDateTime created, int likes, int dislikes, int comments, int clicks, double moneyIncrease) {
+        this.id = id;
         this.created = created.toString();
         this.likes = likes;
         this.dislikes = dislikes;
@@ -72,12 +71,12 @@ public class CampaignReport {
         this.moneyIncrease = moneyIncrease;
     }
 
-    public String getName() {
-        return name;
+    public long getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getCreated() {
@@ -86,5 +85,21 @@ public class CampaignReport {
 
     public void setCreated(String created) {
         this.created = created;
+    }
+
+    public void from(CampaignReportDTO campaignReportDTO) {
+        this.id = campaignReportDTO.getId();
+        this.created = campaignReportDTO.getStart().toString();
+        if(campaignReportDTO.getReport().getPostReport() != null) {
+            this.likes = campaignReportDTO.getReport().getPostReport().getLikeCount();
+            this.dislikes = campaignReportDTO.getReport().getPostReport().getDislikeCount();
+            this.comments = campaignReportDTO.getReport().getPostReport().getCommentCount();
+        }
+        else {
+            this.likes = 0;
+            this.dislikes = 0;
+            this.comments = 0;
+        }
+        this.clicks = (int) campaignReportDTO.getReport().getTotalClicks();
     }
 }

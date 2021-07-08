@@ -1,16 +1,12 @@
 package app.campaign.service;
 
-import app.campaign.dto.CampaignDTO;
-import app.campaign.dto.CampaignForUserDTO;
-import app.campaign.dto.DetailsDTO;
+import app.campaign.dto.*;
 
-import app.campaign.dto.InfluencerCampaignDTO;
-
-import app.campaign.dto.ReportDto;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public interface CampaignService {
@@ -27,7 +23,9 @@ public interface CampaignService {
 
     boolean isPartOfCampaign(long mediaId);
 
-	void createInfluencerCampaign(InfluencerCampaignDTO dto);
+    Collection<CampaignReport> getCampaignsByAgent(String username);
+
+    void createInfluencerCampaign(InfluencerCampaignDTO dto);
 
 	ArrayList<CampaignDTO> getCampaignsForInfluencer(String username);
 

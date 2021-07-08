@@ -1,5 +1,6 @@
 package app.campaign.dto;
 
+import app.campaign.model.Campaign;
 import app.campaign.model.Gender;
 
 import java.time.LocalDateTime;

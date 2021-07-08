@@ -252,6 +252,22 @@ public class CampaignServiceImpl implements CampaignService {
 		Campaign campaign = campaignRepository.findById(id).orElse(null);
 		if (campaign == null)
 			return null;
+		return getCampaignReport(campaign);
+	}
+
+	@Override
+	public Collection<CampaignReport> getCampaignsByAgent(String username) {
+		Collection<Campaign> campaigns = campaignRepository.getAllByAgentUsername(username);
+		Collection<CampaignReport> reports = new ArrayList<>();
+		campaigns.forEach(c -> {
+			CampaignReport report = new CampaignReport(c);
+			report.setReport(getCampaignReport(c));
+			reports.add(report);
+		});
+		return reports;
+	}
+
+	private ReportDto getCampaignReport(Campaign campaign) {
 		ReportDto report = new ReportDto();
 		PostReportDto preport = new PostReportDto();
 		preport.commentCount = 0;

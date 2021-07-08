@@ -4,6 +4,7 @@ import app.auth.dto.TargetGroup;
 import app.auth.model.dto.LoginDTO;
 import app.auth.service.AuthenticationService;
 import app.auth.service.RegularUserService;
+import app.auth.util.ApiKeyUtils;
 import app.auth.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,13 +41,18 @@ public class AuthenticationController {
         return new ResponseEntity<>(TokenUtils.verify(token, role), HttpStatus.OK);
     }
 
+    @GetMapping(value = "key/{header}")
+    public ResponseEntity<String> verifyApiKey(@PathVariable String header) {
+        return new ResponseEntity<>(ApiKeyUtils.verify(header), HttpStatus.OK);
+    }
+
     @GetMapping(value = "{token}")
     public ResponseEntity<String> getUsernameFromToken(@PathVariable("token") String token) {
         return new ResponseEntity<>(TokenUtils.getUsernameFromToken(token), HttpStatus.OK);
     }
 
-    @GetMapping("target-group")
-    List<String> getTargetGroup(@RequestBody TargetGroup targetGroup) {
-        return userService.getByTargetGroup(targetGroup);
+    @PostMapping("target-group")
+    public ResponseEntity<List<String>> getTargetGroup(@RequestBody TargetGroup targetGroup) {
+        return new ResponseEntity<>(userService.getByTargetGroup(targetGroup), HttpStatus.OK);
     }
 }

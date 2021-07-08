@@ -13,8 +13,10 @@ import java.util.List;
 public interface AuthService {
     @PostMapping("/auth/{token}/{role}")
     boolean verify(@PathVariable("token") String token, @PathVariable("role") String role);
+    @GetMapping(value = "/auth/key/{header}")
+    String verifyApiKey(@PathVariable String header);
     @GetMapping("/auth/{token}")
     String getUsernameFromToken(@PathVariable("token") String token);
-    @GetMapping("/auth/target-group")
+    @PostMapping("/auth/target-group")
     List<String> getTargetGroup(@RequestBody TargetGroup targetGroup);
 }

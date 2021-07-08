@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 
+import app.auth.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -27,10 +28,12 @@ public class ApiKeyUtils {
     }
 
     public static String getToken(String authHeader) {
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7);
-        }
-        return null;
+        return authHeader;
+    }
+
+    private static Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
     }
 
     private static Date generateExpirationDate() {
@@ -50,6 +53,14 @@ public class ApiKeyUtils {
         return claims;
     }
 
+    public static String verify(String header) {
+        String token = getToken(header);
+        String username = getUsernameFromToken(token);
+        if(username != null && !isTokenExpired(token))
+            return username;
+        else
+            return null;
+    }
 
     public static Date getExpirationDateFromToken(String token) {
         Date expiration;
