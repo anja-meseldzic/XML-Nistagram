@@ -48,6 +48,8 @@ public class AgentRegistrationRequest {
     @Column(name = "password", nullable = false)
     private String password;
 	
+  
+    
 	public AgentRegistrationRequest() {
 		super();
 	}
@@ -67,6 +69,7 @@ public class AgentRegistrationRequest {
 		this.biography = biography;
 		this.username = username;
 		this.password = password;
+		
 	}
 
 	public long getId() {
@@ -164,7 +167,6 @@ public class AgentRegistrationRequest {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
 	
 
 }

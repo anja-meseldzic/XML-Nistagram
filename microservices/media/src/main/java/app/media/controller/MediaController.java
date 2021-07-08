@@ -32,6 +32,7 @@ import app.media.dtos.ReactionsNumberDTO;
 import app.media.exception.PostDoesNotExistException;
 import app.media.exception.ProfileBlockedException;
 import app.media.exception.ProfilePrivateException;
+import app.media.model.Media;
 import app.media.service.MediaService;
 
 @RestController
@@ -290,7 +291,7 @@ public class MediaController {
 	public boolean exists(@PathVariable("id") long id) {
     	return mediaService.exists(id);
 	}
-
+	
 	@GetMapping(value = "path/{id}")
 	public String getPath(@PathVariable("id") long id) {
     	return mediaService.getPath(id);

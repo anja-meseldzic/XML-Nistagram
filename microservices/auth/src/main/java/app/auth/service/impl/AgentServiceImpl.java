@@ -18,6 +18,7 @@ import app.auth.repository.AgentRegistrationRequestRepository;
 import app.auth.repository.RegularUserRepository;
 import app.auth.repository.UserRepository;
 import app.auth.service.AgentService;
+import app.auth.util.ApiKeyUtils;
 import app.auth.util.PasswordUtil;
 
 @Service
@@ -87,6 +88,7 @@ public class AgentServiceImpl implements AgentService{
 	public void acceptRegistration(Long idOfRequest) {
 		AgentRegistrationRequest agentRequest = agentRegistrationRequestRepository.findOneById(idOfRequest);
 		agentRequest.setReviewed(true);
+		
 		agentRegistrationRequestRepository.save(agentRequest);
 		
 		RegularUser newUser = new RegularUser();
@@ -100,6 +102,7 @@ public class AgentServiceImpl implements AgentService{
 		newUser.setWebsite(agentRequest.getWebsite());
 		newUser.setBiography(agentRequest.getBiography());
 		newUser.setUser(new User(agentRequest.getUsername(), PasswordUtil.hashPBKDF2(agentRequest.getPassword()), Role.AGENT));
+		newUser.setApiToken(ApiKeyUtils.generateToken(agentRequest.getUsername()));
 		
 		try {
 			regularUserRepository.save(newUser);
@@ -134,6 +137,7 @@ public class AgentServiceImpl implements AgentService{
 		newUser.setWebsite(agentRequest.getWebsite());
 		newUser.setBiography(agentRequest.getBiography());
 		newUser.setUser(new User(agentRequest.getUsername(), PasswordUtil.hashPBKDF2(agentRequest.getPassword()), Role.AGENT));
+		newUser.setApiToken(ApiKeyUtils.generateToken(agentRequest.getUsername()));
 		
 		regularUserRepository.save(newUser);
 		profileClient.createFromUser(newUser.getUser().getUsername());
