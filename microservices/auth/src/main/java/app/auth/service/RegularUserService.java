@@ -10,6 +10,9 @@ import java.util.List;
 public interface RegularUserService {
     void register(RegularUser user);
     void update(RegularUser user);
+
+    void remove(long id);
+
     RegularUser getRegularUser(long id);
     UserInfoDTO get(String username) throws UserNotFoundException;
     List<String> getByTargetGroup(TargetGroup targetGroup);
