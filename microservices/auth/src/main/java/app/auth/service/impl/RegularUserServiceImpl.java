@@ -15,12 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.coreapis.commands.CreateUserCommand;
 
+import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.*;
 
 @Service
 public class RegularUserServiceImpl implements RegularUserService {
     private final RegularUserRepository repository;
+    @Inject
     private transient CommandGateway commandGateway;
 //    private final ProfileClient profileClient;
 
@@ -31,9 +33,8 @@ public class RegularUserServiceImpl implements RegularUserService {
 //    }
 
     @Autowired
-    public RegularUserServiceImpl(RegularUserRepository repository, CommandGateway commandGateway) {
+    public RegularUserServiceImpl(RegularUserRepository repository) {
         this.repository = repository;
-        this.commandGateway = commandGateway;
     }
 
     @Override

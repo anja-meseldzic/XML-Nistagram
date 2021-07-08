@@ -7,21 +7,19 @@ import org.axonframework.modelling.saga.StartSaga;
 import org.axonframework.spring.stereotype.Saga;
 import org.springframework.beans.factory.annotation.Autowired;
 import rs.ac.uns.ftn.coreapis.commands.CreateProfileCommand;
+import rs.ac.uns.ftn.coreapis.commands.RollbackUserCommand;
 import rs.ac.uns.ftn.coreapis.events.ProfileCreatedEvent;
 import rs.ac.uns.ftn.coreapis.events.ProfileCreatedFailedEvent;
 import rs.ac.uns.ftn.coreapis.events.UserCreatedEvent;
 import rs.ac.uns.ftn.coreapis.events.UserRollbackEvent;
 
+import javax.inject.Inject;
 import java.util.UUID;
 
 @Saga
 public class UserManagementSaga {
-    private final transient CommandGateway commandGateway;
-
-    @Autowired
-    public UserManagementSaga(CommandGateway commandGateway) {
-        this.commandGateway = commandGateway;
-    }
+    @Inject
+    private transient CommandGateway commandGateway;
 
     @StartSaga
     @SagaEventHandler(associationProperty = "username")
@@ -44,7 +42,7 @@ public class UserManagementSaga {
     @SagaEventHandler(associationProperty = "profileAggregateId")
     public void handle(ProfileCreatedFailedEvent profileCreatedFailedEvent) {
         System.out.println("Saga declined, starting compensation transaction!");
-        commandGateway.send(new UserRollbackEvent(profileCreatedFailedEvent.getProfileUsername(),
+        commandGateway.send(new RollbackUserCommand(profileCreatedFailedEvent.getProfileUsername(),
                 profileCreatedFailedEvent.getRegularUserId(),
                 profileCreatedFailedEvent.getUserId()));
     }

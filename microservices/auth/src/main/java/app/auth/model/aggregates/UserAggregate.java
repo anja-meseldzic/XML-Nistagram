@@ -20,6 +20,7 @@ public class UserAggregate {
 
     public UserAggregate() {}
 
+    @CommandHandler
     public UserAggregate(CreateUserCommand createUserCommand) {
         AggregateLifecycle.apply(
                 new UserCreatedEvent(createUserCommand.getUsername(),
