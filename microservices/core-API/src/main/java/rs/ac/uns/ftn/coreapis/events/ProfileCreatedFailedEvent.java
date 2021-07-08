@@ -1,22 +1,21 @@
-package rs.ac.uns.ftn.coreapis.commands;
+package rs.ac.uns.ftn.coreapis.events;
 
-import org.axonframework.modelling.command.TargetAggregateIdentifier;
-
-public class CreateProfileCommand {
-    @TargetAggregateIdentifier
+public class ProfileCreatedFailedEvent {
     private String profileAggregateId;
+    private String profileUsername;
     private long regularUserId;
     private long userId;
-    private String profileUsername;
+    private String reason;
 
-    public CreateProfileCommand() {
+    public ProfileCreatedFailedEvent() {
     }
 
-    public CreateProfileCommand(String profileAggregateId, long regularUserId, long userId, String profileUsername) {
+    public ProfileCreatedFailedEvent(String profileAggregateId, String profileUsername, long regularUserId, long userId, String reason) {
         this.profileAggregateId = profileAggregateId;
+        this.profileUsername = profileUsername;
         this.regularUserId = regularUserId;
         this.userId = userId;
-        this.profileUsername = profileUsername;
+        this.reason = reason;
     }
 
     public String getProfileUsername() {
@@ -33,6 +32,14 @@ public class CreateProfileCommand {
 
     public void setProfileAggregateId(String profileAggregateId) {
         this.profileAggregateId = profileAggregateId;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
     public long getRegularUserId() {
