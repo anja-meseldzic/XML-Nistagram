@@ -32,7 +32,7 @@ public class ReportHttpClientImpl implements ReportHttpClient{
         HttpEntity request = new HttpEntity(headers);
 
         ResponseEntity<CampaignReportDTO[]> res = restTemplate.exchange(
-                url + "/campaign/reports",
+                url,
                 HttpMethod.GET,
                 request,
                 CampaignReportDTO[].class);

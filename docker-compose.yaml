@@ -144,6 +144,7 @@ services:
       XML_DATABASE_PORT : ${XML_DATABASE_PORT}
       CAMPAIGN_SERVICE_DOMAIN : ${CAMPAIGN_SERVICE_DOMAIN}
       CAMPAIGN_SERVICE_PORT : ${CAMPAIGN_SERVICE_PORT}
+      PATH: api/campaign/campaign/reports
     volumes:
       - agentapp:/app/storage/media-content
     restart: always
