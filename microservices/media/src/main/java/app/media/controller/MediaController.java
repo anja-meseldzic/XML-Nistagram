@@ -296,4 +296,16 @@ public class MediaController {
 	public String getPath(@PathVariable("id") long id) {
     	return mediaService.getPath(id);
 	}
+	
+	@PostMapping(value  = "create-new-post/{id}")
+	public ResponseEntity<Long> createNewPost(@PathVariable("id") long id,  @RequestHeader("Authorization") String auth)
+	{
+		if(!authService.verify(auth, "USER") && !authService.verify(auth, "AGENT"))
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		String token = TokenUtils.getToken(auth);
+		String myUsername = authService.getUsernameFromToken(token);
+		long newId = mediaService.createNewMedia(id,myUsername);
+		
+		return new ResponseEntity<>(newId, HttpStatus.OK);
+	}
 }

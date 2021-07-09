@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 import app.media.dtos.*;
 import app.media.service.NotificationService;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -488,5 +490,36 @@ public class MediaServiceImpl implements MediaService{
 		if(media == null)
 			return null;
 		return media.getPath().stream().findFirst().orElse(null);
+	}
+
+	@Override
+	public long createNewMedia(long id, String username) {
+		Media oldMedia = mediaRepository.findById(id).get();
+		Media newMedia = new Media();
+		newMedia.setCreated(oldMedia.getCreated());
+		newMedia.setPath(new HashSet<>(oldMedia.getPath()));
+		newMedia.setUsername(username);
+		newMedia = mediaRepository.save(newMedia);
+
+		Post oldPost = postRepository.findAll().stream().filter(p -> p.getMedia().getId() == id).findFirst().orElse(null);
+		if(oldPost != null) {
+			Post post = new Post();
+			post.setMedia(newMedia);
+			post.setDescription(oldPost.getDescription());
+			post.setLocation(oldPost.getLocation());
+			post.setTags(new HashSet<>(oldPost.getTags()));
+			postRepository.save(post);
+			return newMedia.getId();
+		}
+		Story oldStory = storyRepository.findAll().stream().filter(s -> s.getMedia().getId() == id).findFirst().orElse(null);
+		if(oldStory != null) {
+			Story newStory = new Story();
+			newStory.setMedia(newMedia);
+			newStory.setCloseFriends(false);
+			newStory.setDateCreated(LocalDateTime.now());
+			storyRepository.save(newStory);
+			return newMedia.getId();
+		}
+		return -1;
 	}
 }

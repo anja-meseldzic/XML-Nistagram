@@ -28,6 +28,9 @@ public class InfluencerCampaign {
 	@Column(name = "deleted")
 	private boolean deleted;
 
+	@Column
+	private long mediaId;
+
 	public InfluencerCampaign() {
 		super();
 	}
@@ -80,6 +83,12 @@ public class InfluencerCampaign {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
-	
-	
+
+	public long getMediaId() {
+		return mediaId;
+	}
+
+	public void setMediaId(long mediaId) {
+		this.mediaId = mediaId;
+	}
 }

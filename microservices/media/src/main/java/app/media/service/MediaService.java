@@ -60,4 +60,6 @@ public interface MediaService {
 	boolean exists(long id);
 
 	String getPath(long id);
+
+	long createNewMedia(long id, String username);
 }

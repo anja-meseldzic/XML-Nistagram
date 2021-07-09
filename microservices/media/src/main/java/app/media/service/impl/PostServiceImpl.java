@@ -195,7 +195,7 @@ public class PostServiceImpl implements PostService {
 						&& p.getId() == postId)
 				.findFirst().orElse(null);
 		if (post == null || (campaignService.isPartOfCampaign(post.getMedia().getId())
-				&& !campaignService.shouldDispaly(post.getMedia().getId())))
+				&& !campaignService.shouldDispaly(post.getMedia().getId(), true)))
 			throw new PostDoesNotExistException();
 		return toPostInfoDTO(post);
 	}
@@ -339,7 +339,7 @@ public class PostServiceImpl implements PostService {
 		for(Post post : posts) {
 			if(!campaignService.isPartOfCampaign(post.getMedia().getId()))
 				result.add(post);
-			else if(campaignService.shouldDispaly(post.getMedia().getId()))
+			else if(campaignService.shouldDispaly(post.getMedia().getId(), true))
 				result.add(post);
 		}
 		return result;
