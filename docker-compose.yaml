@@ -25,6 +25,7 @@ services:
     restart: always
     depends_on: 
       - postgres
+      - axonserver
     networks:
       - backend
 
@@ -127,6 +128,7 @@ services:
     restart: always
     depends_on: 
       - postgres
+      - axonserver
     networks:
       - backend
 
@@ -154,6 +156,16 @@ services:
       - postgres
       - exist
     networks:
+      - backend
+
+  axonserver:
+    image: axoniq/axonserver
+    container_name: axonserver
+    ports: 
+      - 8024:8024
+      - 8124:8124    
+    restart: on-failure
+    networks: 
       - backend
 
   postgres:

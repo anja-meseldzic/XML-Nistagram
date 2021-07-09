@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
@@ -42,5 +44,12 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchase.setUser(user);
         purchase.setTimestamp(LocalDateTime.now());
         purchaseRepository.save(purchase);
+    }
+
+    @Override
+    public Collection<Purchase> getAllAfterDate(LocalDateTime dateTime) {
+        return purchaseRepository.findAll().stream()
+                .filter(p -> p.getTimestamp().isAfter(dateTime))
+                .collect(Collectors.toList());
     }
 }
