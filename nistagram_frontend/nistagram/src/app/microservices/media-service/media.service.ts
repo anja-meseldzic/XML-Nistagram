@@ -195,6 +195,6 @@ export class MediaService {
 
   
   createNewMedia(id : number){
-    return this._http.post(environment.mediaBaseUrl + "media/create-new-media/" + id, {responseType: 'text'});
+    return this._http.post(environment.mediaBaseUrl + "media/create-new-post/" + id, {responseType: 'text'});
   }
 }

@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 import app.media.dtos.*;
 import app.media.service.NotificationService;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -495,7 +497,7 @@ public class MediaServiceImpl implements MediaService{
 		Media oldMedia = mediaRepository.findById(id).get();
 		Media newMedia = new Media();
 		newMedia.setCreated(oldMedia.getCreated());
-		newMedia.setPath(oldMedia.getPath());
+		newMedia.setPath(new HashSet<>(oldMedia.getPath()));
 		newMedia.setUsername(username);
 		
 		mediaRepository.save(newMedia);

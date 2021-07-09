@@ -57,10 +57,13 @@ export class InfluencerCampaignDialogComponent implements OnInit {
       }
     }
     console.log(campaign.mediaId);
-    this.mediaService.createNewMedia(campaign.mediaId).subscribe(data => campaign.mediaId = Number(data));
-    console.log(campaign.mediaId);
+    this.mediaService.createNewMedia(campaign.mediaId).subscribe(data => {campaign.mediaId = Number(data);
+    console.log(Number(data));
     this.snackBar.open("You have successfully accepted this campaign.", "Okay");
     this.campService.acceptCampaign(campaign).subscribe();
+    });
+    
+    
   }
 
   openSnackBar(message: string) {
