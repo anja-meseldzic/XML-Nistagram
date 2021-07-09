@@ -499,11 +499,27 @@ public class MediaServiceImpl implements MediaService{
 		newMedia.setCreated(oldMedia.getCreated());
 		newMedia.setPath(new HashSet<>(oldMedia.getPath()));
 		newMedia.setUsername(username);
-		
-		mediaRepository.save(newMedia);
-		Post post = new Post();
-		post.setMedia(newMedia);
-		postRepository.save(post);
-		return newMedia.getId();
+		newMedia = mediaRepository.save(newMedia);
+
+		Post oldPost = postRepository.findAll().stream().filter(p -> p.getMedia().getId() == id).findFirst().orElse(null);
+		if(oldPost != null) {
+			Post post = new Post();
+			post.setMedia(newMedia);
+			post.setDescription(oldPost.getDescription());
+			post.setLocation(oldPost.getLocation());
+			post.setTags(new HashSet<>(oldPost.getTags()));
+			postRepository.save(post);
+			return newMedia.getId();
+		}
+		Story oldStory = storyRepository.findAll().stream().filter(s -> s.getMedia().getId() == id).findFirst().orElse(null);
+		if(oldStory != null) {
+			Story newStory = new Story();
+			newStory.setMedia(newMedia);
+			newStory.setCloseFriends(false);
+			newStory.setDateCreated(LocalDateTime.now());
+			storyRepository.save(newStory);
+			return newMedia.getId();
+		}
+		return -1;
 	}
 }

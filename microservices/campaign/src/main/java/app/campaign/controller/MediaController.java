@@ -18,9 +18,9 @@ public class MediaController {
         this.campaignService = campaignService;
     }
 
-    @PostMapping(value = "display/{id}")
-    public boolean shouldDisplay(@PathVariable("id") long id) {
-        return campaignService.shouldDisplayMedia(id);
+    @PostMapping(value = "display/{id}/{isPost}")
+    public boolean shouldDisplay(@PathVariable("id") long id, @PathVariable("isPost") boolean isPost) {
+        return campaignService.shouldDisplayMedia(id, isPost);
     }
 
     @PostMapping(value = "{id}")

@@ -10,8 +10,8 @@ import java.util.List;
 
 @FeignClient(name = "campaign", url = "${app.campaign.url}")
 public interface CampaignService {
-    @PostMapping("media/display/{id}")
-    boolean shouldDispaly(@PathVariable("id") long id);
+    @PostMapping("media/display/{id}/{isPost}")
+    boolean shouldDispaly(@PathVariable("id") long id, @PathVariable("isPost") boolean isPost);
     @PostMapping("media/{id}")
     boolean isPartOfCampaign(@PathVariable("id") long id);
     @GetMapping("media/{username}")

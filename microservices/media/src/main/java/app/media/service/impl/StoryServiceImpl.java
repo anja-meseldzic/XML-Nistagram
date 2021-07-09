@@ -145,7 +145,7 @@ public class StoryServiceImpl implements StoryService {
 		for(Story story : stories) {
 			if(!campaignService.isPartOfCampaign(story.getMedia().getId()))
 				result.add(story);
-			else if(campaignService.shouldDispaly(story.getMedia().getId()))
+			else if(campaignService.shouldDispaly(story.getMedia().getId(), false))
 				result.add(story);
 		}
 		return result;
@@ -155,7 +155,7 @@ public class StoryServiceImpl implements StoryService {
 		return storyRepository.findAll().stream().filter(s -> s.getMedia().getUsername().equals(user))
 				.filter(s -> !s.isActive())
 				.filter(s -> campaignService.isPartOfCampaign(s.getMedia().getId()))
-				.filter(s -> campaignService.shouldDispaly(s.getMedia().getId()))
+				.filter(s -> campaignService.shouldDispaly(s.getMedia().getId(), false))
 				.collect(Collectors.toList());
 	}
 

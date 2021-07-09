@@ -74,9 +74,10 @@ export class FeedComponent implements OnInit {
 
   public storyClick(event, storyList : Object[]) {
     var s = storyList[event]
-    this.mediaService.sendStoryLinkClick(s['id']).subscribe()
-    if(s['link'] != null && s['link'].length > 0) {
-      document.location.href = s['link']
+    if(s['link'] != null && s['link'].length > 0)  {
+      this.mediaService.sendStoryLinkClick(s['id']).subscribe(
+        _ => document.location.href = s['link']
+      )
     }
   }
 }

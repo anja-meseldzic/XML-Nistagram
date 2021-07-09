@@ -19,7 +19,7 @@ public interface CampaignService {
 
     List<CampaignDTO> get(String agent);
 
-    boolean shouldDisplayMedia(long mediaId);
+    boolean shouldDisplayMedia(long mediaId, boolean isPost);
 
     boolean isPartOfCampaign(long mediaId);
 
