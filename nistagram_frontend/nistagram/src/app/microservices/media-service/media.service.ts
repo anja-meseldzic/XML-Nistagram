@@ -192,4 +192,9 @@ export class MediaService {
   public sendStoryLinkClick(id : Number) {
     return this._http.post(environment.mediaBaseUrl + 'story/visit/' + id + '/' + this.auth.getUsername(), null)
   }
+
+  
+  createNewMedia(id : number){
+    return this._http.post(environment.mediaBaseUrl + "media/create-new-media/" + id, {responseType: 'text'});
+  }
 }

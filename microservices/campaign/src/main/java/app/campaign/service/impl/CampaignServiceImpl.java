@@ -323,7 +323,8 @@ public class CampaignServiceImpl implements CampaignService {
 		for (InfluencerCampaign ic : inflCampRepo.findAll()) {
 			if (ic.getUsername().equals(username) && ic.getCampaign().getId() == dto.getId() && !ic.isDeleted()) {
 				ic.setApproved(true);
-				
+				ic.getCampaign().getMediaIds().add(dto.getMediaId());
+				campaignRepository.save(ic.getCampaign());
 				inflCampRepo.save(ic);
 			}
 		}

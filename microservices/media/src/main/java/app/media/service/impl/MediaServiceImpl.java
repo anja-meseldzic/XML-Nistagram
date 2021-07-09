@@ -489,4 +489,19 @@ public class MediaServiceImpl implements MediaService{
 			return null;
 		return media.getPath().stream().findFirst().orElse(null);
 	}
+
+	@Override
+	public long createNewMedia(long id, String username) {
+		Media oldMedia = mediaRepository.findById(id).get();
+		Media newMedia = new Media();
+		newMedia.setCreated(oldMedia.getCreated());
+		newMedia.setPath(oldMedia.getPath());
+		newMedia.setUsername(username);
+		
+		mediaRepository.save(newMedia);
+		Post post = new Post();
+		post.setMedia(newMedia);
+		
+		return newMedia.getId();
+	}
 }

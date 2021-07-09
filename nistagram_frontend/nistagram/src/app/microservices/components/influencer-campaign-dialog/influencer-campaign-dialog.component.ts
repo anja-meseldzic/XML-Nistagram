@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from 'src/environments/environment';
 import { CampaignService } from '../../campaign-service/campaign.service';
+import { MediaService } from '../../media-service/media.service';
 import { Campaign } from '../../model/campaign';
 
 @Component({
@@ -12,7 +13,7 @@ import { Campaign } from '../../model/campaign';
 })
 export class InfluencerCampaignDialogComponent implements OnInit {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data : Campaign[], private campService : CampaignService, public snackBar : MatSnackBar) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data : Campaign[], private mediaService : MediaService, private campService : CampaignService, public snackBar : MatSnackBar) { }
 
   public campaigns : Campaign[] = []
   public influencersList = [];
@@ -55,9 +56,11 @@ export class InfluencerCampaignDialogComponent implements OnInit {
         this.campaigns.splice(index,1);
       }
     }
+    console.log(campaign.mediaId);
+    this.mediaService.createNewMedia(campaign.mediaId).subscribe(data => campaign.mediaId = Number(data));
+    console.log(campaign.mediaId);
     this.snackBar.open("You have successfully accepted this campaign.", "Okay");
     this.campService.acceptCampaign(campaign).subscribe();
-
   }
 
   openSnackBar(message: string) {
