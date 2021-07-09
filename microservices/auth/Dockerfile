@@ -1,11 +1,5 @@
-FROM maven:3.6.3-ibmjava-8-alpine AS appBuild
-
-WORKDIR /usr/src/auth
-COPY . .
-RUN mvn package -DskipTests
-
-FROM openjdk:8-jdk-alpine AS appRuntime
+FROM openjdk:8-jdk-alpine
 WORKDIR /app
-COPY --from=appBuild /usr/src/auth/target/auth-0.0.1-SNAPSHOT.war ./
+COPY target/auth-0.0.1-SNAPSHOT.war ./
 EXPOSE 8081
 CMD java -jar auth-0.0.1-SNAPSHOT.war

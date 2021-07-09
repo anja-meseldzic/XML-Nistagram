@@ -9,5 +9,5 @@ WORKDIR /app
 WORKDIR /app/storage/media-content
 WORKDIR /app
 COPY --from=appBuild /usr/src/agent/target/agent-0.0.1-SNAPSHOT.war ./
-EXPOSE 8081
+EXPOSE 8090
 CMD java -jar agent-0.0.1-SNAPSHOT.war
