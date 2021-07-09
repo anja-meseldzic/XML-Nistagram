@@ -503,7 +503,7 @@ public class MediaServiceImpl implements MediaService{
 		mediaRepository.save(newMedia);
 		Post post = new Post();
 		post.setMedia(newMedia);
-		
+		postRepository.save(post);
 		return newMedia.getId();
 	}
 }
