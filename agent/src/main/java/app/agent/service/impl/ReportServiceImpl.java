@@ -1,8 +1,10 @@
 package app.agent.service.impl;
 
-import app.agent.model.reports.CampaignReport;
+import app.agent.client.ReportHttpClient;
+import app.agent.model.Purchase;
 import app.agent.model.reports.CampaignReports;
 import app.agent.repository.ReportRepository;
+import app.agent.service.PurchaseService;
 import app.agent.service.ReportService;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -18,31 +20,41 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Stream;
 
 @Service
 public class ReportServiceImpl implements ReportService {
     private final ReportRepository reportRepository;
+    private final ReportHttpClient reportHttpClient;
+    private final PurchaseService purchaseService;
 
     @Value("${media.storage}")
     private String storageDirectory;
 
     @Autowired
-    public ReportServiceImpl(ReportRepository reportRepository) {
+    public ReportServiceImpl(ReportRepository reportRepository, ReportHttpClient reportHttpClient, PurchaseService purchaseService) {
         this.reportRepository = reportRepository;
+        this.reportHttpClient = reportHttpClient;
+        this.purchaseService = purchaseService;
     }
 
     @Override
     public String generatePDFReport() {
-        CampaignReport cr1 = new CampaignReport("campaign1", LocalDateTime.now(), 4, 4, 5, 4, 456123);
-        CampaignReport cr2 = new CampaignReport("campaign2", LocalDateTime.now(), 23, 45, 54, 42, 45643);
-        CampaignReport cr3 = new CampaignReport("campaihn3", LocalDateTime.now(), 44, 34, 54, 24, 45655);
+//        CampaignReport cr1 = new CampaignReport("campaign1", LocalDateTime.now(), 4, 4, 5, 4, 456123);
+//        CampaignReport cr2 = new CampaignReport("campaign2", LocalDateTime.now(), 23, 45, 54, 42, 45643);
+//        CampaignReport cr3 = new CampaignReport("campaihn3", LocalDateTime.now(), 44, 34, 54, 24, 45655);
 
         CampaignReports reports = new CampaignReports();
-        reports.addCampaign(cr1);
-        reports.addCampaign(cr2);
-        reports.addCampaign(cr3);
+        reportHttpClient.fetchReports().forEach(r -> {
+            Collection<Purchase> purchases = purchaseService.getAllAfterDate(LocalDateTime.parse(r.getCreated()));
+            r.setMoneyIncrease(purchases.stream().mapToDouble(p -> p.getProduct().getPrice()).sum());
+            reports.addCampaign(r);
+        });
+//        reports.addCampaign(cr1);
+//        reports.addCampaign(cr2);
+//        reports.addCampaign(cr3);
         UUID id = reportRepository.generate(reports);
         generatePDF(id.toString(), reports);
         return "/merch/content/" + id + ".pdf";
@@ -88,7 +100,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private void addTableHeaders(PdfPTable table) {
-        Stream.of("Name", "Created On", "Likes", "Dislikes", "Number of Comments", "Number of Clicks", "Total Salary")
+        Stream.of("Id", "Created On", "Likes", "Dislikes", "Number of Comments", "Number of Clicks", "Total Salary")
                 .forEach(column -> {
                     PdfPCell header = new PdfPCell();
                     header.setBackgroundColor(BaseColor.LIGHT_GRAY);
@@ -99,7 +111,7 @@ public class ReportServiceImpl implements ReportService {
 
     private void addRows(PdfPTable table, CampaignReports reports) {
         reports.getCampaigns().forEach(r -> {
-            table.addCell(r.getName());
+            table.addCell("" + r.getId());
             table.addCell(r.getCreated());
             table.addCell("" + r.getLikes());
             table.addCell("" + r.getDislikes());

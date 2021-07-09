@@ -25,6 +25,7 @@ services:
     restart: always
     depends_on: 
       - postgres
+      - axonserver
     networks:
       - backend
 
@@ -127,6 +128,7 @@ services:
     restart: always
     depends_on: 
       - postgres
+      - axonserver
     networks:
       - backend
 
@@ -142,6 +144,9 @@ services:
       MEDIA_STORAGE_PATH : ${MEDIA_STORAGE_PATH}
       XML_DATABASE_DOMAIN : ${XML_DATABASE_DOMAIN}
       XML_DATABASE_PORT : ${XML_DATABASE_PORT}
+      CAMPAIGN_SERVICE_DOMAIN : ${CAMPAIGN_SERVICE_DOMAIN}
+      CAMPAIGN_SERVICE_PORT : ${CAMPAIGN_SERVICE_PORT}
+      PATH: api/campaign/campaign/reports
     volumes:
       - agentapp:/app/storage/media-content
     restart: always
@@ -151,6 +156,16 @@ services:
       - postgres
       - exist
     networks:
+      - backend
+
+  axonserver:
+    image: axoniq/axonserver
+    container_name: axonserver
+    ports: 
+      - 8024:8024
+      - 8124:8124    
+    restart: on-failure
+    networks: 
       - backend
 
   postgres:

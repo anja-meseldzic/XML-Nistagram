@@ -1,11 +1,7 @@
 package app.campaign.controller;
 
-import app.campaign.dto.CampaignDTO;
-import app.campaign.dto.DetailsDTO;
+import app.campaign.dto.*;
 
-import app.campaign.dto.InfluencerCampaignDTO;
-
-import app.campaign.dto.ReportDto;
 import app.campaign.service.AuthService;
 import app.campaign.service.CampaignService;
 import app.campaign.util.TokenUtils;
@@ -16,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -129,6 +126,13 @@ public class CampaignController {
     @GetMapping("report/{id}")
     ReportDto getReport(@PathVariable("id") long id) {
         return campaignService.getReport(id);
+    }
 
+    @GetMapping("reports")
+    public ResponseEntity<Collection<CampaignReport>> getReportsByAgent(@RequestHeader("ApiKey") String header) {
+        String username = authService.verifyApiKey(header);
+        if(username == null)
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(campaignService.getCampaignsByAgent(username), HttpStatus.OK);
     }
 }
