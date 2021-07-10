@@ -2,6 +2,7 @@ version: "3.8"
 services:
   gateway:
     image: nginx:1.19.8-alpine
+    container_name: gateway
     ports:
       - 8080:8080
     networks:
@@ -41,6 +42,10 @@ services:
       DATABASE_PORT : ${DATABASE_PORT}
       AUTH_SERVICE_DOMAIN: ${AUTH_SERVICE_DOMAIN}
       AUTH_SERVICE_PORT : ${AUTH_SERVICE_PORT}
+      MEDIA_SERVICE_DOMAIN : ${MEDIA_SERVICE_DOMAIN}
+      MEDIA_SERVICE_PORT : ${MEDIA_SERVICE_PORT}
+      PROFILE_SERVICE_DOMAIN : ${PROFILE_SERVICE_DOMAIN}
+      PROFILE_SERVICE_PORT : ${PROFILE_SERVICE_PORT}
     restart: always
     depends_on: 
       - postgres
@@ -62,6 +67,8 @@ services:
       AUTH_SERVICE_PORT : ${AUTH_SERVICE_PORT}
       NOTIFICATION_SERVICE_DOMAIN: ${NOTIFICATION_SERVICE_DOMAIN}
       NOTIFICATION_SERVICE_PORT : ${NOTIFICATION_SERVICE_PORT}
+      CAMPAIGN_SERVICE_DOMAIN : ${CAMPAIGN_SERVICE_DOMAIN}
+      CAMPAIGN_SERVICE_PORT : ${CAMPAIGN_SERVICE_PORT}
       MEDIA_STORAGE_PATH : ${MEDIA_STORAGE_PATH}
     restart: always
     volumes:
@@ -146,8 +153,8 @@ services:
       MEDIA_STORAGE_PATH : ${MEDIA_STORAGE_PATH}
       XML_DATABASE_DOMAIN : ${XML_DATABASE_DOMAIN}
       XML_DATABASE_PORT : ${XML_DATABASE_PORT}
-      CAMPAIGN_SERVICE_DOMAIN : ${CAMPAIGN_SERVICE_DOMAIN}
-      CAMPAIGN_SERVICE_PORT : ${CAMPAIGN_SERVICE_PORT}
+      CAMPAIGN_SERVICE_DOMAIN : "gateway"
+      CAMPAIGN_SERVICE_PORT : "8080/api/campaign"
     volumes:
       - agentapp:/app/storage/media-content
     restart: always
@@ -182,6 +189,8 @@ services:
       POSTGRES_PASSWORD: root
     networks: 
       - backend
+    volumes:
+      - postgres-data:/var/lib/postgres
 
   exist:
     image: existdb/existdb:latest
@@ -201,3 +210,4 @@ volumes:
   myapp:
   myapp2:
   agentapp:
+  postgres-data:

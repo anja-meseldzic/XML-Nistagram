@@ -4,19 +4,19 @@
 
 export const environment = {
   production: false,
-  // profileBaseUrl: 'http://localhost:8080/api/profile/',
-  // mediaBaseUrl: 'http://localhost:8080/api/media/',
-  // authBaseUrl: 'http://localhost:8080/api/auth/',
-  // campaignBaseUrl: 'http://localhost:8080/api/campaign/',
-  // messageBaseUrl: 'http://localhost:8080/api/message/',
-  // notificationBaseUrl: 'http://localhost:8080/api/notification/',
+   profileBaseUrl: 'http://localhost:8080/api/profile/',
+   mediaBaseUrl: 'http://localhost:8080/api/media/',
+   authBaseUrl: 'http://localhost:8080/api/auth/',
+   campaignBaseUrl: 'http://localhost:8080/api/campaign/',
+   messageBaseUrl: 'http://localhost:8080/api/message/',
+   notificationBaseUrl: 'http://localhost:8080/api/notification/',
 
-   profileBaseUrl: 'http://localhost:8085/',
-   mediaBaseUrl: 'http://localhost:8083/',
-   authBaseUrl: 'http://localhost:8081/',
-   campaignBaseUrl: 'http://localhost:8082/',
-   messageBaseUrl: 'http://localhost:8084/',
-   notificationBaseUrl: 'http://localhost:8086/'
+  // profileBaseUrl: 'http://localhost:8085/',
+  // mediaBaseUrl: 'http://localhost:8083/',
+  // authBaseUrl: 'http://localhost:8081/',
+  // campaignBaseUrl: 'http://localhost:8082/',
+  // messageBaseUrl: 'http://localhost:8084/',
+  // notificationBaseUrl: 'http://localhost:8086/'
 };
 
 /*
